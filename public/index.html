@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PolyTrader Pro - All Markets</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <title>PolyTrader Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -14,7 +14,6 @@
             --primary: #facc15;
             --primary-foreground: #09090b;
             --secondary: #27272a;
-            --muted: #27272a;
             --muted-foreground: #a1a1aa;
             --destructive: #ef4444;
             --success: #22c55e;
@@ -36,6 +35,8 @@
             line-height: 2;
         }
         
+        .thai { font-family: 'Sarabun', sans-serif; }
+        
         .header {
             background: var(--card);
             padding: 12px 16px;
@@ -49,9 +50,7 @@
         
         .logo { display: flex; align-items: center; gap: 12px; }
         .logo-text { font-size: 12px; color: var(--primary); text-shadow: 2px 2px 0 #ca8a04; }
-        .logo-badge { background: var(--purple); color: white; font-size: 6px; padding: 4px 8px; animation: blink 1s steps(2) infinite; }
-        
-        @keyframes blink { 50% { opacity: 0; } }
+        .logo-badge { background: var(--purple); color: white; font-size: 6px; padding: 4px 8px; }
         
         .status-badge { display: flex; align-items: center; gap: 8px; font-size: 8px; color: var(--muted-foreground); }
         .status-dot { width: 8px; height: 8px; background: var(--success); animation: pulse 1s infinite; }
@@ -61,16 +60,13 @@
         
         .main { max-width: 1200px; margin: 0 auto; padding: 16px; }
         
-        .nes-btn { display: inline-block; padding: 8px 16px; font-family: inherit; font-size: 10px; color: var(--foreground); background: var(--secondary); border: none; cursor: pointer; text-transform: uppercase; box-shadow: inset -4px -4px 0 0 #18181b, inset 4px 4px 0 0 #52525b; }
+        .nes-btn { display: inline-block; padding: 8px 16px; font-family: inherit; font-size: 10px; color: var(--foreground); background: var(--secondary); border: none; cursor: pointer; text-transform: uppercase; box-shadow: inset -4px -4px 0 0 #18181b, inset 4px 4px 0 0 #52525b; text-decoration: none; }
         .nes-btn:hover { color: var(--muted-foreground); }
-        .nes-btn:active { box-shadow: inset 4px 4px 0 0 #18181b, inset -4px -4px 0 0 #52525b; }
         .nes-btn.is-primary { background: var(--primary); color: var(--primary-foreground); box-shadow: inset -4px -4px 0 0 #a16207, inset 4px 4px 0 0 #fef08a; }
         .nes-btn.is-success { background: var(--success); color: #052e16; box-shadow: inset -4px -4px 0 0 #15803d, inset 4px 4px 0 0 #86efac; }
-        .nes-btn.is-error { background: var(--destructive); color: white; box-shadow: inset -4px -4px 0 0 #b91c1c, inset 4px 4px 0 0 #fca5a5; }
         
-        .tabs { display: flex; gap: 4px; margin-bottom: 16px; border-bottom: 4px solid var(--border); padding-bottom: 4px; flex-wrap: wrap; }
+        .tabs { display: flex; gap: 4px; margin-bottom: 16px; border-bottom: 4px solid var(--border); padding-bottom: 4px; }
         .tab-btn { padding: 12px 16px; font-family: inherit; font-size: 8px; background: var(--secondary); color: var(--muted-foreground); border: none; cursor: pointer; box-shadow: inset -4px -4px 0 0 #18181b, inset 4px 4px 0 0 #52525b; }
-        .tab-btn:hover { color: var(--foreground); }
         .tab-btn.active { background: var(--primary); color: var(--primary-foreground); box-shadow: inset -4px -4px 0 0 #a16207, inset 4px 4px 0 0 #fef08a; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
@@ -78,32 +74,114 @@
         .controls-row { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; align-items: flex-end; }
         .control-group { display: flex; flex-direction: column; gap: 4px; }
         .control-label { font-size: 8px; color: var(--muted-foreground); }
-        
         .nes-input { padding: 8px 12px; font-family: inherit; font-size: 10px; color: var(--foreground); background: var(--background); border: none; width: 100px; box-shadow: inset -4px -4px 0 0 #52525b, inset 4px 4px 0 0 #18181b; }
         .nes-input:focus { outline: none; box-shadow: inset -4px -4px 0 0 var(--primary), inset 4px 4px 0 0 #a16207; }
         
         .filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
         .filter-btn { padding: 6px 10px; font-family: inherit; font-size: 7px; background: var(--secondary); color: var(--muted-foreground); border: 2px solid var(--border); cursor: pointer; }
-        .filter-btn:hover { border-color: var(--primary); color: var(--primary); }
         .filter-btn.active { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); }
-        .filter-btn[data-cat="crypto"].active { background: #f7931a; border-color: #f7931a; }
-        .filter-btn[data-cat="politics"].active { background: var(--destructive); border-color: var(--destructive); color: white; }
-        .filter-btn[data-cat="sports"].active { background: var(--success); border-color: var(--success); }
-        .filter-btn[data-cat="entertainment"].active { background: var(--pink); border-color: var(--pink); }
-        .filter-btn[data-cat="science"].active { background: var(--info); border-color: var(--info); color: white; }
-        .filter-btn[data-cat="business"].active { background: var(--purple); border-color: var(--purple); color: white; }
         
         .stats-row { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-        .stat-badge { padding: 8px 12px; background: var(--secondary); font-size: 8px; color: var(--muted-foreground); box-shadow: inset -2px -2px 0 0 #18181b, inset 2px 2px 0 0 #3f3f46; }
+        .stat-badge { padding: 8px 12px; background: var(--secondary); font-size: 8px; color: var(--muted-foreground); }
         .stat-badge span { color: var(--primary); margin-left: 4px; }
         
         .quest-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
         
-        .quest-card { background: var(--card); box-shadow: 0 0 0 4px var(--border), inset -4px -4px 0 0 #18181b, inset 4px 4px 0 0 #3f3f46; }
+        /* Market Card with Hover Popup */
+        .quest-card {
+            background: var(--card);
+            box-shadow: 0 0 0 4px var(--border), inset -4px -4px 0 0 #18181b, inset 4px 4px 0 0 #3f3f46;
+            position: relative;
+        }
+        
         .quest-card.is-legendary { box-shadow: 0 0 0 4px var(--success), inset -4px -4px 0 0 #15803d, inset 4px 4px 0 0 #4ade80, 0 0 20px rgba(34, 197, 94, 0.3); }
         .quest-card.is-epic { box-shadow: 0 0 0 4px var(--info), inset -4px -4px 0 0 #1d4ed8, inset 4px 4px 0 0 #60a5fa; }
         .quest-card.is-rare { box-shadow: 0 0 0 4px var(--warning), inset -4px -4px 0 0 #b45309, inset 4px 4px 0 0 #fbbf24; }
         .quest-card.is-common { box-shadow: 0 0 0 4px var(--destructive), inset -4px -4px 0 0 #b91c1c, inset 4px 4px 0 0 #f87171; opacity: 0.7; }
+        
+        /* HOVER POPUP */
+        .hover-popup {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 100;
+            padding: 16px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s, visibility 0.2s;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .quest-card:hover .hover-popup {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .popup-header {
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .popup-header h3 {
+            font-size: 9px;
+            color: var(--primary);
+            line-height: 1.6;
+        }
+        
+        .popup-section {
+            margin-bottom: 12px;
+        }
+        
+        .popup-section h4 {
+            font-size: 8px;
+            color: var(--primary);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .popup-section p,
+        .popup-section li {
+            font-family: 'Sarabun', sans-serif;
+            font-size: 13px;
+            color: var(--muted-foreground);
+            line-height: 1.6;
+        }
+        
+        .popup-section ul {
+            padding-left: 16px;
+            margin: 0;
+        }
+        
+        .popup-section li {
+            margin-bottom: 4px;
+        }
+        
+        .popup-highlight {
+            background: rgba(250, 204, 21, 0.2);
+            color: var(--primary);
+            padding: 1px 4px;
+        }
+        
+        .popup-footer {
+            margin-top: auto;
+            padding-top: 12px;
+            border-top: 2px solid var(--border);
+            display: flex;
+            gap: 8px;
+        }
+        
+        .popup-footer .nes-btn {
+            flex: 1;
+            text-align: center;
+        }
         
         .quest-header { padding: 12px 16px; border-bottom: 4px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; }
         .quest-title { font-size: 9px; color: var(--foreground); line-height: 1.8; }
@@ -115,14 +193,14 @@
         .quest-meta .cat.entertainment { background: var(--pink); color: #000; }
         .quest-meta .cat.science { background: var(--info); color: white; }
         .quest-meta .cat.business { background: var(--purple); color: white; }
-        .quest-meta .cat.other { background: var(--muted); color: var(--foreground); }
+        .quest-meta .cat.other { background: #71717a; color: white; }
         
-        .quest-badge { padding: 4px 8px; font-size: 6px; text-transform: uppercase; animation: blink 1.5s steps(2) infinite; }
+        .quest-badge { padding: 4px 8px; font-size: 6px; text-transform: uppercase; }
         .quest-badge.legendary { background: var(--success); color: #052e16; }
         .quest-badge.epic { background: var(--info); color: white; }
         .quest-badge.rare { background: var(--warning); color: #451a03; }
-        .quest-badge.common { background: var(--muted); color: var(--muted-foreground); animation: none; }
-        .quest-badge.pending { background: var(--secondary); color: var(--muted-foreground); animation: none; }
+        .quest-badge.common { background: #71717a; color: white; }
+        .quest-badge.pending { background: var(--secondary); color: var(--muted-foreground); }
         
         .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); border-bottom: 4px solid var(--border); }
         .stat-cell { padding: 10px 6px; text-align: center; border-right: 2px solid var(--border); }
@@ -143,14 +221,23 @@
         .loading-state { text-align: center; padding: 48px 16px; grid-column: 1 / -1; }
         .loading-icon { font-size: 32px; animation: bounce 0.5s infinite alternate; }
         @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-8px); } }
-        .loading-text { margin-top: 16px; font-size: 10px; color: var(--primary); animation: blink 1s steps(2) infinite; }
+        .loading-text { margin-top: 16px; font-size: 10px; color: var(--primary); }
         
         .empty-state { text-align: center; padding: 48px 16px; color: var(--muted-foreground); grid-column: 1 / -1; }
-        .empty-icon { font-size: 32px; margin-bottom: 16px; }
         
         .search-box { flex: 1; min-width: 200px; }
         .search-box .nes-input { width: 100%; }
         
+        /* Guide Tab */
+        .guide-section { background: var(--card); margin-bottom: 16px; box-shadow: 0 0 0 4px var(--border), inset -4px -4px 0 0 #18181b, inset 4px 4px 0 0 #3f3f46; }
+        .guide-section.highlight { box-shadow: 0 0 0 4px var(--primary), inset -4px -4px 0 0 #a16207, inset 4px 4px 0 0 #fef08a; }
+        .guide-header { padding: 16px; border-bottom: 4px solid var(--border); background: var(--secondary); }
+        .guide-header h3 { font-size: 10px; color: var(--primary); }
+        .guide-body { padding: 16px; }
+        .guide-body p { font-family: 'Sarabun', sans-serif; font-size: 15px; color: var(--muted-foreground); line-height: 2; margin-bottom: 12px; }
+        .guide-body strong { color: var(--foreground); }
+        
+        /* Portfolio */
         .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px; }
         .portfolio-card { padding: 16px; background: var(--card); box-shadow: 0 0 0 4px var(--border), inset -4px -4px 0 0 #18181b, inset 4px 4px 0 0 #3f3f46; }
         .portfolio-card .label { font-size: 8px; color: var(--primary); margin-bottom: 8px; }
@@ -160,7 +247,7 @@
         .portfolio-card .sub { font-size: 8px; color: var(--muted-foreground); margin-top: 4px; }
         
         .progress-bar { height: 16px; background: var(--secondary); box-shadow: inset -4px -4px 0 0 #18181b, inset 4px 4px 0 0 #3f3f46; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--destructive), var(--warning), var(--success)); transition: width 0.3s; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--destructive), var(--warning), var(--success)); }
         
         .form-card { padding: 16px; margin-bottom: 16px; background: var(--card); box-shadow: 0 0 0 4px var(--primary), inset -4px -4px 0 0 #a16207, inset 4px 4px 0 0 #fef08a; }
         .form-card h3 { font-size: 10px; color: var(--primary); margin-bottom: 16px; }
@@ -168,27 +255,23 @@
         .form-group label { display: block; font-size: 8px; color: var(--muted-foreground); margin-bottom: 4px; }
         .form-group input, .form-group select { width: 100%; padding: 8px; font-family: inherit; font-size: 8px; color: var(--foreground); background: var(--background); border: none; box-shadow: inset -4px -4px 0 0 #52525b, inset 4px 4px 0 0 #18181b; }
         
-        .table-container { overflow-x: auto; box-shadow: 0 0 0 4px var(--border), inset -4px -4px 0 0 #18181b, inset 4px 4px 0 0 #3f3f46; }
+        .table-container { overflow-x: auto; box-shadow: 0 0 0 4px var(--border); }
         table { width: 100%; border-collapse: collapse; background: var(--card); }
-        th { padding: 12px; text-align: left; font-size: 8px; color: var(--primary); background: var(--secondary); border-bottom: 4px solid var(--border); }
+        th { padding: 12px; text-align: left; font-size: 8px; color: var(--primary); background: var(--secondary); }
         td { padding: 12px; font-size: 8px; border-bottom: 2px solid var(--border); }
         .win { color: var(--success); }
         .loss { color: var(--destructive); }
-        .pending { color: var(--warning); }
         
-        .guide-card { padding: 16px; margin-bottom: 16px; background: var(--card); box-shadow: 0 0 0 4px var(--border), inset -4px -4px 0 0 #18181b, inset 4px 4px 0 0 #3f3f46; }
-        .guide-card.is-primary { box-shadow: 0 0 0 4px var(--primary), inset -4px -4px 0 0 #a16207, inset 4px 4px 0 0 #fef08a; }
-        .guide-card.is-error { box-shadow: 0 0 0 4px var(--destructive), inset -4px -4px 0 0 #b91c1c, inset 4px 4px 0 0 #f87171; }
-        .guide-card h3 { font-size: 10px; color: var(--foreground); margin-bottom: 16px; }
-        .guide-card.is-primary h3 { color: var(--primary); }
-        .guide-card.is-error h3 { color: var(--destructive); }
-        .guide-card p { font-size: 8px; color: var(--muted-foreground); line-height: 2.5; }
-        .guide-card strong { color: var(--foreground); }
-        
-        .message-box { padding: 16px; margin-bottom: 16px; background: var(--card); display: flex; align-items: flex-start; gap: 12px; box-shadow: 0 0 0 4px var(--info), inset -4px -4px 0 0 #1d4ed8, inset 4px 4px 0 0 #60a5fa; }
-        .message-icon { font-size: 20px; }
-        .message-content h4 { font-size: 10px; color: var(--foreground); margin-bottom: 4px; }
-        .message-content p { font-size: 8px; color: var(--muted-foreground); }
+        /* Hover hint */
+        .hover-hint {
+            font-family: 'Sarabun', sans-serif;
+            font-size: 11px;
+            color: var(--muted-foreground);
+            text-align: center;
+            padding: 8px;
+            background: var(--secondary);
+            margin-bottom: 16px;
+        }
         
         @media (max-width: 600px) {
             .stats-grid { grid-template-columns: repeat(3, 1fr); }
@@ -211,131 +294,135 @@
     
     <main class="main">
         <div class="tabs">
-            <button class="tab-btn active" onclick="showTab('scanner')">🔍 MARKETS</button>
-            <button class="tab-btn" onclick="showTab('portfolio')">💰 PORTFOLIO</button>
-            <button class="tab-btn" onclick="showTab('guide')">📜 GUIDE</button>
+            <button class="tab-btn active" onclick="showTab('scanner')">🔍 ตลาด</button>
+            <button class="tab-btn" onclick="showTab('portfolio')">💰 พอร์ต</button>
+            <button class="tab-btn" onclick="showTab('guide')">📖 คู่มือ</button>
         </div>
         
+        <!-- Scanner Tab -->
         <div class="tab-content active" id="tab-scanner">
             <div class="controls-row">
                 <div class="control-group">
-                    <span class="control-label">💰 BANKROLL</span>
+                    <span class="control-label">💰 เงินทุน ($)</span>
                     <input type="number" class="nes-input" id="bankroll" value="100">
                 </div>
                 <div class="control-group">
-                    <span class="control-label">🎯 MIN EDGE</span>
+                    <span class="control-label">🎯 EDGE ขั้นต่ำ</span>
                     <input type="number" class="nes-input" id="minEdge" value="5">
                 </div>
                 <div class="control-group search-box">
-                    <span class="control-label">🔍 SEARCH</span>
+                    <span class="control-label">🔍 ค้นหา</span>
                     <input type="text" class="nes-input" id="searchInput" placeholder="BITCOIN, TRUMP..." oninput="filterMarkets()">
                 </div>
-                <button class="nes-btn is-primary" onclick="fetchMarkets()">⟳ RELOAD</button>
+                <button class="nes-btn is-primary" onclick="fetchMarkets()">⟳ โหลดใหม่</button>
             </div>
             
             <div class="filter-row">
-                <button class="filter-btn active" data-cat="all" onclick="filterCategory('all', this)">🌐 ALL</button>
-                <button class="filter-btn" data-cat="crypto" onclick="filterCategory('crypto', this)">₿ CRYPTO</button>
-                <button class="filter-btn" data-cat="politics" onclick="filterCategory('politics', this)">🏛️ POLITICS</button>
-                <button class="filter-btn" data-cat="sports" onclick="filterCategory('sports', this)">⚽ SPORTS</button>
-                <button class="filter-btn" data-cat="entertainment" onclick="filterCategory('entertainment', this)">🎬 ENTERTAINMENT</button>
-                <button class="filter-btn" data-cat="science" onclick="filterCategory('science', this)">🔬 SCIENCE/AI</button>
-                <button class="filter-btn" data-cat="business" onclick="filterCategory('business', this)">💼 BUSINESS</button>
+                <button class="filter-btn active" data-cat="all" onclick="filterCategory('all', this)">🌐 ทั้งหมด</button>
+                <button class="filter-btn" data-cat="crypto" onclick="filterCategory('crypto', this)">₿ คริปโต</button>
+                <button class="filter-btn" data-cat="politics" onclick="filterCategory('politics', this)">🏛️ การเมือง</button>
+                <button class="filter-btn" data-cat="sports" onclick="filterCategory('sports', this)">⚽ กีฬา</button>
+                <button class="filter-btn" data-cat="entertainment" onclick="filterCategory('entertainment', this)">🎬 บันเทิง</button>
+                <button class="filter-btn" data-cat="science" onclick="filterCategory('science', this)">🔬 AI/วิทย์</button>
+                <button class="filter-btn" data-cat="business" onclick="filterCategory('business', this)">💼 ธุรกิจ</button>
             </div>
             
+            <div class="hover-hint">💡 เอาเมาส์ไปวางบนการ์ด เพื่อดูกลยุทธ์และวิธีหา Model%</div>
+            
             <div class="stats-row">
-                <div class="stat-badge">MARKETS:<span id="totalMarkets">0</span></div>
-                <div class="stat-badge">SHOWING:<span id="filteredMarkets">0</span></div>
-                <div class="stat-badge">TIME:<span id="lastUpdate">--:--</span></div>
+                <div class="stat-badge">ตลาดทั้งหมด:<span id="totalMarkets">0</span></div>
+                <div class="stat-badge">แสดง:<span id="filteredMarkets">0</span></div>
+                <div class="stat-badge">เวลา:<span id="lastUpdate">--:--</span></div>
             </div>
             
             <div class="quest-grid" id="questGrid">
                 <div class="loading-state">
                     <div class="loading-icon">🔮</div>
-                    <div class="loading-text">LOADING MARKETS...</div>
+                    <div class="loading-text">กำลังโหลด...</div>
                 </div>
             </div>
         </div>
         
+        <!-- Portfolio Tab -->
         <div class="tab-content" id="tab-portfolio">
             <div class="portfolio-grid">
                 <div class="portfolio-card">
-                    <div class="label">💰 BANKROLL</div>
+                    <div class="label">💰 เงินทุน</div>
                     <div class="value" id="pBankroll">$100</div>
                     <div class="progress-bar" style="margin-top: 8px;"><div class="progress-fill" id="hpFill" style="width: 100%;"></div></div>
                 </div>
                 <div class="portfolio-card">
-                    <div class="label">📈 P&L</div>
+                    <div class="label">📈 กำไร/ขาดทุน</div>
                     <div class="value positive" id="pPnL">+$0</div>
                     <div class="sub" id="pPnLPct">0%</div>
                 </div>
                 <div class="portfolio-card">
-                    <div class="label">🎯 WIN RATE</div>
+                    <div class="label">🎯 อัตราชนะ</div>
                     <div class="value" id="pWinRate">0%</div>
                     <div class="sub" id="pWinLoss">0W - 0L</div>
                 </div>
             </div>
             
             <div class="form-card">
-                <h3>➕ LOG TRADE</h3>
+                <h3>➕ บันทึกการเทรด</h3>
                 <div class="form-row">
-                    <div class="form-group"><label>MARKET</label><input type="text" id="betEvent" placeholder="BITCOIN >100K"></div>
-                    <div class="form-group"><label>STAKE ($)</label><input type="number" id="betStake" placeholder="5"></div>
-                    <div class="form-group"><label>PRICE (¢)</label><input type="number" id="betPrice" placeholder="55"></div>
-                    <div class="form-group"><label>STATUS</label><select id="betStatus"><option value="pending">⏳ PENDING</option><option value="win">✅ WIN</option><option value="loss">❌ LOSS</option></select></div>
+                    <div class="form-group"><label>ตลาด</label><input type="text" id="betEvent" placeholder="BITCOIN >100K"></div>
+                    <div class="form-group"><label>เงินลง ($)</label><input type="number" id="betStake" placeholder="5"></div>
+                    <div class="form-group"><label>ราคา (¢)</label><input type="number" id="betPrice" placeholder="55"></div>
+                    <div class="form-group"><label>สถานะ</label><select id="betStatus"><option value="pending">⏳ รอผล</option><option value="win">✅ ชนะ</option><option value="loss">❌ แพ้</option></select></div>
                 </div>
-                <button class="nes-btn is-primary" onclick="addBet()">+ LOG</button>
+                <button class="nes-btn is-primary" onclick="addBet()">+ บันทึก</button>
             </div>
             
             <div class="table-container">
                 <table>
-                    <thead><tr><th>DATE</th><th>MARKET</th><th>STAKE</th><th>P&L</th><th>STATUS</th><th></th></tr></thead>
-                    <tbody id="betsTable"><tr><td colspan="6" style="text-align:center;">NO TRADES</td></tr></tbody>
+                    <thead><tr><th>วันที่</th><th>ตลาด</th><th>เงินลง</th><th>ผลลัพธ์</th><th>สถานะ</th><th></th></tr></thead>
+                    <tbody id="betsTable"><tr><td colspan="6" style="text-align:center;">ยังไม่มีรายการ</td></tr></tbody>
                 </table>
             </div>
         </div>
         
+        <!-- Guide Tab -->
         <div class="tab-content" id="tab-guide">
-            <div class="message-box">
-                <span class="message-icon">💡</span>
-                <div class="message-content">
-                    <h4>Pro Tip</h4>
-                    <p>ใช้ได้กับทุกตลาด! Crypto, Politics, Sports และอื่นๆ</p>
+            <div class="guide-section highlight">
+                <div class="guide-header"><h3>❓ ใช้งานยังไง?</h3></div>
+                <div class="guide-body">
+                    <p><strong>1.</strong> เลือกตลาดที่สนใจจากรายการ</p>
+                    <p><strong>2.</strong> เอาเมาส์ไปวางบนการ์ด → จะขึ้น Popup อธิบายกลยุทธ์</p>
+                    <p><strong>3.</strong> ศึกษาข้อมูลตามที่แนะนำ แล้วใส่ Model%</p>
+                    <p><strong>4.</strong> กด CALC ดู EDGE → ถ้า ≥5% น่าเทรด!</p>
+                    <p><strong>5.</strong> กด TRADE ไปซื้อบน Polymarket</p>
                 </div>
             </div>
             
-            <div class="guide-card is-primary">
-                <h3>📊 MARKET CATEGORIES</h3>
-                <p>
-                    <strong>₿ CRYPTO:</strong> Bitcoin, Ethereum, ETFs<br>
-                    <strong>🏛️ POLITICS:</strong> Trump, Elections, Xi, Putin<br>
-                    <strong>⚽ SPORTS:</strong> NBA, NFL, Soccer, UFC<br>
-                    <strong>🎬 ENTERTAINMENT:</strong> Movies, Awards<br>
-                    <strong>🔬 SCIENCE/AI:</strong> OpenAI, SpaceX, Tech<br>
-                    <strong>💼 BUSINESS:</strong> IPOs, Stocks, Economy
-                </p>
+            <div class="guide-section">
+                <div class="guide-header"><h3>📊 ความหมายตัวเลข</h3></div>
+                <div class="guide-body">
+                    <p><strong>PRICE</strong> = ราคาซื้อ (35¢ = จ่าย 35 เซนต์ ถ้าชนะได้ $1)</p>
+                    <p><strong>IMPLIED</strong> = โอกาสที่ตลาดคิด (35¢ = 35%)</p>
+                    <p><strong>MODEL</strong> = โอกาสที่คุณคิดว่าจะเกิดจริง</p>
+                    <p><strong>EDGE</strong> = Model - Implied (ถ้า + คือน่าเทรด)</p>
+                    <p><strong>EV</strong> = กำไรคาดหวังต่อ $100</p>
+                </div>
             </div>
             
-            <div class="guide-card">
-                <h3>🎯 HOW TO FIND MODEL%</h3>
-                <p>
-                    <strong>₿ Crypto:</strong> ดู Prediction Markets อื่น, Expert Analysis<br>
-                    <strong>🏛️ Politics:</strong> ดู Polls, 538, RealClearPolitics<br>
-                    <strong>⚽ Sports:</strong> FanDuel, DraftKings, ESPN<br>
-                    <strong>🔬 Science:</strong> Expert opinions, Research papers<br>
-                    <strong>💼 Business:</strong> Analyst reports, News
-                </p>
+            <div class="guide-section">
+                <div class="guide-header"><h3>🏆 ระบบ Rarity</h3></div>
+                <div class="guide-body">
+                    <p>🚀 <strong>LEGENDARY</strong> (EDGE ≥10%) = โอกาสทอง! เทรดเลย</p>
+                    <p>✨ <strong>EPIC</strong> (EDGE 5-9%) = น่าเทรด</p>
+                    <p>🔶 <strong>RARE</strong> (EDGE 0-4%) = พิจารณา</p>
+                    <p>💀 <strong>SKIP</strong> (EDGE <0%) = ข้ามไป!</p>
+                </div>
             </div>
             
-            <div class="guide-card is-error">
-                <h3>⚠️ RISK WARNING</h3>
-                <p>
-                    <strong>1.</strong> NEVER BET MORE THAN 5% PER TRADE<br>
-                    <strong>2.</strong> DON'T CHASE LOSSES<br>
-                    <strong>3.</strong> ONLY USE MONEY YOU CAN LOSE<br>
-                    <strong>4.</strong> VERIFY MODEL% FROM RELIABLE SOURCES<br>
-                    <strong>5.</strong> STOP IF DOWN 20%
-                </p>
+            <div class="guide-section">
+                <div class="guide-header"><h3>💰 กฎการจัดการเงิน</h3></div>
+                <div class="guide-body">
+                    <p>⚠️ ลงไม่เกิน <strong>5%</strong> ของเงินทุนต่อตลาด</p>
+                    <p>🛑 หยุดถ้าขาดทุน <strong>20%</strong></p>
+                    <p>❌ ห้ามไล่ตามขาดทุน</p>
+                </div>
             </div>
         </div>
     </main>
@@ -347,19 +434,133 @@
         let bets = JSON.parse(localStorage.getItem('polytrader_bets') || '[]');
         
         const categoryKeywords = {
-            crypto: ['bitcoin', 'btc', 'ethereum', 'eth', 'crypto', 'solana', 'xrp', 'doge', 'memecoin', 'defi', 'nft', 'binance', 'coinbase', 'etf'],
-            politics: ['trump', 'biden', 'election', 'president', 'congress', 'senate', 'republican', 'democrat', 'xi', 'putin', 'ukraine', 'russia', 'china', 'iran', 'israel', 'gaza', 'war', 'government', 'vote', 'governor', 'mayor', 'political', 'gop', 'white house', 'cabinet'],
-            sports: ['nba', 'nfl', 'nhl', 'mlb', 'soccer', 'football', 'basketball', 'baseball', 'hockey', 'ufc', 'mma', 'boxing', 'tennis', 'golf', 'olympics', 'championship', 'playoff', 'finals', 'super bowl', 'world cup', ' vs ', 'lakers', 'celtics', 'warriors', 'chiefs', 'eagles'],
-            entertainment: ['movie', 'oscar', 'grammy', 'emmy', 'actor', 'actress', 'film', 'album', 'celebrity', 'swift', 'beyonce', 'netflix', 'disney', 'box office', 'streaming', 'youtube', 'tiktok'],
-            science: ['ai', 'artificial intelligence', 'openai', 'chatgpt', 'gpt', 'tesla', 'spacex', 'mars', 'nasa', 'space', 'rocket', 'climate', 'vaccine', 'fda', 'research', 'quantum', 'robot', 'autonomous', 'anthropic', 'google ai'],
-            business: ['ipo', 'stock', 'merger', 'acquisition', 'ceo', 'company', 'revenue', 'earnings', 'market cap', 'nasdaq', 'nyse', 'fed', 'interest rate', 'inflation', 'recession', 'gdp', 'economy', 'layoff', 'startup', 'valuation', 's&p']
+            crypto: ['bitcoin', 'btc', 'ethereum', 'eth', 'crypto', 'solana', 'xrp', 'doge', 'defi', 'nft', 'binance', 'coinbase', 'etf'],
+            politics: ['trump', 'biden', 'election', 'president', 'congress', 'senate', 'republican', 'democrat', 'xi', 'putin', 'ukraine', 'russia', 'china', 'iran', 'israel', 'gaza', 'war', 'government', 'vote', 'governor', 'political'],
+            sports: ['nba', 'nfl', 'nhl', 'mlb', 'soccer', 'football', 'basketball', 'baseball', 'hockey', 'ufc', 'mma', 'boxing', 'tennis', 'golf', 'olympics', 'championship', 'playoff', 'finals', 'super bowl', 'world cup', ' vs '],
+            entertainment: ['movie', 'oscar', 'grammy', 'emmy', 'actor', 'actress', 'film', 'album', 'celebrity', 'swift', 'beyonce', 'netflix', 'disney', 'streaming'],
+            science: ['ai', 'artificial intelligence', 'openai', 'chatgpt', 'gpt', 'tesla', 'spacex', 'mars', 'nasa', 'space', 'rocket', 'climate', 'vaccine', 'fda', 'quantum', 'robot'],
+            business: ['ipo', 'stock', 'merger', 'acquisition', 'ceo', 'company', 'revenue', 'earnings', 'nasdaq', 'fed', 'interest rate', 'inflation', 'recession', 'gdp', 'economy']
+        };
+        
+        // กลยุทธ์แต่ละหมวด (ภาษาไทย)
+        const strategies = {
+            crypto: {
+                icon: '₿',
+                name: 'คริปโต',
+                howTo: [
+                    'ดูราคาและ Technical Analysis บน TradingView',
+                    'ติดตาม Crypto analysts บน Twitter/X',
+                    'ดู On-chain data (Glassnode, CryptoQuant)',
+                    'ศึกษา Halving cycles ของ Bitcoin'
+                ],
+                tips: [
+                    'Bitcoin มักขึ้นหลัง Halving 12-18 เดือน',
+                    'ข่าว ETF มีผลกระทบสูงมาก',
+                    'ดู Fear & Greed Index ประกอบ'
+                ],
+                sources: 'TradingView, CoinGecko, Glassnode'
+            },
+            politics: {
+                icon: '🏛️',
+                name: 'การเมือง',
+                howTo: [
+                    'ดู Polls จาก FiveThirtyEight, RealClearPolitics',
+                    'ติดตามข่าวจาก Reuters, AP News',
+                    'ดู Prediction markets อื่นเทียบ',
+                    'ศึกษาประวัติการเลือกตั้งที่ผ่านมา'
+                ],
+                tips: [
+                    'Polls อาจคลาดเคลื่อน 3-5%',
+                    'ดู Electoral map สำหรับเลือกตั้ง',
+                    'ข่าว October Surprise มีผลมาก'
+                ],
+                sources: 'FiveThirtyEight, RealClearPolitics'
+            },
+            sports: {
+                icon: '⚽',
+                name: 'กีฬา',
+                howTo: [
+                    'ดู Odds จาก FanDuel, DraftKings แปลงเป็น %',
+                    'เช็คข่าวบาดเจ็บของนักกีฬา',
+                    'ดูสถิติ Head-to-head',
+                    'ติดตาม ESPN predictions'
+                ],
+                tips: [
+                    'Odds -150 = 60%, +200 = 33%',
+                    'Home advantage มีผล ~3-5%',
+                    'Back-to-back games ทีมมักเหนื่อย'
+                ],
+                sources: 'FanDuel, DraftKings, ESPN'
+            },
+            entertainment: {
+                icon: '🎬',
+                name: 'บันเทิง',
+                howTo: [
+                    'ดู Critics reviews และ Audience scores',
+                    'ติดตาม Awards prediction sites',
+                    'ดู Social media buzz',
+                    'เช็ค Box office predictions'
+                ],
+                tips: [
+                    'Oscar มักมี "narrative" ที่ชอบ',
+                    'ดู Guild awards ก่อน Oscar',
+                    'Box office weekend แรกสำคัญ'
+                ],
+                sources: 'Rotten Tomatoes, Gold Derby'
+            },
+            science: {
+                icon: '🔬',
+                name: 'AI/วิทยาศาสตร์',
+                howTo: [
+                    'ติดตามข่าว Tech จาก The Verge, TechCrunch',
+                    'ดู Official announcements',
+                    'ติดตาม CEO บน Twitter/X',
+                    'ดูประวัติการ release ของบริษัท'
+                ],
+                tips: [
+                    'Tech companies มักประกาศล่าช้า',
+                    'Elon Musk timelines มักไม่ตรง',
+                    'ดู Earnings calls สำหรับ hints'
+                ],
+                sources: 'The Verge, TechCrunch, Company blogs'
+            },
+            business: {
+                icon: '💼',
+                name: 'ธุรกิจ',
+                howTo: [
+                    'ดู Analyst reports จาก Bloomberg',
+                    'ติดตาม Fed statements',
+                    'ดู Economic indicators (GDP, CPI)',
+                    'เช็ค IPO filings'
+                ],
+                tips: [
+                    'Fed มักบอก forward guidance ล่วงหน้า',
+                    'ดู CME FedWatch สำหรับ rate predictions',
+                    'Earnings season มีผลกับ sentiment'
+                ],
+                sources: 'Bloomberg, Reuters, CNBC'
+            },
+            other: {
+                icon: '📊',
+                name: 'อื่นๆ',
+                howTo: [
+                    'ศึกษาข้อมูลเฉพาะของตลาดนั้น',
+                    'ค้นหาข่าวที่เกี่ยวข้อง',
+                    'ดู Historical data ถ้ามี'
+                ],
+                tips: [
+                    'ถ้าไม่แน่ใจ อย่าเทรด',
+                    'หาข้อมูลให้มากที่สุดก่อน'
+                ],
+                sources: 'Google News, Expert blogs'
+            }
         };
         
         function detectCategory(title, slug) {
             const text = (title + ' ' + slug).toLowerCase();
-            for (const [category, keywords] of Object.entries(categoryKeywords)) {
-                for (const keyword of keywords) {
-                    if (text.includes(keyword)) return category;
+            for (const [cat, keywords] of Object.entries(categoryKeywords)) {
+                for (const kw of keywords) {
+                    if (text.includes(kw)) return cat;
                 }
             }
             return 'other';
@@ -373,14 +574,54 @@
             if (name === 'portfolio') updatePortfolio();
         }
         
+        function generatePopupHTML(m) {
+            const s = strategies[m.category] || strategies.other;
+            const implied = (m.price * 100).toFixed(1);
+            
+            return `
+                <div class="popup-header">
+                    <h3>${s.icon} กลยุทธ์: ${s.name}</h3>
+                </div>
+                
+                <div class="popup-section">
+                    <h4>📊 ข้อมูลตลาดนี้</h4>
+                    <p>ราคา: <span class="popup-highlight">${(m.price*100).toFixed(0)}¢</span> = ตลาดคิดว่ามีโอกาส <span class="popup-highlight">${implied}%</span></p>
+                    <p>Volume: $${formatNum(m.volume)}</p>
+                </div>
+                
+                <div class="popup-section">
+                    <h4>🎯 วิธีหา Model%</h4>
+                    <ul>
+                        ${s.howTo.map(h => `<li>${h}</li>`).join('')}
+                    </ul>
+                </div>
+                
+                <div class="popup-section">
+                    <h4>💡 เคล็ดลับ</h4>
+                    <ul>
+                        ${s.tips.map(t => `<li>${t}</li>`).join('')}
+                    </ul>
+                </div>
+                
+                <div class="popup-section">
+                    <h4>📚 แหล่งข้อมูล</h4>
+                    <p>${s.sources}</p>
+                </div>
+                
+                <div class="popup-footer">
+                    <a href="${m.url}" target="_blank" class="nes-btn is-primary">🎮 ไปเทรดเลย!</a>
+                </div>
+            `;
+        }
+        
         async function fetchMarkets() {
             const grid = document.getElementById('questGrid');
             const statusBadge = document.getElementById('statusBadge');
             const statusText = document.getElementById('statusText');
             
-            grid.innerHTML = '<div class="loading-state"><div class="loading-icon">🔮</div><div class="loading-text">LOADING...</div></div>';
+            grid.innerHTML = '<div class="loading-state"><div class="loading-icon">🔮</div><div class="loading-text">กำลังโหลด...</div></div>';
             statusBadge.className = 'status-badge loading';
-            statusText.textContent = 'LOADING...';
+            statusText.textContent = 'กำลังโหลด...';
             
             try {
                 const response = await fetch(`${API_URL}?endpoint=events&closed=false&limit=200`);
@@ -406,49 +647,84 @@
                 allMarkets.sort((a, b) => b.volume - a.volume);
                 
                 statusBadge.className = 'status-badge';
-                statusText.textContent = `LIVE · ${allMarkets.length}`;
+                statusText.textContent = `🟢 LIVE · ${allMarkets.length}`;
                 document.getElementById('totalMarkets').textContent = allMarkets.length;
                 document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
                 filterMarkets();
             } catch (err) {
                 statusBadge.className = 'status-badge error';
-                statusText.textContent = 'OFFLINE';
-                grid.innerHTML = `<div class="empty-state"><div class="empty-icon">💀</div><p>FAILED</p><p style="margin-top:8px;color:var(--destructive);">${err.message}</p><button class="nes-btn is-primary" onclick="fetchMarkets()" style="margin-top:16px;">↻ RETRY</button></div>`;
+                statusText.textContent = '🔴 OFFLINE';
+                grid.innerHTML = `<div class="empty-state"><p>โหลดไม่สำเร็จ: ${err.message}</p><button class="nes-btn is-primary" onclick="fetchMarkets()" style="margin-top:16px;">↻ ลองใหม่</button></div>`;
             }
         }
         
-        function filterCategory(category, btn) {
-            currentCategory = category;
+        function filterCategory(cat, btn) {
+            currentCategory = cat;
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             filterMarkets();
         }
         
         function filterMarkets() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const search = document.getElementById('searchInput').value.toLowerCase();
             let filtered = allMarkets;
             if (currentCategory !== 'all') filtered = filtered.filter(m => m.category === currentCategory);
-            if (searchTerm) filtered = filtered.filter(m => m.title.toLowerCase().includes(searchTerm) || m.slug.toLowerCase().includes(searchTerm));
+            if (search) filtered = filtered.filter(m => m.title.toLowerCase().includes(search) || m.slug.toLowerCase().includes(search));
             document.getElementById('filteredMarkets').textContent = filtered.length;
             renderMarkets(filtered);
         }
         
         function renderMarkets(markets) {
             const grid = document.getElementById('questGrid');
-            if (!markets.length) { grid.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><p>NO MARKETS FOUND</p></div>'; return; }
+            if (!markets.length) { grid.innerHTML = '<div class="empty-state"><p>ไม่พบตลาด</p></div>'; return; }
             
-            const catIcons = { crypto: '₿', politics: '🏛️', sports: '⚽', entertainment: '🎬', science: '🔬', business: '💼', other: '📊' };
+            const icons = { crypto: '₿', politics: '🏛️', sports: '⚽', entertainment: '🎬', science: '🔬', business: '💼', other: '📊' };
             
             grid.innerHTML = markets.slice(0, 50).map((m, i) => {
-                const icon = catIcons[m.category] || '📊';
-                let endDate = m.endDate ? new Date(m.endDate).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' }) : '';
-                return `<div class="quest-card" id="card-${i}"><div class="quest-header"><div><div class="quest-title">${icon} ${m.title}</div><div class="quest-meta"><span class="cat ${m.category}">${m.category.toUpperCase()}</span>${endDate ? `<span>📅 ${endDate}</span>` : ''}</div></div><span class="quest-badge pending" id="badge-${i}">INPUT MODEL%</span></div><div class="stats-grid"><div class="stat-cell"><div class="label">PRICE</div><div class="value">${(m.price*100).toFixed(0)}¢</div></div><div class="stat-cell"><div class="label">IMPLIED</div><div class="value">${(m.price*100).toFixed(1)}%</div></div><div class="stat-cell"><div class="label">MODEL</div><div class="value" id="model-${i}">--</div></div><div class="stat-cell"><div class="label">EDGE</div><div class="value" id="edge-${i}">--</div></div><div class="stat-cell"><div class="label">EV</div><div class="value" id="ev-${i}">--</div></div></div><div class="quest-input"><span class="label">MODEL%:</span><input type="number" class="nes-input" id="input-${i}" placeholder="65" min="1" max="99"><button class="nes-btn is-success" onclick="calculate(${i}, ${m.price})">CALC</button></div><div class="quest-footer"><span>VOL: $${formatNum(m.volume)}</span><a href="${m.url}" target="_blank" class="nes-btn is-primary">🎮 TRADE</a></div></div>`;
+                const icon = icons[m.category] || '📊';
+                const endDate = m.endDate ? new Date(m.endDate).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' }) : '';
+                
+                return `
+                    <div class="quest-card" id="card-${i}">
+                        <!-- HOVER POPUP -->
+                        <div class="hover-popup">
+                            ${generatePopupHTML(m)}
+                        </div>
+                        
+                        <div class="quest-header">
+                            <div>
+                                <div class="quest-title">${icon} ${m.title}</div>
+                                <div class="quest-meta">
+                                    <span class="cat ${m.category}">${m.category.toUpperCase()}</span>
+                                    ${endDate ? `<span>📅 ${endDate}</span>` : ''}
+                                </div>
+                            </div>
+                            <span class="quest-badge pending" id="badge-${i}">ใส่ MODEL%</span>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-cell"><div class="label">ราคา</div><div class="value">${(m.price*100).toFixed(0)}¢</div></div>
+                            <div class="stat-cell"><div class="label">IMPLIED</div><div class="value">${(m.price*100).toFixed(1)}%</div></div>
+                            <div class="stat-cell"><div class="label">MODEL</div><div class="value" id="model-${i}">--</div></div>
+                            <div class="stat-cell"><div class="label">EDGE</div><div class="value" id="edge-${i}">--</div></div>
+                            <div class="stat-cell"><div class="label">EV</div><div class="value" id="ev-${i}">--</div></div>
+                        </div>
+                        <div class="quest-input">
+                            <span class="label">MODEL%:</span>
+                            <input type="number" class="nes-input" id="input-${i}" placeholder="65" min="1" max="99" onclick="event.stopPropagation()">
+                            <button class="nes-btn is-success" onclick="event.stopPropagation(); calculate(${i}, ${m.price})">CALC</button>
+                        </div>
+                        <div class="quest-footer">
+                            <span>VOL: $${formatNum(m.volume)}</span>
+                            <a href="${m.url}" target="_blank" class="nes-btn is-primary" onclick="event.stopPropagation()">🎮 TRADE</a>
+                        </div>
+                    </div>
+                `;
             }).join('');
         }
         
         function calculate(i, price) {
             const model = parseFloat(document.getElementById(`input-${i}`).value);
-            if (!model || model < 1 || model > 99) { alert('ENTER MODEL% (1-99)'); return; }
+            if (!model || model < 1 || model > 99) { alert('กรุณาใส่ MODEL% (1-99)'); return; }
             const minEdge = parseFloat(document.getElementById('minEdge').value) || 5;
             const edge = model - (price * 100);
             const ev = ((model / 100) * (100 * (1/price - 1))) - ((1 - model / 100) * 100);
@@ -479,7 +755,7 @@
             const stake = parseFloat(document.getElementById('betStake').value);
             const price = parseFloat(document.getElementById('betPrice').value) / 100;
             const status = document.getElementById('betStatus').value;
-            if (!event || !stake || !price) { alert('FILL ALL FIELDS'); return; }
+            if (!event || !stake || !price) { alert('กรุณากรอกข้อมูลให้ครบ'); return; }
             const pnl = status === 'win' ? (stake / price) - stake : status === 'loss' ? -stake : 0;
             bets.unshift({ id: Date.now(), date: new Date().toISOString(), event, stake, price, status, pnl });
             localStorage.setItem('polytrader_bets', JSON.stringify(bets));
@@ -494,7 +770,7 @@
             if (bet) { bet.status = status; bet.pnl = status === 'win' ? (bet.stake / bet.price) - bet.stake : status === 'loss' ? -bet.stake : 0; localStorage.setItem('polytrader_bets', JSON.stringify(bets)); updatePortfolio(); }
         }
         
-        function deleteBet(id) { if (confirm('DELETE?')) { bets = bets.filter(b => b.id !== id); localStorage.setItem('polytrader_bets', JSON.stringify(bets)); updatePortfolio(); } }
+        function deleteBet(id) { if (confirm('ลบ?')) { bets = bets.filter(b => b.id !== id); localStorage.setItem('polytrader_bets', JSON.stringify(bets)); updatePortfolio(); } }
         
         function updatePortfolio() {
             const bankroll = parseFloat(document.getElementById('bankroll').value) || 100;
@@ -513,11 +789,11 @@
             document.getElementById('hpFill').style.width = `${Math.max(0, Math.min(100, (current / bankroll) * 100))}%`;
             
             const tbody = document.getElementById('betsTable');
-            if (!bets.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">NO TRADES</td></tr>'; return; }
+            if (!bets.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">ยังไม่มีรายการ</td></tr>'; return; }
             tbody.innerHTML = bets.map(b => {
                 const date = new Date(b.date).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' });
-                const pnlClass = b.status === 'win' ? 'win' : b.status === 'loss' ? 'loss' : 'pending';
-                return `<tr><td>${date}</td><td>${b.event}</td><td>$${b.stake}</td><td class="${pnlClass}">${b.pnl >= 0 ? '+' : ''}$${b.pnl.toFixed(0)}</td><td><select onchange="updateStatus(${b.id}, this.value)" style="background:var(--background);border:none;color:var(--foreground);font-family:inherit;font-size:8px;padding:4px;"><option value="pending" ${b.status === 'pending' ? 'selected' : ''}>⏳</option><option value="win" ${b.status === 'win' ? 'selected' : ''}>✅</option><option value="loss" ${b.status === 'loss' ? 'selected' : ''}>❌</option></select></td><td><button onclick="deleteBet(${b.id})" class="nes-btn is-error" style="padding:4px 8px;font-size:8px;">X</button></td></tr>`;
+                const pnlClass = b.status === 'win' ? 'win' : b.status === 'loss' ? 'loss' : '';
+                return `<tr><td>${date}</td><td>${b.event}</td><td>$${b.stake}</td><td class="${pnlClass}">${b.pnl >= 0 ? '+' : ''}$${b.pnl.toFixed(0)}</td><td><select onchange="updateStatus(${b.id}, this.value)" style="background:var(--background);border:none;color:var(--foreground);font-family:inherit;font-size:8px;padding:4px;"><option value="pending" ${b.status === 'pending' ? 'selected' : ''}>⏳</option><option value="win" ${b.status === 'win' ? 'selected' : ''}>✅</option><option value="loss" ${b.status === 'loss' ? 'selected' : ''}>❌</option></select></td><td><button onclick="deleteBet(${b.id})" style="background:var(--destructive);color:white;border:none;padding:4px 8px;font-size:8px;cursor:pointer;">X</button></td></tr>`;
             }).join('');
         }
         
