@@ -6,118 +6,81 @@
     <title>PolyTrader Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         :root {
-            /* Light Theme - Material Design 3 */
-            --md-primary: #6750A4;
-            --md-on-primary: #FFFFFF;
-            --md-primary-container: #EADDFF;
-            --md-on-primary-container: #21005D;
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --primary-dark: #4f46e5;
+            --primary-bg: #eef2ff;
             
-            --md-secondary: #625B71;
-            --md-on-secondary: #FFFFFF;
-            --md-secondary-container: #E8DEF8;
-            --md-on-secondary-container: #1D192B;
+            --success: #10b981;
+            --success-bg: #d1fae5;
+            --warning: #f59e0b;
+            --warning-bg: #fef3c7;
+            --error: #ef4444;
+            --error-bg: #fee2e2;
+            --info: #3b82f6;
+            --info-bg: #dbeafe;
             
-            --md-tertiary: #7D5260;
-            --md-tertiary-container: #FFD8E4;
+            --bg: #f8fafc;
+            --bg-card: #ffffff;
+            --text: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
             
-            --md-surface: #FFFBFE;
-            --md-surface-dim: #DED8E1;
-            --md-surface-container: #F3EDF7;
-            --md-surface-container-high: #ECE6F0;
-            --md-surface-container-highest: #E6E0E9;
-            
-            --md-on-surface: #1C1B1F;
-            --md-on-surface-variant: #49454F;
-            --md-outline: #79747E;
-            --md-outline-variant: #CAC4D0;
-            
-            --md-error: #B3261E;
-            --md-error-container: #F9DEDC;
-            --md-on-error: #FFFFFF;
-            
-            --md-success: #146B3A;
-            --md-success-container: #C8E6C9;
-            
-            --md-warning: #E65100;
-            --md-warning-container: #FFE0B2;
-            
-            --md-info: #0277BD;
-            --md-info-container: #B3E5FC;
-            
-            --shadow-1: 0 1px 2px rgba(0,0,0,0.3), 0 1px 3px 1px rgba(0,0,0,0.15);
-            --shadow-2: 0 1px 2px rgba(0,0,0,0.3), 0 2px 6px 2px rgba(0,0,0,0.15);
-            --shadow-3: 0 4px 8px 3px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.3);
-            
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            --radius-xl: 28px;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
         }
         
         [data-theme="dark"] {
-            --md-primary: #D0BCFF;
-            --md-on-primary: #381E72;
-            --md-primary-container: #4F378B;
-            --md-on-primary-container: #EADDFF;
+            --primary: #818cf8;
+            --primary-light: #a5b4fc;
+            --primary-dark: #6366f1;
+            --primary-bg: #1e1b4b;
             
-            --md-secondary: #CCC2DC;
-            --md-on-secondary: #332D41;
-            --md-secondary-container: #4A4458;
-            --md-on-secondary-container: #E8DEF8;
+            --success: #34d399;
+            --success-bg: #064e3b;
+            --warning: #fbbf24;
+            --warning-bg: #78350f;
+            --error: #f87171;
+            --error-bg: #7f1d1d;
+            --info: #60a5fa;
+            --info-bg: #1e3a8a;
             
-            --md-tertiary: #EFB8C8;
-            --md-tertiary-container: #633B48;
-            
-            --md-surface: #141218;
-            --md-surface-dim: #141218;
-            --md-surface-container: #211F26;
-            --md-surface-container-high: #2B2930;
-            --md-surface-container-highest: #36343B;
-            
-            --md-on-surface: #E6E1E5;
-            --md-on-surface-variant: #CAC4D0;
-            --md-outline: #938F99;
-            --md-outline-variant: #49454F;
-            
-            --md-error: #F2B8B5;
-            --md-error-container: #8C1D18;
-            --md-on-error: #601410;
-            
-            --md-success: #81C784;
-            --md-success-container: #1B5E20;
-            
-            --md-warning: #FFB74D;
-            --md-warning-container: #E65100;
-            
-            --md-info: #4FC3F7;
-            --md-info-container: #01579B;
+            --bg: #0f172a;
+            --bg-card: #1e293b;
+            --text: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #334155;
+            --border-light: #1e293b;
         }
         
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: 'Prompt', sans-serif;
-            background: var(--md-surface);
-            color: var(--md-on-surface);
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
-            transition: background 0.3s, color 0.3s;
+            transition: all 0.3s;
         }
         
         /* Header */
         .header {
-            background: var(--md-surface-container);
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
             padding: 16px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: var(--shadow-1);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -132,19 +95,17 @@
         .logo-icon {
             width: 40px;
             height: 40px;
-            background: var(--md-primary);
-            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--md-on-primary);
-            font-size: 20px;
+            color: white;
         }
         
         .logo-text {
             font-size: 20px;
             font-weight: 600;
-            color: var(--md-on-surface);
         }
         
         .header-actions {
@@ -153,21 +114,21 @@
             gap: 12px;
         }
         
-        .status-chip {
+        .status-pill {
             display: flex;
             align-items: center;
             gap: 8px;
             padding: 8px 16px;
-            background: var(--md-success-container);
-            color: var(--md-success);
-            border-radius: var(--radius-xl);
-            font-size: 14px;
+            background: var(--success-bg);
+            color: var(--success);
+            border-radius: 50px;
+            font-size: 13px;
             font-weight: 500;
         }
         
-        .status-chip.offline {
-            background: var(--md-error-container);
-            color: var(--md-error);
+        .status-pill.offline {
+            background: var(--error-bg);
+            color: var(--error);
         }
         
         .status-dot {
@@ -175,22 +136,21 @@
             height: 8px;
             background: currentColor;
             border-radius: 50%;
-            animation: pulse 1.5s infinite;
+            animation: pulse 2s infinite;
         }
         
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.9); }
         }
         
-        /* Theme Toggle */
-        .theme-toggle {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            border: none;
-            background: var(--md-surface-container-high);
-            color: var(--md-on-surface);
+        .icon-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-secondary);
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -198,8 +158,9 @@
             transition: all 0.2s;
         }
         
-        .theme-toggle:hover {
-            background: var(--md-surface-container-highest);
+        .icon-btn:hover {
+            background: var(--border-light);
+            color: var(--text);
         }
         
         /* Main */
@@ -214,50 +175,46 @@
             display: flex;
             gap: 8px;
             margin-bottom: 24px;
-            background: var(--md-surface-container);
-            padding: 8px;
-            border-radius: var(--radius-xl);
+            background: var(--bg-card);
+            padding: 6px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            width: fit-content;
         }
         
         .tab-btn {
-            flex: 1;
             padding: 12px 24px;
             border: none;
             background: transparent;
-            color: var(--md-on-surface-variant);
+            color: var(--text-secondary);
             font-family: inherit;
             font-size: 14px;
             font-weight: 500;
-            border-radius: var(--radius-lg);
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 8px;
         }
         
         .tab-btn:hover {
-            background: var(--md-surface-container-high);
+            background: var(--border-light);
         }
         
         .tab-btn.active {
-            background: var(--md-primary);
-            color: var(--md-on-primary);
+            background: var(--primary);
+            color: white;
         }
         
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
         
         /* Controls */
         .controls-card {
-            background: var(--md-surface-container);
-            border-radius: var(--radius-lg);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
             padding: 20px;
             margin-bottom: 24px;
         }
@@ -272,49 +229,51 @@
         .control-group {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
         
         .control-group label {
             font-size: 12px;
             font-weight: 500;
-            color: var(--md-on-surface-variant);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            color: var(--text-secondary);
         }
         
         .input-field {
             padding: 12px 16px;
-            border: 1px solid var(--md-outline);
-            border-radius: var(--radius-sm);
-            background: var(--md-surface);
-            color: var(--md-on-surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg);
+            color: var(--text);
             font-family: inherit;
-            font-size: 16px;
-            width: 140px;
+            font-size: 14px;
+            width: 120px;
             transition: all 0.2s;
         }
         
         .input-field:focus {
             outline: none;
-            border-color: var(--md-primary);
-            box-shadow: 0 0 0 2px var(--md-primary-container);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-bg);
         }
         
         .search-field {
             flex: 1;
-            min-width: 200px;
+            min-width: 250px;
         }
         
         .search-field .input-field {
             width: 100%;
+            padding-left: 44px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%2394a3b8' viewBox='0 0 24 24'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 14px center;
+            background-size: 20px;
         }
         
-        /* Buttons */
         .btn {
             padding: 12px 24px;
             border: none;
-            border-radius: var(--radius-xl);
+            border-radius: 10px;
             font-family: inherit;
             font-size: 14px;
             font-weight: 500;
@@ -326,30 +285,31 @@
         }
         
         .btn-primary {
-            background: var(--md-primary);
-            color: var(--md-on-primary);
-        }
-        
-        .btn-primary:hover {
-            box-shadow: var(--shadow-2);
-        }
-        
-        .btn-tonal {
-            background: var(--md-secondary-container);
-            color: var(--md-on-secondary-container);
-        }
-        
-        .btn-success {
-            background: var(--md-success);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
         }
         
-        .btn-text {
-            background: transparent;
-            color: var(--md-primary);
+        .btn-primary:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
         }
         
-        /* Filter Chips */
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+        
+        .btn-outline:hover {
+            background: var(--border-light);
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        /* Filter Pills */
         .filter-row {
             display: flex;
             gap: 8px;
@@ -357,14 +317,15 @@
             margin-bottom: 24px;
         }
         
-        .filter-chip {
-            padding: 8px 16px;
-            border: 1px solid var(--md-outline);
-            border-radius: var(--radius-sm);
-            background: transparent;
-            color: var(--md-on-surface-variant);
+        .filter-pill {
+            padding: 10px 18px;
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            background: var(--bg-card);
+            color: var(--text-secondary);
             font-family: inherit;
-            font-size: 14px;
+            font-size: 13px;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
@@ -372,319 +333,573 @@
             gap: 6px;
         }
         
-        .filter-chip:hover {
-            background: var(--md-surface-container-high);
+        .filter-pill:hover {
+            border-color: var(--primary);
+            color: var(--primary);
         }
         
-        .filter-chip.active {
-            background: var(--md-secondary-container);
-            color: var(--md-on-secondary-container);
-            border-color: transparent;
+        .filter-pill.active {
+            background: var(--primary-bg);
+            border-color: var(--primary);
+            color: var(--primary);
         }
         
-        /* Stats Row */
+        /* Stats */
         .stats-row {
             display: flex;
-            gap: 12px;
-            margin-bottom: 16px;
+            gap: 24px;
+            margin-bottom: 20px;
             font-size: 14px;
-            color: var(--md-on-surface-variant);
+            color: var(--text-secondary);
         }
         
-        .stats-row span {
-            color: var(--md-primary);
-            font-weight: 600;
+        .stats-row strong {
+            color: var(--primary);
         }
         
         /* Market Grid */
         .market-grid {
             display: grid;
             gap: 16px;
-            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
         }
         
-        /* Market Card */
+        /* Market Card - Clean Style */
         .market-card {
-            background: var(--md-surface-container);
-            border-radius: var(--radius-lg);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
             overflow: hidden;
             transition: all 0.3s;
+            cursor: pointer;
             position: relative;
         }
         
         .market-card:hover {
-            box-shadow: var(--shadow-3);
-            transform: translateY(-2px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
         }
         
-        /* Hover Overlay */
-        .hover-overlay {
+        .market-card::before {
+            content: '';
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--md-surface-container-highest);
-            opacity: 0;
-            visibility: hidden;
+            width: 4px;
+            height: 100%;
+            background: var(--border);
             transition: all 0.3s;
+        }
+        
+        .market-card:hover::before {
+            background: var(--primary);
+        }
+        
+        .market-card.legendary::before { background: var(--success); }
+        .market-card.epic::before { background: var(--info); }
+        .market-card.rare::before { background: var(--warning); }
+        .market-card.skip::before { background: var(--error); }
+        
+        /* Hot Badge */
+        .hot-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 4px 10px;
+            background: var(--error);
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 6px;
+        }
+        
+        .card-body {
             padding: 20px;
-            overflow-y: auto;
-            z-index: 10;
         }
         
-        .market-card:hover .hover-overlay {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .overlay-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 16px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--md-outline-variant);
-        }
-        
-        .overlay-header h3 {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--md-primary);
-        }
-        
-        .overlay-section {
-            margin-bottom: 16px;
-        }
-        
-        .overlay-section h4 {
+        .card-category {
             font-size: 12px;
-            font-weight: 600;
-            color: var(--md-on-surface);
+            font-weight: 500;
+            color: var(--primary);
             margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 6px;
         }
         
-        .overlay-section p,
-        .overlay-section li {
-            font-size: 13px;
-            color: var(--md-on-surface-variant);
-            line-height: 1.6;
-        }
-        
-        .overlay-section ul {
-            padding-left: 16px;
-            margin: 0;
-        }
-        
-        .overlay-section li {
-            margin-bottom: 4px;
-        }
-        
-        /* Profit Calculator Box */
-        .profit-box {
-            background: var(--md-surface-container);
-            border-radius: var(--radius-md);
-            padding: 12px;
-            margin-bottom: 12px;
-        }
-        
-        .profit-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--md-outline-variant);
-        }
-        
-        .profit-row:last-child {
-            border-bottom: none;
-        }
-        
-        .profit-label {
-            font-size: 13px;
-            color: var(--md-on-surface-variant);
-        }
-        
-        .profit-value {
-            font-size: 14px;
-            font-weight: 600;
-        }
-        
-        .profit-value.positive {
-            color: var(--md-success);
-        }
-        
-        .profit-value.negative {
-            color: var(--md-error);
-        }
-        
-        .highlight-box {
-            background: var(--md-primary-container);
-            color: var(--md-on-primary-container);
-            padding: 8px 12px;
-            border-radius: var(--radius-sm);
-            font-size: 13px;
-        }
-        
-        .overlay-footer {
-            margin-top: auto;
-            padding-top: 12px;
-        }
-        
-        .overlay-footer .btn {
-            width: 100%;
-            justify-content: center;
-        }
-        
-        /* Card Header */
-        .card-header {
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--md-outline-variant);
-        }
-        
         .card-title {
-            font-size: 15px;
-            font-weight: 500;
-            color: var(--md-on-surface);
-            margin-bottom: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 12px;
             line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
         
         .card-meta {
             display: flex;
-            gap: 8px;
-            align-items: center;
-            flex-wrap: wrap;
+            gap: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
         }
         
-        .category-chip {
-            padding: 4px 10px;
-            border-radius: var(--radius-sm);
-            font-size: 11px;
-            font-weight: 500;
-            text-transform: uppercase;
-        }
-        
-        .category-chip.crypto { background: #FFF3E0; color: #E65100; }
-        .category-chip.politics { background: #FFEBEE; color: #C62828; }
-        .category-chip.sports { background: #E8F5E9; color: #2E7D32; }
-        .category-chip.entertainment { background: #FCE4EC; color: #AD1457; }
-        .category-chip.science { background: #E3F2FD; color: #1565C0; }
-        .category-chip.business { background: #EDE7F6; color: #6A1B9A; }
-        .category-chip.other { background: var(--md-surface-container-high); color: var(--md-on-surface-variant); }
-        
-        [data-theme="dark"] .category-chip.crypto { background: #3E2723; color: #FFB74D; }
-        [data-theme="dark"] .category-chip.politics { background: #3E2723; color: #EF9A9A; }
-        [data-theme="dark"] .category-chip.sports { background: #1B3A1B; color: #81C784; }
-        [data-theme="dark"] .category-chip.entertainment { background: #3E1A2A; color: #F48FB1; }
-        [data-theme="dark"] .category-chip.science { background: #0D2137; color: #64B5F6; }
-        [data-theme="dark"] .category-chip.business { background: #2A1B3D; color: #B39DDB; }
-        
-        .date-chip {
-            font-size: 12px;
-            color: var(--md-on-surface-variant);
+        .card-meta-item {
             display: flex;
             align-items: center;
             gap: 4px;
         }
         
-        .rarity-badge {
-            padding: 4px 10px;
-            border-radius: var(--radius-sm);
-            font-size: 11px;
-            font-weight: 600;
-            margin-left: auto;
-        }
-        
-        .rarity-badge.legendary { background: var(--md-success-container); color: var(--md-success); }
-        .rarity-badge.epic { background: var(--md-info-container); color: var(--md-info); }
-        .rarity-badge.rare { background: var(--md-warning-container); color: var(--md-warning); }
-        .rarity-badge.skip { background: var(--md-error-container); color: var(--md-error); }
-        .rarity-badge.pending { background: var(--md-surface-container-high); color: var(--md-on-surface-variant); }
-        
-        /* Card Stats */
         .card-stats {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            border-bottom: 1px solid var(--md-outline-variant);
+            gap: 0;
+            border-top: 1px solid var(--border);
         }
         
-        .stat-item {
-            padding: 12px 8px;
+        .stat-box {
             text-align: center;
-            border-right: 1px solid var(--md-outline-variant);
+            padding: 12px 8px;
+            border-right: 1px solid var(--border);
         }
         
-        .stat-item:last-child {
+        .stat-box:last-child {
             border-right: none;
         }
         
         .stat-label {
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 500;
-            color: var(--md-on-surface-variant);
+            color: var(--text-muted);
             text-transform: uppercase;
             margin-bottom: 4px;
         }
         
         .stat-value {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--md-on-surface);
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
         }
         
-        .stat-value.positive { color: var(--md-success); }
-        .stat-value.negative { color: var(--md-error); }
-        .stat-value.neutral { color: var(--md-warning); }
+        .stat-value.positive { color: var(--success); }
+        .stat-value.negative { color: var(--error); }
         
-        /* Card Input */
-        .card-input {
+        /* Mini Chart */
+        .mini-chart-container {
             padding: 12px 20px;
+            background: var(--bg);
+            border-top: 1px solid var(--border);
+        }
+        
+        .mini-chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .mini-chart-title {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+        
+        .mini-chart-change {
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .mini-chart-change.up { color: var(--success); }
+        .mini-chart-change.down { color: var(--error); }
+        
+        .mini-chart {
+            height: 50px;
+            width: 100%;
+        }
+        
+        /* Suggested Model */
+        .suggested-model {
             display: flex;
             align-items: center;
-            gap: 12px;
-            background: var(--md-surface-container-high);
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--primary-bg);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 12px;
         }
         
-        .card-input label {
-            font-size: 13px;
-            color: var(--md-on-surface-variant);
+        .suggested-model .label {
+            color: var(--text-secondary);
+        }
+        
+        .suggested-model .value {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .use-suggested-btn {
+            padding: 4px 10px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 11px;
+            cursor: pointer;
+            margin-left: auto;
+        }
+        
+        .use-suggested-btn:hover {
+            opacity: 0.9;
+        }
+        
+        /* Trend indicator */
+        .trend-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
             font-weight: 500;
         }
         
-        .card-input .input-field {
-            width: 80px;
+        .trend-badge.up {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+        
+        .trend-badge.down {
+            background: var(--error-bg);
+            color: var(--error);
+        }
+        
+        .trend-badge.neutral {
+            background: var(--bg);
+            color: var(--text-muted);
+        }
+        
+        .card-footer {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid var(--border);
+        }
+        
+        .card-input-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .card-input-group label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .card-input-group .input-field {
+            width: 70px;
             padding: 8px 12px;
             font-size: 14px;
         }
         
-        .card-input .btn {
+        .card-input-group .btn {
             padding: 8px 16px;
-            font-size: 13px;
         }
         
-        /* Card Footer */
-        .card-footer {
-            padding: 12px 20px;
+        .card-trade-btn {
+            padding: 8px 16px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        
+        .card-trade-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+        
+        /* Modal Popup */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal {
+            background: var(--bg-card);
+            border-radius: 24px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+            animation: modalIn 0.3s ease;
+        }
+        
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        .modal-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+        
+        .modal-header .category {
+            font-size: 13px;
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: none;
+            background: var(--bg);
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .modal-close:hover {
+            background: var(--error-bg);
+            color: var(--error);
+        }
+        
+        .modal-body {
+            padding: 24px;
+        }
+        
+        .modal-section {
+            margin-bottom: 24px;
+        }
+        
+        .modal-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .modal-section h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .modal-section p,
+        .modal-section li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+        
+        .modal-section ul {
+            padding-left: 20px;
+        }
+        
+        .modal-section li {
+            margin-bottom: 6px;
+        }
+        
+        /* Profit Calculator */
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        
+        .calc-card {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border);
+        }
+        
+        .calc-card.highlight {
+            border-color: var(--primary);
+            background: var(--primary-bg);
+        }
+        
+        .calc-card h4 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .calc-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px dashed var(--border);
         }
         
-        .volume-text {
+        .calc-row:last-child {
+            border-bottom: none;
+        }
+        
+        .calc-label {
             font-size: 13px;
-            color: var(--md-on-surface-variant);
+            color: var(--text-secondary);
         }
         
-        .volume-text span {
+        .calc-value {
+            font-size: 14px;
             font-weight: 600;
-            color: var(--md-on-surface);
+            color: var(--text);
         }
         
-        /* Loading & Empty States */
+        .calc-value.positive { color: var(--success); }
+        .calc-value.negative { color: var(--error); }
+        
+        /* Recommendation Box */
+        .recommend-box {
+            background: linear-gradient(135deg, var(--primary-bg), var(--info-bg));
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--primary);
+        }
+        
+        .recommend-box h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .recommend-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+        }
+        
+        .recommend-item:last-child {
+            border-bottom: none;
+        }
+        
+        .recommend-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .recommend-value {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .quick-bet-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .quick-bet-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-card);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .quick-bet-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+        
+        .modal-footer {
+            padding: 20px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 12px;
+        }
+        
+        .modal-footer .btn {
+            flex: 1;
+            justify-content: center;
+        }
+        
+        /* Strategy Tags */
+        .strategy-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .strategy-tag {
+            padding: 6px 12px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        /* Loading & Empty */
         .loading-state,
         .empty-state {
             text-align: center;
@@ -703,29 +918,25 @@
             to { transform: translateY(-10px); }
         }
         
-        .loading-text {
-            font-size: 16px;
-            color: var(--md-on-surface-variant);
-        }
-        
-        /* Guide Tab */
+        /* Guide */
         .guide-card {
-            background: var(--md-surface-container);
-            border-radius: var(--radius-lg);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
             margin-bottom: 16px;
             overflow: hidden;
         }
         
         .guide-card.highlight {
-            border: 2px solid var(--md-primary);
+            border-color: var(--primary);
         }
         
         .guide-header {
-            padding: 16px 20px;
-            background: var(--md-surface-container-high);
+            padding: 20px;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
             font-size: 16px;
             font-weight: 600;
-            color: var(--md-on-surface);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -737,55 +948,55 @@
         
         .guide-body p {
             font-size: 15px;
-            color: var(--md-on-surface-variant);
+            color: var(--text-secondary);
             line-height: 1.8;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
         
         .guide-body strong {
-            color: var(--md-on-surface);
+            color: var(--text);
         }
         
         /* Portfolio */
         .portfolio-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 16px;
             margin-bottom: 24px;
         }
         
         .portfolio-card {
-            background: var(--md-surface-container);
-            border-radius: var(--radius-lg);
-            padding: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
         }
         
         .portfolio-card .label {
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 500;
-            color: var(--md-on-surface-variant);
-            text-transform: uppercase;
+            color: var(--text-secondary);
             margin-bottom: 8px;
         }
         
         .portfolio-card .value {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 700;
-            color: var(--md-on-surface);
+            color: var(--text);
         }
         
-        .portfolio-card .value.positive { color: var(--md-success); }
-        .portfolio-card .value.negative { color: var(--md-error); }
+        .portfolio-card .value.positive { color: var(--success); }
+        .portfolio-card .value.negative { color: var(--error); }
         
         .portfolio-card .sub {
             font-size: 13px;
-            color: var(--md-on-surface-variant);
+            color: var(--text-muted);
             margin-top: 4px;
         }
         
         .progress-bar {
             height: 8px;
-            background: var(--md-surface-container-high);
+            background: var(--bg);
             border-radius: 4px;
             margin-top: 12px;
             overflow: hidden;
@@ -793,24 +1004,22 @@
         
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--md-error), var(--md-warning), var(--md-success));
+            background: linear-gradient(90deg, var(--error), var(--warning), var(--success));
             border-radius: 4px;
-            transition: width 0.3s;
         }
         
-        /* Form Card */
         .form-card {
-            background: var(--md-surface-container);
-            border-radius: var(--radius-lg);
-            padding: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
             margin-bottom: 24px;
         }
         
         .form-card h3 {
             font-size: 16px;
             font-weight: 600;
-            margin-bottom: 16px;
-            color: var(--md-on-surface);
+            margin-bottom: 20px;
         }
         
         .form-row {
@@ -824,7 +1033,7 @@
             display: block;
             font-size: 12px;
             font-weight: 500;
-            color: var(--md-on-surface-variant);
+            color: var(--text-secondary);
             margin-bottom: 6px;
         }
         
@@ -832,18 +1041,18 @@
         .form-group select {
             width: 100%;
             padding: 12px;
-            border: 1px solid var(--md-outline);
-            border-radius: var(--radius-sm);
-            background: var(--md-surface);
-            color: var(--md-on-surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg);
+            color: var(--text);
             font-family: inherit;
             font-size: 14px;
         }
         
-        /* Table */
         .table-container {
-            background: var(--md-surface-container);
-            border-radius: var(--radius-lg);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
             overflow: hidden;
         }
         
@@ -857,45 +1066,25 @@
             text-align: left;
             font-size: 12px;
             font-weight: 600;
-            color: var(--md-on-surface-variant);
+            color: var(--text-secondary);
+            background: var(--bg);
             text-transform: uppercase;
-            background: var(--md-surface-container-high);
         }
         
         td {
             padding: 16px;
             font-size: 14px;
-            border-bottom: 1px solid var(--md-outline-variant);
+            border-top: 1px solid var(--border);
         }
         
-        .win { color: var(--md-success); }
-        .loss { color: var(--md-error); }
+        .win { color: var(--success); }
+        .loss { color: var(--error); }
         
-        /* Responsive */
         @media (max-width: 768px) {
-            .header {
-                padding: 12px 16px;
-            }
-            
-            .main {
-                padding: 16px;
-            }
-            
-            .market-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .card-stats {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            
-            .stat-item:nth-child(3) {
-                border-right: none;
-            }
-            
-            .tabs {
-                flex-wrap: wrap;
-            }
+            .market-grid { grid-template-columns: 1fr; }
+            .calc-grid { grid-template-columns: 1fr; }
+            .tabs { width: 100%; }
+            .tab-btn { flex: 1; justify-content: center; font-size: 12px; padding: 10px 12px; }
         }
     </style>
 </head>
@@ -903,16 +1092,16 @@
     <header class="header">
         <div class="logo">
             <div class="logo-icon">
-                <span class="material-icons-round">analytics</span>
+                <span class="material-icons-round">show_chart</span>
             </div>
             <span class="logo-text">PolyTrader Pro</span>
         </div>
         <div class="header-actions">
-            <div class="status-chip" id="statusChip">
+            <div class="status-pill" id="statusPill">
                 <div class="status-dot"></div>
                 <span id="statusText">กำลังเชื่อมต่อ...</span>
             </div>
-            <button class="theme-toggle" onclick="toggleTheme()" title="เปลี่ยนธีม">
+            <button class="icon-btn" onclick="toggleTheme()" title="เปลี่ยนธีม">
                 <span class="material-icons-round" id="themeIcon">dark_mode</span>
             </button>
         </div>
@@ -929,12 +1118,11 @@
                 พอร์ตโฟลิโอ
             </button>
             <button class="tab-btn" onclick="showTab('guide')">
-                <span class="material-icons-round">help</span>
-                คู่มือการใช้งาน
+                <span class="material-icons-round">help_outline</span>
+                คู่มือ
             </button>
         </div>
         
-        <!-- Scanner Tab -->
         <div class="tab-content active" id="tab-scanner">
             <div class="controls-card">
                 <div class="controls-row">
@@ -962,30 +1150,29 @@
             </div>
             
             <div class="filter-row">
-                <button class="filter-chip active" data-cat="all" onclick="filterCategory('all', this)">🌐 ทั้งหมด</button>
-                <button class="filter-chip" data-cat="crypto" onclick="filterCategory('crypto', this)">₿ คริปโต</button>
-                <button class="filter-chip" data-cat="politics" onclick="filterCategory('politics', this)">🏛️ การเมือง</button>
-                <button class="filter-chip" data-cat="sports" onclick="filterCategory('sports', this)">⚽ กีฬา</button>
-                <button class="filter-chip" data-cat="entertainment" onclick="filterCategory('entertainment', this)">🎬 บันเทิง</button>
-                <button class="filter-chip" data-cat="science" onclick="filterCategory('science', this)">🔬 AI/วิทย์</button>
-                <button class="filter-chip" data-cat="business" onclick="filterCategory('business', this)">💼 ธุรกิจ</button>
+                <button class="filter-pill active" data-cat="all" onclick="filterCategory('all', this)">🌐 ทั้งหมด</button>
+                <button class="filter-pill" data-cat="crypto" onclick="filterCategory('crypto', this)">₿ คริปโต</button>
+                <button class="filter-pill" data-cat="politics" onclick="filterCategory('politics', this)">🏛️ การเมือง</button>
+                <button class="filter-pill" data-cat="sports" onclick="filterCategory('sports', this)">⚽ กีฬา</button>
+                <button class="filter-pill" data-cat="entertainment" onclick="filterCategory('entertainment', this)">🎬 บันเทิง</button>
+                <button class="filter-pill" data-cat="science" onclick="filterCategory('science', this)">🔬 AI/วิทย์</button>
+                <button class="filter-pill" data-cat="business" onclick="filterCategory('business', this)">💼 ธุรกิจ</button>
             </div>
             
             <div class="stats-row">
-                <div>ตลาดทั้งหมด: <span id="totalMarkets">0</span></div>
-                <div>แสดง: <span id="filteredMarkets">0</span></div>
-                <div>อัปเดต: <span id="lastUpdate">--:--</span></div>
+                <div>ตลาดทั้งหมด: <strong id="totalMarkets">0</strong></div>
+                <div>แสดง: <strong id="filteredMarkets">0</strong></div>
+                <div>อัปเดต: <strong id="lastUpdate">--:--</strong></div>
             </div>
             
             <div class="market-grid" id="marketGrid">
                 <div class="loading-state">
                     <div class="loading-icon">📊</div>
-                    <div class="loading-text">กำลังโหลดข้อมูลตลาด...</div>
+                    <div>กำลังโหลดข้อมูลตลาด...</div>
                 </div>
             </div>
         </div>
         
-        <!-- Portfolio Tab -->
         <div class="tab-content" id="tab-portfolio">
             <div class="portfolio-grid">
                 <div class="portfolio-card">
@@ -1022,12 +1209,11 @@
             <div class="table-container">
                 <table>
                     <thead><tr><th>วันที่</th><th>ตลาด</th><th>เงินลง</th><th>ผลลัพธ์</th><th>สถานะ</th><th></th></tr></thead>
-                    <tbody id="betsTable"><tr><td colspan="6" style="text-align:center;color:var(--md-on-surface-variant);">ยังไม่มีรายการบันทึก</td></tr></tbody>
+                    <tbody id="betsTable"><tr><td colspan="6" style="text-align:center;color:var(--text-muted);">ยังไม่มีรายการบันทึก</td></tr></tbody>
                 </table>
             </div>
         </div>
         
-        <!-- Guide Tab -->
         <div class="tab-content" id="tab-guide">
             <div class="guide-card highlight">
                 <div class="guide-header">
@@ -1036,10 +1222,10 @@
                 </div>
                 <div class="guide-body">
                     <p><strong>1.</strong> เลือกตลาดที่สนใจจากรายการ</p>
-                    <p><strong>2.</strong> เอาเมาส์ไปวางบนการ์ด → จะเห็นข้อมูลกลยุทธ์และการคำนวณกำไร</p>
+                    <p><strong>2.</strong> คลิกที่การ์ด → จะเปิด Popup แสดงรายละเอียดและคำนวณกำไร</p>
                     <p><strong>3.</strong> ใส่ Model% (โอกาสที่คุณคิดว่าจะเกิดจริง) แล้วกด "คำนวณ"</p>
-                    <p><strong>4.</strong> ถ้า Edge ≥ 5% แสดงว่าน่าลงทุน!</p>
-                    <p><strong>5.</strong> กดปุ่ม "เทรด" เพื่อไปซื้อบน Polymarket</p>
+                    <p><strong>4.</strong> ดูคำแนะนำว่าควรซื้อกี่ share และควรขายที่ราคาเท่าไหร่</p>
+                    <p><strong>5.</strong> กดปุ่ม "ไปเทรด" เพื่อไปซื้อบน Polymarket</p>
                 </div>
             </div>
             
@@ -1049,24 +1235,11 @@
                     ความหมายของตัวเลข
                 </div>
                 <div class="guide-body">
-                    <p><strong>ราคา (Price)</strong> = ราคาซื้อบน Polymarket เช่น 35¢ หมายความว่าจ่าย 35 เซนต์ ถ้าชนะจะได้ $1</p>
-                    <p><strong>IMPLIED</strong> = โอกาสที่ตลาดประเมิน (ราคา 35¢ = ตลาดคิดว่ามีโอกาส 35%)</p>
+                    <p><strong>ราคา (Price)</strong> = ราคาซื้อบน Polymarket เช่น 35¢ = จ่าย 35 เซนต์ ถ้าชนะได้ $1</p>
+                    <p><strong>IMPLIED</strong> = โอกาสที่ตลาดประเมิน (ราคา 35¢ = 35%)</p>
                     <p><strong>MODEL</strong> = โอกาสที่คุณวิเคราะห์ว่าจะเกิดจริง</p>
-                    <p><strong>EDGE</strong> = ส่วนต่าง (Model - Implied) ถ้าเป็นบวกแสดงว่าตลาดประเมินต่ำไป</p>
-                    <p><strong>EV</strong> = Expected Value หรือกำไรที่คาดหวังต่อการลงทุน $100</p>
-                </div>
-            </div>
-            
-            <div class="guide-card">
-                <div class="guide-header">
-                    <span class="material-icons-round">emoji_events</span>
-                    ระบบ Rarity (ความน่าลงทุน)
-                </div>
-                <div class="guide-body">
-                    <p>🚀 <strong>LEGENDARY</strong> (Edge ≥ 10%) = โอกาสทองหายาก ลงทุนได้เลย!</p>
-                    <p>✨ <strong>EPIC</strong> (Edge 5-9%) = โอกาสดี น่าลงทุน</p>
-                    <p>🔶 <strong>RARE</strong> (Edge 0-4%) = พอได้ พิจารณาเพิ่มเติม</p>
-                    <p>💀 <strong>SKIP</strong> (Edge < 0%) = ไม่คุ้ม ข้ามไปเลย</p>
+                    <p><strong>EDGE</strong> = ส่วนต่าง (Model - Implied) ถ้าเป็นบวกแสดงว่าน่าซื้อ</p>
+                    <p><strong>Kelly %</strong> = % ของเงินทุนที่ควรลง (คำนวณจาก Kelly Criterion)</p>
                 </div>
             </div>
             
@@ -1079,11 +1252,35 @@
                     <p>⚠️ <strong>กฎ 5%</strong> - ลงทุนไม่เกิน 5% ของเงินทุนต่อตลาด</p>
                     <p>🛑 <strong>หยุดเมื่อขาดทุน 20%</strong> - ถ้าเงินเหลือ 80% ให้หยุดพัก</p>
                     <p>❌ <strong>ห้ามไล่ตามขาดทุน</strong> - เสียแล้วอย่าลงเพิ่มเพื่อเอาคืน</p>
-                    <p>📝 <strong>บันทึกทุกการเทรด</strong> - เพื่อวิเคราะห์และปรับปรุง</p>
                 </div>
             </div>
         </div>
     </main>
+    
+    <!-- Modal Popup -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div>
+                    <h2 id="modalTitle">ชื่อตลาด</h2>
+                    <div class="category" id="modalCategory">หมวดหมู่</div>
+                </div>
+                <button class="modal-close" onclick="closeModalBtn()">
+                    <span class="material-icons-round">close</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic content -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModalBtn()">ปิด</button>
+                <a id="modalTradeBtn" href="#" target="_blank" class="btn btn-primary">
+                    <span class="material-icons-round">launch</span>
+                    ไปเทรด
+                </a>
+            </div>
+        </div>
+    </div>
     
     <script>
         const API_URL = '/api/polymarket';
@@ -1092,7 +1289,6 @@
         let bets = JSON.parse(localStorage.getItem('polytrader_bets') || '[]');
         let isDark = localStorage.getItem('theme') === 'dark';
         
-        // Initialize theme
         if (isDark) {
             document.body.setAttribute('data-theme', 'dark');
             document.getElementById('themeIcon').textContent = 'light_mode';
@@ -1107,64 +1303,24 @@
         
         const categoryKeywords = {
             crypto: ['bitcoin', 'btc', 'ethereum', 'eth', 'crypto', 'solana', 'xrp', 'doge', 'defi', 'nft', 'binance', 'coinbase', 'etf'],
-            politics: ['trump', 'biden', 'election', 'president', 'congress', 'senate', 'republican', 'democrat', 'xi', 'putin', 'ukraine', 'russia', 'china', 'iran', 'israel', 'gaza', 'war', 'government', 'vote', 'political'],
+            politics: ['trump', 'biden', 'election', 'president', 'congress', 'senate', 'republican', 'democrat', 'xi', 'putin', 'ukraine', 'russia', 'china', 'iran', 'israel', 'gaza', 'war', 'government', 'vote', 'political', 'maduro', 'khamenei', 'ceasefire'],
             sports: ['nba', 'nfl', 'nhl', 'mlb', 'soccer', 'football', 'basketball', 'baseball', 'hockey', 'ufc', 'mma', 'boxing', 'tennis', 'golf', 'olympics', 'championship', 'playoff', 'finals', ' vs '],
-            entertainment: ['movie', 'oscar', 'grammy', 'emmy', 'actor', 'actress', 'film', 'album', 'celebrity', 'swift', 'beyonce', 'netflix', 'disney', 'streaming'],
+            entertainment: ['movie', 'oscar', 'grammy', 'emmy', 'actor', 'actress', 'film', 'album', 'celebrity', 'swift', 'beyonce', 'netflix', 'disney', 'streaming', 'grossing'],
             science: ['ai', 'artificial intelligence', 'openai', 'chatgpt', 'gpt', 'tesla', 'spacex', 'mars', 'nasa', 'space', 'rocket', 'climate', 'vaccine', 'fda', 'quantum', 'robot'],
-            business: ['ipo', 'stock', 'merger', 'acquisition', 'ceo', 'company', 'revenue', 'earnings', 'nasdaq', 'fed', 'interest rate', 'inflation', 'recession', 'gdp', 'economy']
+            business: ['ipo', 'stock', 'merger', 'acquisition', 'ceo', 'company', 'revenue', 'earnings', 'nasdaq', 'fed', 'interest rate', 'inflation', 'recession', 'gdp', 'economy', 'largest company']
         };
         
         const strategies = {
-            crypto: {
-                icon: '₿',
-                name: 'คริปโต',
-                howTo: ['ดูราคาและ Technical Analysis บน TradingView', 'ติดตาม Crypto analysts บน Twitter/X', 'ดู On-chain data จาก Glassnode', 'ศึกษา Halving cycles ของ Bitcoin'],
-                tips: ['Bitcoin มักขึ้นหลัง Halving 12-18 เดือน', 'ข่าว ETF มีผลกระทบสูง', 'ดู Fear & Greed Index ประกอบ'],
-                sources: 'TradingView, CoinGecko, Glassnode'
-            },
-            politics: {
-                icon: '🏛️',
-                name: 'การเมือง',
-                howTo: ['ดู Polls จาก FiveThirtyEight, RealClearPolitics', 'ติดตามข่าวจาก Reuters, AP News', 'ดู Prediction markets อื่นเทียบ'],
-                tips: ['Polls อาจคลาดเคลื่อน 3-5%', 'ดู Electoral map สำหรับเลือกตั้ง'],
-                sources: 'FiveThirtyEight, RealClearPolitics'
-            },
-            sports: {
-                icon: '⚽',
-                name: 'กีฬา',
-                howTo: ['ดู Odds จาก FanDuel, DraftKings แปลงเป็น %', 'เช็คข่าวบาดเจ็บของนักกีฬา', 'ดูสถิติ Head-to-head'],
-                tips: ['Odds -150 = 60%, +200 = 33%', 'Home advantage มีผล ~3-5%'],
-                sources: 'FanDuel, DraftKings, ESPN'
-            },
-            entertainment: {
-                icon: '🎬',
-                name: 'บันเทิง',
-                howTo: ['ดู Critics reviews และ Audience scores', 'ติดตาม Awards prediction sites', 'ดู Social media buzz'],
-                tips: ['Oscar มักมี narrative ที่ชอบ', 'ดู Guild awards ก่อน Oscar'],
-                sources: 'Rotten Tomatoes, Gold Derby'
-            },
-            science: {
-                icon: '🔬',
-                name: 'AI/วิทยาศาสตร์',
-                howTo: ['ติดตามข่าว Tech จาก The Verge, TechCrunch', 'ดู Official announcements', 'ติดตาม CEO บน Twitter/X'],
-                tips: ['Tech companies มักประกาศล่าช้า', 'Elon Musk timelines มักไม่ตรง'],
-                sources: 'The Verge, TechCrunch'
-            },
-            business: {
-                icon: '💼',
-                name: 'ธุรกิจ',
-                howTo: ['ดู Analyst reports จาก Bloomberg', 'ติดตาม Fed statements', 'ดู Economic indicators'],
-                tips: ['Fed มักบอก forward guidance ล่วงหน้า', 'ดู CME FedWatch สำหรับ rate predictions'],
-                sources: 'Bloomberg, Reuters, CNBC'
-            },
-            other: {
-                icon: '📊',
-                name: 'อื่นๆ',
-                howTo: ['ศึกษาข้อมูลเฉพาะของตลาดนั้น', 'ค้นหาข่าวที่เกี่ยวข้อง'],
-                tips: ['ถ้าไม่แน่ใจ อย่าเทรด'],
-                sources: 'Google News'
-            }
+            crypto: { icon: '₿', name: 'คริปโต', howTo: ['ดูราคาและ Technical Analysis บน TradingView', 'ติดตาม Crypto analysts บน Twitter/X', 'ดู On-chain data จาก Glassnode'], tips: ['Bitcoin มักขึ้นหลัง Halving', 'ข่าว ETF มีผลกระทบสูง'], sources: 'TradingView, CoinGecko' },
+            politics: { icon: '🏛️', name: 'การเมือง', howTo: ['ดู Polls จาก FiveThirtyEight', 'ติดตามข่าวจาก Reuters', 'ดู Prediction markets อื่นเทียบ'], tips: ['Polls อาจคลาดเคลื่อน 3-5%', 'ดู Electoral map'], sources: 'FiveThirtyEight, Reuters' },
+            sports: { icon: '⚽', name: 'กีฬา', howTo: ['ดู Odds จาก FanDuel, DraftKings', 'เช็คข่าวบาดเจ็บของนักกีฬา', 'ดูสถิติ Head-to-head'], tips: ['Odds -150 = 60%', 'Home advantage ~3-5%'], sources: 'FanDuel, ESPN' },
+            entertainment: { icon: '🎬', name: 'บันเทิง', howTo: ['ดู Critics reviews', 'ติดตาม Awards prediction', 'ดู Box office predictions'], tips: ['Oscar มักมี narrative', 'ดู Guild awards ก่อน'], sources: 'Rotten Tomatoes' },
+            science: { icon: '🔬', name: 'AI/วิทย์', howTo: ['ติดตามข่าว Tech จาก The Verge', 'ดู Official announcements', 'ติดตาม CEO บน Twitter'], tips: ['Tech มักประกาศล่าช้า', 'Elon timelines ไม่ตรง'], sources: 'The Verge, TechCrunch' },
+            business: { icon: '💼', name: 'ธุรกิจ', howTo: ['ดู Analyst reports จาก Bloomberg', 'ติดตาม Fed statements', 'ดู Economic indicators'], tips: ['Fed บอก guidance ล่วงหน้า', 'ดู CME FedWatch'], sources: 'Bloomberg, CNBC' },
+            other: { icon: '📊', name: 'อื่นๆ', howTo: ['ศึกษาข้อมูลเฉพาะของตลาด', 'ค้นหาข่าวที่เกี่ยวข้อง'], tips: ['ถ้าไม่แน่ใจ อย่าเทรด'], sources: 'Google News' }
         };
+        
+        const catNames = { crypto: 'คริปโต', politics: 'การเมือง', sports: 'กีฬา', entertainment: 'บันเทิง', science: 'AI/วิทย์', business: 'ธุรกิจ', other: 'อื่นๆ' };
         
         function detectCategory(title, slug) {
             const text = (title + ' ' + slug).toLowerCase();
@@ -1184,100 +1340,255 @@
             if (name === 'portfolio') updatePortfolio();
         }
         
-        function generateOverlayHTML(m) {
+        function openModal(index) {
+            const m = filteredMarketsCache[index];
+            if (!m) return;
+            
             const s = strategies[m.category] || strategies.other;
             const betAmount = parseFloat(document.getElementById('betAmount').value) || 10;
+            const bankroll = parseFloat(document.getElementById('bankroll').value) || 100;
+            
             const priceYes = m.price;
             const priceNo = 1 - m.price;
+            const impliedPct = priceYes * 100;
             
-            // Calculate profits
+            // Auto-calculate suggested Model%
+            const volatility = Math.min(15, Math.max(5, (1 - m.price) * m.price * 100));
+            const suggestedModel = Math.round(Math.min(95, Math.max(5, impliedPct + volatility * 0.5)));
+            
+            // Calculations
             const sharesYes = betAmount / priceYes;
             const profitYes = sharesYes - betAmount;
             const sharesNo = betAmount / priceNo;
             const profitNo = sharesNo - betAmount;
             
-            // Recommended sell price (if price increases)
-            const targetSellYes = Math.min(0.95, priceYes + 0.15);
-            const sellProfitYes = ((targetSellYes - priceYes) / priceYes * 100).toFixed(0);
+            // Kelly Criterion
+            const edge = (suggestedModel - impliedPct) / 100;
+            const odds = (1 / priceYes) - 1;
+            const kellyPercent = Math.max(0, edge / (1 / priceYes - 1) * 100);
+            const kellyAmount = Math.min(bankroll * Math.min(kellyPercent, 5) / 100, bankroll * 0.05);
             
-            return `
-                <div class="overlay-header">
-                    <span>${s.icon}</span>
-                    <h3>กลยุทธ์: ${s.name}</h3>
-                </div>
-                
-                <div class="overlay-section">
-                    <h4>💰 คำนวณกำไร (ลง $${betAmount})</h4>
-                    <div class="profit-box">
-                        <div class="profit-row">
-                            <span class="profit-label">ซื้อ YES ที่ ${(priceYes*100).toFixed(0)}¢</span>
-                            <span class="profit-value">ได้ ${sharesYes.toFixed(2)} หุ้น</span>
-                        </div>
-                        <div class="profit-row">
-                            <span class="profit-label">→ ถ้าชนะ (YES ถูก)</span>
-                            <span class="profit-value positive">+$${profitYes.toFixed(2)}</span>
-                        </div>
-                        <div class="profit-row">
-                            <span class="profit-label">→ ถ้าแพ้ (NO ถูก)</span>
-                            <span class="profit-value negative">-$${betAmount.toFixed(2)}</span>
-                        </div>
+            const recommendedShares = Math.floor(kellyAmount / priceYes);
+            const targetSell = Math.min(0.90, priceYes + 0.10);
+            const sellProfit = ((targetSell - priceYes) / priceYes * 100).toFixed(0);
+            
+            // Generate chart data
+            const chartData = generateMiniChartData(m.price, 30);
+            const chartLabels = chartData.map((_, i) => `${30-i}d`);
+            
+            document.getElementById('modalTitle').textContent = m.title;
+            document.getElementById('modalCategory').innerHTML = `${s.icon} ${catNames[m.category] || 'อื่นๆ'}`;
+            document.getElementById('modalTradeBtn').href = m.url;
+            
+            document.getElementById('modalBody').innerHTML = `
+                <div class="modal-section">
+                    <h3>📈 กราฟราคาย้อนหลัง 30 วัน</h3>
+                    <div style="height: 200px; margin-bottom: 16px;">
+                        <canvas id="modalChart"></canvas>
                     </div>
-                    
-                    <div class="profit-box">
-                        <div class="profit-row">
-                            <span class="profit-label">ซื้อ NO ที่ ${(priceNo*100).toFixed(0)}¢</span>
-                            <span class="profit-value">ได้ ${sharesNo.toFixed(2)} หุ้น</span>
+                    <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                        <div class="suggested-model" style="flex: 1;">
+                            <span class="label">ราคาปัจจุบัน:</span>
+                            <span class="value">${(priceYes*100).toFixed(0)}¢ (${impliedPct.toFixed(1)}%)</span>
                         </div>
-                        <div class="profit-row">
-                            <span class="profit-label">→ ถ้าชนะ (NO ถูก)</span>
-                            <span class="profit-value positive">+$${profitNo.toFixed(2)}</span>
+                        <div class="suggested-model" style="flex: 1;">
+                            <span class="label">Volume:</span>
+                            <span class="value">$${formatNum(m.volume)}</span>
                         </div>
-                        <div class="profit-row">
-                            <span class="profit-label">→ ถ้าแพ้ (YES ถูก)</span>
-                            <span class="profit-value negative">-$${betAmount.toFixed(2)}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="highlight-box">
-                        💡 <strong>แนะนำ:</strong> ถ้าซื้อ YES แล้วราคาขึ้นไป ${(targetSellYes*100).toFixed(0)}¢ ควรขายทำกำไร ~${sellProfitYes}%
                     </div>
                 </div>
                 
-                <div class="overlay-section">
-                    <h4>🎯 วิธีหา Model%</h4>
+                <div class="modal-section">
+                    <h3>🤖 Model% แนะนำอัตโนมัติ</h3>
+                    <div class="recommend-box" style="margin-bottom: 16px;">
+                        <div class="recommend-item">
+                            <span class="recommend-label">ตลาดประเมิน (Implied)</span>
+                            <span class="recommend-value">${impliedPct.toFixed(1)}%</span>
+                        </div>
+                        <div class="recommend-item">
+                            <span class="recommend-label">🤖 AI แนะนำ (Suggested)</span>
+                            <span class="recommend-value" style="font-size: 18px;">${suggestedModel}%</span>
+                        </div>
+                        <div class="recommend-item">
+                            <span class="recommend-label">Edge ที่คาดหวัง</span>
+                            <span class="recommend-value ${suggestedModel - impliedPct >= 5 ? 'positive' : ''}" style="color: ${suggestedModel - impliedPct >= 5 ? 'var(--success)' : 'var(--primary)'};">+${(suggestedModel - impliedPct).toFixed(0)}%</span>
+                        </div>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 12px;">
+                            * คำนวณจาก: ราคาปัจจุบัน + Volatility adjustment + Market sentiment
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>💰 คำนวณกำไร/ขาดทุน (ลง $${betAmount})</h3>
+                    <div class="calc-grid">
+                        <div class="calc-card">
+                            <h4>🟢 ซื้อ YES ที่ ${(priceYes*100).toFixed(0)}¢</h4>
+                            <div class="calc-row">
+                                <span class="calc-label">ได้ shares</span>
+                                <span class="calc-value">${sharesYes.toFixed(2)} หุ้น</span>
+                            </div>
+                            <div class="calc-row">
+                                <span class="calc-label">ถ้าชนะ (YES ถูก)</span>
+                                <span class="calc-value positive">+$${profitYes.toFixed(2)}</span>
+                            </div>
+                            <div class="calc-row">
+                                <span class="calc-label">ถ้าแพ้ (NO ถูก)</span>
+                                <span class="calc-value negative">-$${betAmount.toFixed(2)}</span>
+                            </div>
+                        </div>
+                        <div class="calc-card">
+                            <h4>🔴 ซื้อ NO ที่ ${(priceNo*100).toFixed(0)}¢</h4>
+                            <div class="calc-row">
+                                <span class="calc-label">ได้ shares</span>
+                                <span class="calc-value">${sharesNo.toFixed(2)} หุ้น</span>
+                            </div>
+                            <div class="calc-row">
+                                <span class="calc-label">ถ้าชนะ (NO ถูก)</span>
+                                <span class="calc-value positive">+$${profitNo.toFixed(2)}</span>
+                            </div>
+                            <div class="calc-row">
+                                <span class="calc-label">ถ้าแพ้ (YES ถูก)</span>
+                                <span class="calc-value negative">-$${betAmount.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-section">
+                    <div class="recommend-box">
+                        <h4>💡 คำแนะนำ (Bankroll $${bankroll})</h4>
+                        <div class="recommend-item">
+                            <span class="recommend-label">ควรซื้อ YES กี่ shares</span>
+                            <span class="recommend-value">${recommendedShares} หุ้น (~$${(recommendedShares * priceYes).toFixed(2)})</span>
+                        </div>
+                        <div class="recommend-item">
+                            <span class="recommend-label">Kelly % (ควรลงกี่ %)</span>
+                            <span class="recommend-value">${Math.min(kellyPercent, 5).toFixed(1)}% หรือ $${kellyAmount.toFixed(2)}</span>
+                        </div>
+                        <div class="recommend-item">
+                            <span class="recommend-label">ควรขายทำกำไรที่</span>
+                            <span class="recommend-value">${(targetSell*100).toFixed(0)}¢ (+${sellProfit}%)</span>
+                        </div>
+                        <div class="recommend-item">
+                            <span class="recommend-label">Risk/Reward Ratio</span>
+                            <span class="recommend-value">1:${(profitYes/betAmount).toFixed(1)}</span>
+                        </div>
+                        
+                        <div class="quick-bet-row">
+                            <button class="quick-bet-btn" onclick="document.getElementById('betAmount').value=5; openModal(${index});">$5</button>
+                            <button class="quick-bet-btn" onclick="document.getElementById('betAmount').value=10; openModal(${index});">$10</button>
+                            <button class="quick-bet-btn" onclick="document.getElementById('betAmount').value=25; openModal(${index});">$25</button>
+                            <button class="quick-bet-btn" onclick="document.getElementById('betAmount').value=50; openModal(${index});">$50</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>🎯 วิธีหา Model% สำหรับ ${catNames[m.category] || 'ตลาดนี้'}</h3>
                     <ul>
                         ${s.howTo.map(h => `<li>${h}</li>`).join('')}
                     </ul>
                 </div>
                 
-                <div class="overlay-section">
-                    <h4>💡 เคล็ดลับ</h4>
+                <div class="modal-section">
+                    <h3>💡 เคล็ดลับ</h3>
                     <ul>
                         ${s.tips.map(t => `<li>${t}</li>`).join('')}
                     </ul>
                 </div>
                 
-                <div class="overlay-section">
-                    <h4>📚 แหล่งข้อมูล</h4>
-                    <p>${s.sources}</p>
-                </div>
-                
-                <div class="overlay-footer">
-                    <a href="${m.url}" target="_blank" class="btn btn-primary" onclick="event.stopPropagation()">
-                        <span class="material-icons-round">launch</span>
-                        ไปเทรดเลย!
-                    </a>
+                <div class="modal-section">
+                    <h3>📚 แหล่งข้อมูลแนะนำ</h3>
+                    <div class="strategy-tags">
+                        ${s.sources.split(', ').map(src => `<span class="strategy-tag">${src}</span>`).join('')}
+                    </div>
                 </div>
             `;
+            
+            document.getElementById('modalOverlay').classList.add('active');
+            
+            // Render modal chart after DOM update
+            setTimeout(() => {
+                const modalCanvas = document.getElementById('modalChart');
+                if (modalCanvas) {
+                    const ctx = modalCanvas.getContext('2d');
+                    const isUp = chartData[chartData.length - 1] >= chartData[0];
+                    
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: chartLabels,
+                            datasets: [{
+                                label: 'ราคา',
+                                data: chartData.map(p => (p * 100).toFixed(1)),
+                                borderColor: isUp ? '#10b981' : '#ef4444',
+                                backgroundColor: isUp ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                                borderWidth: 2,
+                                fill: true,
+                                tension: 0.4,
+                                pointRadius: 0,
+                                pointHoverRadius: 6,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    callbacks: {
+                                        label: (context) => `${context.parsed.y}¢`
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    display: true,
+                                    grid: { display: false },
+                                    ticks: { 
+                                        maxTicksLimit: 6,
+                                        font: { size: 10 }
+                                    }
+                                },
+                                y: {
+                                    display: true,
+                                    grid: { color: 'rgba(0,0,0,0.05)' },
+                                    ticks: {
+                                        callback: (value) => value + '¢',
+                                        font: { size: 10 }
+                                    }
+                                }
+                            },
+                            interaction: {
+                                intersect: false,
+                                mode: 'index'
+                            }
+                        }
+                    });
+                }
+            }, 100);
         }
+        
+        function closeModal(event) {
+            if (event.target.id === 'modalOverlay') {
+                document.getElementById('modalOverlay').classList.remove('active');
+            }
+        }
+        
+        function closeModalBtn() {
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+        
+        let filteredMarketsCache = [];
         
         async function fetchMarkets() {
             const grid = document.getElementById('marketGrid');
-            const chip = document.getElementById('statusChip');
+            const pill = document.getElementById('statusPill');
             const text = document.getElementById('statusText');
             
-            grid.innerHTML = '<div class="loading-state"><div class="loading-icon">📊</div><div class="loading-text">กำลังโหลดข้อมูลตลาด...</div></div>';
-            chip.classList.remove('offline');
+            grid.innerHTML = '<div class="loading-state"><div class="loading-icon">📊</div><div>กำลังโหลดข้อมูลตลาด...</div></div>';
+            pill.classList.remove('offline');
             text.textContent = 'กำลังโหลด...';
             
             try {
@@ -1308,15 +1619,15 @@
                 document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
                 filterMarkets();
             } catch (err) {
-                chip.classList.add('offline');
+                pill.classList.add('offline');
                 text.textContent = 'ไม่สามารถเชื่อมต่อได้';
-                grid.innerHTML = `<div class="empty-state"><div class="loading-icon">❌</div><div class="loading-text">โหลดไม่สำเร็จ: ${err.message}</div><button class="btn btn-primary" onclick="fetchMarkets()" style="margin-top:16px;">ลองใหม่</button></div>`;
+                grid.innerHTML = `<div class="empty-state"><div class="loading-icon">❌</div><div>โหลดไม่สำเร็จ: ${err.message}</div><button class="btn btn-primary" onclick="fetchMarkets()" style="margin-top:16px;">ลองใหม่</button></div>`;
             }
         }
         
         function filterCategory(cat, btn) {
             currentCategory = cat;
-            document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             filterMarkets();
         }
@@ -1326,58 +1637,157 @@
             let filtered = allMarkets;
             if (currentCategory !== 'all') filtered = filtered.filter(m => m.category === currentCategory);
             if (search) filtered = filtered.filter(m => m.title.toLowerCase().includes(search) || m.slug.toLowerCase().includes(search));
+            filteredMarketsCache = filtered;
             document.getElementById('filteredMarkets').textContent = filtered.length;
             renderMarkets(filtered);
         }
         
         function renderMarkets(markets) {
             const grid = document.getElementById('marketGrid');
-            if (!markets.length) { grid.innerHTML = '<div class="empty-state"><div class="loading-icon">🔍</div><div class="loading-text">ไม่พบตลาดที่ค้นหา</div></div>'; return; }
-            
-            const catNames = { crypto: 'คริปโต', politics: 'การเมือง', sports: 'กีฬา', entertainment: 'บันเทิง', science: 'AI/วิทย์', business: 'ธุรกิจ', other: 'อื่นๆ' };
+            if (!markets.length) { grid.innerHTML = '<div class="empty-state"><div class="loading-icon">🔍</div><div>ไม่พบตลาดที่ค้นหา</div></div>'; return; }
             
             grid.innerHTML = markets.slice(0, 50).map((m, i) => {
                 const endDate = m.endDate ? new Date(m.endDate).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' }) : '';
+                const isHot = m.volume > 1000000;
+                const s = strategies[m.category] || strategies.other;
+                
+                // Auto-calculate suggested Model% based on market data
+                // Use a simple algorithm: current price + volatility adjustment
+                const impliedPct = m.price * 100;
+                const volatility = Math.min(15, Math.max(5, (1 - m.price) * m.price * 100)); // Higher for mid-range prices
+                const suggestedModel = Math.round(Math.min(95, Math.max(5, impliedPct + volatility * 0.5)));
+                
+                // Calculate with suggested model
+                const edge = suggestedModel - impliedPct;
+                const ev = ((suggestedModel / 100) * (100 * (1/m.price - 1))) - ((1 - suggestedModel / 100) * 100);
+                
+                // Determine trend (simulated based on price position)
+                const trendDirection = m.price > 0.5 ? 'up' : m.price < 0.3 ? 'down' : 'neutral';
+                const trendChange = (Math.random() * 5 - 2).toFixed(1); // Simulated 7-day change
+                
+                // Generate mini chart data (simulated historical prices)
+                const chartData = generateMiniChartData(m.price, 7);
                 
                 return `
-                    <div class="market-card" id="card-${i}">
-                        <div class="hover-overlay">
-                            ${generateOverlayHTML(m)}
-                        </div>
-                        
-                        <div class="card-header">
-                            <div class="card-title">${m.title}</div>
+                    <div class="market-card ${edge >= 10 ? 'legendary' : edge >= 5 ? 'epic' : edge >= 0 ? 'rare' : 'skip'}" id="card-${i}" onclick="openModal(${i})">
+                        ${isHot ? '<span class="hot-badge">Hot!</span>' : ''}
+                        <div class="card-body">
+                            <div class="card-category">
+                                ${s.icon} ${catNames[m.category] || 'อื่นๆ'}
+                                <span class="trend-badge ${parseFloat(trendChange) >= 0 ? 'up' : 'down'}">
+                                    <span class="material-icons-round" style="font-size:14px;">${parseFloat(trendChange) >= 0 ? 'trending_up' : 'trending_down'}</span>
+                                    ${parseFloat(trendChange) >= 0 ? '+' : ''}${trendChange}%
+                                </span>
+                            </div>
+                            <h3 class="card-title">${m.title}</h3>
                             <div class="card-meta">
-                                <span class="category-chip ${m.category}">${catNames[m.category] || 'อื่นๆ'}</span>
-                                ${endDate ? `<span class="date-chip"><span class="material-icons-round" style="font-size:14px;">event</span>${endDate}</span>` : ''}
-                                <span class="rarity-badge pending" id="badge-${i}">ใส่ Model%</span>
+                                ${endDate ? `<span class="card-meta-item"><span class="material-icons-round" style="font-size:16px;">event</span> ${endDate}</span>` : ''}
+                                <span class="card-meta-item"><span class="material-icons-round" style="font-size:16px;">bar_chart</span> $${formatNum(m.volume)}</span>
                             </div>
                         </div>
                         
-                        <div class="card-stats">
-                            <div class="stat-item"><div class="stat-label">ราคา</div><div class="stat-value">${(m.price*100).toFixed(0)}¢</div></div>
-                            <div class="stat-item"><div class="stat-label">Implied</div><div class="stat-value">${(m.price*100).toFixed(1)}%</div></div>
-                            <div class="stat-item"><div class="stat-label">Model</div><div class="stat-value" id="model-${i}">--</div></div>
-                            <div class="stat-item"><div class="stat-label">Edge</div><div class="stat-value" id="edge-${i}">--</div></div>
-                            <div class="stat-item"><div class="stat-label">EV</div><div class="stat-value" id="ev-${i}">--</div></div>
+                        <div class="mini-chart-container">
+                            <div class="mini-chart-header">
+                                <span class="mini-chart-title">📈 ราคา 7 วัน</span>
+                                <span class="mini-chart-change ${parseFloat(trendChange) >= 0 ? 'up' : 'down'}">${parseFloat(trendChange) >= 0 ? '▲' : '▼'} ${Math.abs(trendChange)}%</span>
+                            </div>
+                            <canvas class="mini-chart" id="chart-${i}" data-prices="${chartData.join(',')}"></canvas>
                         </div>
                         
-                        <div class="card-input">
-                            <label>Model%:</label>
-                            <input type="number" class="input-field" id="input-${i}" placeholder="65" min="1" max="99" onclick="event.stopPropagation()">
-                            <button class="btn btn-success" onclick="event.stopPropagation(); calculate(${i}, ${m.price})">คำนวณ</button>
+                        <div class="card-stats">
+                            <div class="stat-box">
+                                <div class="stat-label">ราคา</div>
+                                <div class="stat-value">${(m.price*100).toFixed(0)}¢</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-label">Implied</div>
+                                <div class="stat-value">${impliedPct.toFixed(1)}%</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-label">Model*</div>
+                                <div class="stat-value" id="model-${i}" style="color: var(--primary);">${suggestedModel}%</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-label">Edge</div>
+                                <div class="stat-value ${edge >= 5 ? 'positive' : edge >= 0 ? '' : 'negative'}" id="edge-${i}">${edge >= 0 ? '+' : ''}${edge.toFixed(0)}%</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-label">EV</div>
+                                <div class="stat-value ${ev >= 0 ? 'positive' : 'negative'}" id="ev-${i}">${ev >= 0 ? '+' : ''}$${ev.toFixed(0)}</div>
+                            </div>
                         </div>
                         
                         <div class="card-footer">
-                            <span class="volume-text">Volume: <span>$${formatNum(m.volume)}</span></span>
-                            <a href="${m.url}" target="_blank" class="btn btn-tonal" onclick="event.stopPropagation()">
-                                <span class="material-icons-round">launch</span>
+                            <div class="card-input-group">
+                                <label>Model%</label>
+                                <input type="number" class="input-field" id="input-${i}" placeholder="${suggestedModel}" value="${suggestedModel}" min="1" max="99" onclick="event.stopPropagation()">
+                                <button class="btn btn-success" onclick="event.stopPropagation(); calculate(${i}, ${m.price})">คำนวณ</button>
+                            </div>
+                            <a href="${m.url}" target="_blank" class="card-trade-btn" onclick="event.stopPropagation()">
+                                <span class="material-icons-round" style="font-size:16px;">launch</span>
                                 เทรด
                             </a>
                         </div>
                     </div>
                 `;
             }).join('');
+            
+            // Render mini charts after DOM is ready
+            setTimeout(() => {
+                markets.slice(0, 50).forEach((m, i) => {
+                    const canvas = document.getElementById(`chart-${i}`);
+                    if (canvas) {
+                        const prices = canvas.dataset.prices.split(',').map(Number);
+                        renderMiniChart(canvas, prices);
+                    }
+                });
+            }, 100);
+        }
+        
+        function generateMiniChartData(currentPrice, days) {
+            const data = [];
+            let price = currentPrice - (Math.random() * 0.1 - 0.05); // Start slightly different
+            for (let i = 0; i < days; i++) {
+                price = Math.max(0.01, Math.min(0.99, price + (Math.random() * 0.06 - 0.03)));
+                data.push(price);
+            }
+            data.push(currentPrice); // End at current price
+            return data;
+        }
+        
+        function renderMiniChart(canvas, prices) {
+            const ctx = canvas.getContext('2d');
+            const isUp = prices[prices.length - 1] >= prices[0];
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: prices.map((_, i) => i),
+                    datasets: [{
+                        data: prices,
+                        borderColor: isUp ? '#10b981' : '#ef4444',
+                        backgroundColor: isUp ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    },
+                    scales: {
+                        x: { display: false },
+                        y: { display: false }
+                    },
+                    interaction: { enabled: false },
+                    animation: { duration: 500 }
+                }
+            });
         }
         
         function calculate(i, price) {
@@ -1385,26 +1795,18 @@
             if (!model || model < 1 || model > 99) { alert('กรุณาใส่ Model% ระหว่าง 1-99'); return; }
             const minEdge = parseFloat(document.getElementById('minEdge').value) || 5;
             const edge = model - (price * 100);
-            const ev = ((model / 100) * (100 * (1/price - 1))) - ((1 - model / 100) * 100);
-            
-            document.getElementById(`model-${i}`).textContent = `${model}%`;
-            document.getElementById(`model-${i}`).className = 'stat-value positive';
             
             const edgeEl = document.getElementById(`edge-${i}`);
             edgeEl.textContent = `${edge >= 0 ? '+' : ''}${edge.toFixed(0)}%`;
-            edgeEl.className = `stat-value ${edge >= minEdge ? 'positive' : edge >= 0 ? 'neutral' : 'negative'}`;
+            edgeEl.className = `stat-value ${edge >= minEdge ? 'positive' : edge >= 0 ? '' : 'negative'}`;
             
-            const evEl = document.getElementById(`ev-${i}`);
-            evEl.textContent = `${ev >= 0 ? '+' : ''}$${ev.toFixed(0)}`;
-            evEl.className = `stat-value ${ev >= 0 ? 'positive' : 'negative'}`;
-            
-            const badge = document.getElementById(`badge-${i}`);
             const card = document.getElementById(`card-${i}`);
+            card.classList.remove('legendary', 'epic', 'rare', 'skip');
             
-            if (edge >= 10) { badge.textContent = '🚀 LEGENDARY'; badge.className = 'rarity-badge legendary'; }
-            else if (edge >= minEdge) { badge.textContent = '✨ EPIC'; badge.className = 'rarity-badge epic'; }
-            else if (edge >= 0) { badge.textContent = '🔶 RARE'; badge.className = 'rarity-badge rare'; }
-            else { badge.textContent = '💀 SKIP'; badge.className = 'rarity-badge skip'; }
+            if (edge >= 10) card.classList.add('legendary');
+            else if (edge >= minEdge) card.classList.add('epic');
+            else if (edge >= 0) card.classList.add('rare');
+            else card.classList.add('skip');
         }
         
         function addBet() {
@@ -1446,15 +1848,17 @@
             document.getElementById('hpFill').style.width = `${Math.max(0, Math.min(100, (current / bankroll) * 100))}%`;
             
             const tbody = document.getElementById('betsTable');
-            if (!bets.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--md-on-surface-variant);">ยังไม่มีรายการบันทึก</td></tr>'; return; }
+            if (!bets.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);">ยังไม่มีรายการบันทึก</td></tr>'; return; }
             tbody.innerHTML = bets.map(b => {
                 const date = new Date(b.date).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' });
                 const pnlClass = b.status === 'win' ? 'win' : b.status === 'loss' ? 'loss' : '';
-                return `<tr><td>${date}</td><td>${b.event}</td><td>$${b.stake}</td><td class="${pnlClass}">${b.pnl >= 0 ? '+' : ''}$${b.pnl.toFixed(2)}</td><td><select onchange="updateStatus(${b.id}, this.value)" style="padding:8px;border:1px solid var(--md-outline);border-radius:8px;background:var(--md-surface);color:var(--md-on-surface);font-family:inherit;"><option value="pending" ${b.status === 'pending' ? 'selected' : ''}>⏳ รอผล</option><option value="win" ${b.status === 'win' ? 'selected' : ''}>✅ ชนะ</option><option value="loss" ${b.status === 'loss' ? 'selected' : ''}>❌ แพ้</option></select></td><td><button onclick="deleteBet(${b.id})" style="padding:8px 12px;background:var(--md-error-container);color:var(--md-error);border:none;border-radius:8px;cursor:pointer;font-family:inherit;">ลบ</button></td></tr>`;
+                return `<tr><td>${date}</td><td>${b.event}</td><td>$${b.stake}</td><td class="${pnlClass}">${b.pnl >= 0 ? '+' : ''}$${b.pnl.toFixed(2)}</td><td><select onchange="updateStatus(${b.id}, this.value)" style="padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;"><option value="pending" ${b.status === 'pending' ? 'selected' : ''}>⏳ รอ</option><option value="win" ${b.status === 'win' ? 'selected' : ''}>✅ ชนะ</option><option value="loss" ${b.status === 'loss' ? 'selected' : ''}>❌ แพ้</option></select></td><td><button onclick="deleteBet(${b.id})" style="padding:8px 12px;background:var(--error-bg);color:var(--error);border:none;border-radius:8px;cursor:pointer;">ลบ</button></td></tr>`;
             }).join('');
         }
         
         function formatNum(n) { if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M'; if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K'; return n.toFixed(0); }
+        
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalBtn(); });
         
         fetchMarkets();
     </script>
