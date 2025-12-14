@@ -94,9 +94,13 @@
         .filter-pill:hover { border-color: var(--primary); color: var(--primary); }
         .filter-pill.active { background: var(--primary-bg); border-color: var(--primary); color: var(--primary); }
         
-        .stats-row { display: flex; gap: 24px; margin-bottom: 20px; font-size: 14px; color: var(--text-secondary); align-items: center; }
+        .stats-row { display: flex; gap: 24px; margin-bottom: 20px; font-size: 14px; color: var(--text-secondary); align-items: center; flex-wrap: wrap; }
         .stats-row strong { color: var(--primary); }
-        .btn-analyze-all { margin-left: auto; padding: 8px 16px; background: linear-gradient(135deg, var(--primary), #8b5cf6); border: none; border-radius: 8px; color: white; font-family: inherit; font-size: 12px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s; }
+        .sort-group { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+        .sort-group label { font-size: 12px; color: var(--text-muted); }
+        .sort-group select { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-card); color: var(--text); font-family: inherit; font-size: 13px; cursor: pointer; }
+        .sort-group select:focus { outline: none; border-color: var(--primary); }
+        .btn-analyze-all { padding: 8px 16px; background: linear-gradient(135deg, var(--primary), #8b5cf6); border: none; border-radius: 8px; color: white; font-family: inherit; font-size: 12px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s; }
         .btn-analyze-all:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); }
         .btn-analyze-all .material-icons-round { font-size: 16px; }
         
@@ -182,6 +186,11 @@
         
         .card-ai-error { display: flex; align-items: center; justify-content: space-between; padding: 8px; background: var(--error-bg); border-radius: 8px; font-size: 12px; color: var(--error); }
         .card-ai-error button { padding: 4px 10px; background: var(--error); color: white; border: none; border-radius: 4px; font-size: 11px; cursor: pointer; }
+        
+        .card-ai-refresh { padding: 4px 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; font-size: 12px; cursor: pointer; }
+        .card-ai-refresh:hover { background: var(--border-light); }
+        
+        .ai-prob-badge { background: linear-gradient(135deg, var(--primary), #8b5cf6); color: white; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 11px; }
         .card-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 8px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .card-meta { display: flex; gap: 16px; font-size: 12px; color: var(--text-muted); }
         .card-meta-item { display: flex; align-items: center; gap: 4px; }
@@ -352,7 +361,17 @@
                 <div>ตลาดทั้งหมด: <strong id="totalMarkets">0</strong></div>
                 <div>แสดง: <strong id="filteredMarkets">0</strong></div>
                 <div>อัปเดต: <strong id="lastUpdate">--:--</strong></div>
-                <button class="btn-analyze-all" onclick="analyzeAllVisible()" title="วิเคราะห์ทุกการ์ดที่แสดง (ใช้ quota)">
+                <div class="sort-group">
+                    <label>เรียงตาม:</label>
+                    <select id="sortBy" onchange="sortAndRender()">
+                        <option value="score">📊 Signal Score</option>
+                        <option value="aiProb">🧠 AI วิเคราะห์</option>
+                        <option value="edge">📈 Edge</option>
+                        <option value="volume">💰 Volume</option>
+                        <option value="ev">💵 EV</option>
+                    </select>
+                </div>
+                <button class="btn-analyze-all" onclick="analyzeAllVisible()" title="วิเคราะห์ทุกการ์ดที่แสดง">
                     <span class="material-icons-round">psychology</span>
                     วิเคราะห์ทั้งหมด
                 </button>
@@ -403,6 +422,12 @@
             <div class="guide-card"><div class="guide-header"><span class="material-icons-round">calculate</span>ความหมายตัวเลข</div><div class="guide-body"><p><strong>ราคา</strong> = ราคาซื้อ เช่น 35¢ = จ่าย 35 เซนต์ ถ้าชนะได้ $1</p><p><strong>IMPLIED</strong> = โอกาสที่ตลาดประเมิน</p><p><strong>MODEL*</strong> = โอกาสที่ AI แนะนำ</p><p><strong>EDGE</strong> = ส่วนต่าง ถ้าบวก = น่าซื้อ</p><p><strong>EV</strong> = กำไรคาดหวังต่อ $100</p></div></div>
             
             <div class="guide-card"><div class="guide-header"><span class="material-icons-round">warning</span>กฎจัดการเงิน</div><div class="guide-body"><p>⚠️ <strong>กฎ 5%</strong> - ลงไม่เกิน 5% ต่อตลาด</p><p>🛑 <strong>หยุดเมื่อขาดทุน 20%</strong></p><p>❌ <strong>ห้ามไล่ตามขาดทุน</strong></p><p>🎯 <strong>เลือกเฉพาะ Strong Buy / Buy</strong> เท่านั้น</p></div></div>
+            
+            <div class="guide-card"><div class="guide-header"><span class="material-icons-round">settings</span>ตั้งค่า</div><div class="guide-body">
+                <p>🗑️ <strong>ล้างข้อมูล AI วิเคราะห์</strong></p>
+                <button class="btn btn-outline" onclick="clearAICache()" style="margin-top: 8px;">ล้างข้อมูล AI ทั้งหมด</button>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">ข้อมูล AI จะถูกเก็บไว้ใน browser เพื่อไม่ต้องวิเคราะห์ซ้ำ</p>
+            </div></div>
         </div>
     </main>
     
@@ -425,6 +450,9 @@
         let allMarkets = [], filteredMarketsCache = [], currentCategory = 'all', currentSignal = 'all';
         let bets = JSON.parse(localStorage.getItem('polytrader_bets') || '[]');
         let isDark = localStorage.getItem('theme') === 'dark';
+        
+        // Store AI analysis results by market ID
+        let aiResults = JSON.parse(localStorage.getItem('polytrader_ai') || '{}');
         
         if (isDark) { document.body.setAttribute('data-theme', 'dark'); document.getElementById('themeIcon').textContent = 'light_mode'; }
         
@@ -789,12 +817,42 @@
                 });
             }
             
-            // Sort by signal score (best first)
-            filtered.sort((a, b) => calculateSignal(b).score - calculateSignal(a).score);
-            
             filteredMarketsCache = filtered;
             document.getElementById('filteredMarkets').textContent = filtered.length;
-            renderMarkets(filtered);
+            sortAndRender();
+        }
+        
+        function sortAndRender() {
+            const sortBy = document.getElementById('sortBy')?.value || 'score';
+            
+            // Sort based on selected option
+            filteredMarketsCache.sort((a, b) => {
+                const sigA = calculateSignal(a);
+                const sigB = calculateSignal(b);
+                const aiA = aiResults[a.id];
+                const aiB = aiResults[b.id];
+                
+                switch (sortBy) {
+                    case 'aiProb':
+                        // AI analyzed markets first, then by probability
+                        const probA = aiA?.probability || 0;
+                        const probB = aiB?.probability || 0;
+                        if (probA && !probB) return -1;
+                        if (!probA && probB) return 1;
+                        return probB - probA;
+                    case 'edge':
+                        return sigB.edge - sigA.edge;
+                    case 'volume':
+                        return b.volume - a.volume;
+                    case 'ev':
+                        return sigB.ev - sigA.ev;
+                    case 'score':
+                    default:
+                        return sigB.score - sigA.score;
+                }
+            });
+            
+            renderMarkets(filteredMarketsCache);
         }
         
         function renderMarkets(markets) {
@@ -821,7 +879,36 @@
                     return '<span class="signal-dot"></span>';
                 }).join('');
                 
-                return `<div class="market-card ${rarity}" onclick="openModal(${i})">
+                // Check if we have cached AI result
+                const aiResult = aiResults[m.id];
+                let aiBoxHtml = '';
+                
+                if (aiResult) {
+                    const recClass = aiResult.recommendation === 'buy-yes' ? 'buy' : aiResult.recommendation === 'buy-no' ? 'sell' : aiResult.recommendation === 'avoid' ? 'avoid' : 'hold';
+                    aiBoxHtml = `
+                        <div class="card-ai-result ${recClass}">
+                            <div class="card-ai-header">
+                                <span class="card-ai-rec ${recClass}">${aiResult.recText}</span>
+                                ${aiResult.probability ? `<span class="card-ai-prob">AI: ${aiResult.probability}%</span>` : ''}
+                            </div>
+                            <p class="card-ai-summary">${aiResult.summary}</p>
+                            <div class="card-ai-actions">
+                                <button class="card-ai-more" onclick="event.stopPropagation(); openModal(${i})">ดูเพิ่ม</button>
+                                <a href="${aiResult.newsUrl || '#'}" target="_blank" class="card-ai-news" onclick="event.stopPropagation()">📰 ข่าว</a>
+                                <button class="card-ai-refresh" onclick="event.stopPropagation(); analyzeCard(${i}, '${m.title.replace(/'/g, "\\'")}', '${m.category}', ${impl.toFixed(1)}, '${m.id}')">🔄</button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    aiBoxHtml = `
+                        <button class="card-ai-btn" onclick="event.stopPropagation(); analyzeCard(${i}, '${m.title.replace(/'/g, "\\'")}', '${m.category}', ${impl.toFixed(1)}, '${m.id}')">
+                            <span class="material-icons-round">psychology</span>
+                            AI วิเคราะห์
+                        </button>
+                    `;
+                }
+                
+                return `<div class="market-card ${rarity}" onclick="openModal(${i})" data-id="${m.id}">
                     ${hot ? '<span class="hot-badge">Hot!</span>' : ''}
                     <div class="card-body">
                         <div class="card-category">
@@ -834,15 +921,11 @@
                             ${date ? `<span class="card-meta-item"><span class="material-icons-round" style="font-size:14px;">event</span>${date}</span>` : ''}
                             <span class="card-meta-item"><span class="material-icons-round" style="font-size:14px;">bar_chart</span>$${formatNum(m.volume)}</span>
                             <span class="card-meta-item"><span class="signal-score">${scoreDots}</span> ${sig.score}pt</span>
+                            ${aiResult?.probability ? `<span class="card-meta-item ai-prob-badge">🧠 ${aiResult.probability}%</span>` : ''}
                         </div>
                     </div>
                     
-                    <div class="card-ai-box" id="ai-box-${i}">
-                        <button class="card-ai-btn" onclick="event.stopPropagation(); analyzeCard(${i}, '${m.title.replace(/'/g, "\\'")}', '${m.category}', ${impl.toFixed(1)})">
-                            <span class="material-icons-round">psychology</span>
-                            AI วิเคราะห์
-                        </button>
-                    </div>
+                    <div class="card-ai-box" id="ai-box-${i}">${aiBoxHtml}</div>
                     
                     <div class="sparkline-container"><span class="sparkline-label">7 วัน</span><div class="sparkline">${generateSparkline(isUp)}</div><span class="sparkline-change ${isUp ? 'up' : 'down'}">${isUp ? '+' : ''}${trend}%</span></div>
                     <div class="card-stats">
@@ -861,7 +944,7 @@
         }
         
         // AI Analysis for Card - short version
-        async function analyzeCard(index, title, category, impliedPct) {
+        async function analyzeCard(index, title, category, impliedPct, marketId) {
             const box = document.getElementById(`ai-box-${index}`);
             box.innerHTML = `<div class="card-ai-loading"><div class="loading-spinner-sm"></div><span>กำลังวิเคราะห์...</span></div>`;
             
@@ -898,10 +981,18 @@
                 }
                 
                 // Extract probability estimate
-                let probMatch = analysis.match(/(\d{1,2})-?(\d{1,2})?%|~(\d{1,2})%|ประมาณ\s*(\d{1,2})%/);
+                let probability = 0;
                 let probText = '';
+                const probMatch = analysis.match(/(\d{1,2})-(\d{1,2})%|~(\d{1,2})%|ประมาณ\s*(\d{1,2})%|โอกาส[^\d]*(\d{1,2})%/);
                 if (probMatch) {
                     probText = probMatch[0];
+                    // Extract the number
+                    const nums = probMatch[0].match(/\d+/g);
+                    if (nums && nums.length >= 2) {
+                        probability = (parseInt(nums[0]) + parseInt(nums[1])) / 2; // Average of range
+                    } else if (nums && nums.length === 1) {
+                        probability = parseInt(nums[0]);
+                    }
                 }
                 
                 // Short summary (first sentence or key point)
@@ -917,24 +1008,45 @@
                     summary = lines[0].substring(0, 80);
                 }
                 
+                // Store result
+                aiResults[marketId] = {
+                    recommendation,
+                    recText,
+                    probability,
+                    probText,
+                    summary: summary + (summary.length >= 80 ? '...' : ''),
+                    newsUrl: data.newsLinks?.google || '',
+                    fullAnalysis: analysis,
+                    timestamp: Date.now()
+                };
+                localStorage.setItem('polytrader_ai', JSON.stringify(aiResults));
+                
+                // Update UI
                 box.innerHTML = `
                     <div class="card-ai-result ${recClass}">
                         <div class="card-ai-header">
                             <span class="card-ai-rec ${recClass}">${recText}</span>
-                            ${probText ? `<span class="card-ai-prob">AI: ${probText}</span>` : ''}
+                            ${probability ? `<span class="card-ai-prob">AI: ${probability}%</span>` : ''}
                         </div>
                         <p class="card-ai-summary">${summary}${summary.length >= 80 ? '...' : ''}</p>
                         <div class="card-ai-actions">
                             <button class="card-ai-more" onclick="event.stopPropagation(); openModal(${index})">ดูเพิ่ม</button>
                             <a href="${data.newsLinks?.google || '#'}" target="_blank" class="card-ai-news" onclick="event.stopPropagation()">📰 ข่าว</a>
+                            <button class="card-ai-refresh" onclick="event.stopPropagation(); analyzeCard(${index}, '${title.replace(/'/g, "\\'")}', '${category}', ${impliedPct}, '${marketId}')">🔄</button>
                         </div>
                     </div>
                 `;
+                
+                // Re-sort if sorting by AI probability
+                if (document.getElementById('sortBy')?.value === 'aiProb') {
+                    sortAndRender();
+                }
+                
             } catch (err) {
                 box.innerHTML = `
                     <div class="card-ai-error">
                         <span>❌ วิเคราะห์ไม่ได้</span>
-                        <button onclick="event.stopPropagation(); analyzeCard(${index}, '${title.replace(/'/g, "\\'")}', '${category}', ${impliedPct})">ลองใหม่</button>
+                        <button onclick="event.stopPropagation(); analyzeCard(${index}, '${title.replace(/'/g, "\\'")}', '${category}', ${impliedPct}, '${marketId}')">ลองใหม่</button>
                     </div>
                 `;
             }
@@ -996,28 +1108,50 @@
             const count = Math.min(filteredMarketsCache.length, 10); // Max 10 at a time
             if (count === 0) return;
             
-            if (!confirm(`จะวิเคราะห์ ${count} ตลาด (ใช้ ${count} requests)\nต้องการดำเนินการ?`)) return;
+            // Count how many need analysis
+            let needAnalysis = 0;
+            for (let i = 0; i < count; i++) {
+                const m = filteredMarketsCache[i];
+                if (!aiResults[m.id]) needAnalysis++;
+            }
+            
+            if (needAnalysis === 0) {
+                alert('ทุกตลาดที่แสดงถูกวิเคราะห์แล้ว!');
+                return;
+            }
+            
+            if (!confirm(`จะวิเคราะห์ ${needAnalysis} ตลาด\nต้องการดำเนินการ?`)) return;
             
             for (let i = 0; i < count; i++) {
                 const m = filteredMarketsCache[i];
                 const impl = m.price * 100;
                 
-                // Check if already analyzed
-                const box = document.getElementById(`ai-box-${i}`);
-                if (box && box.querySelector('.card-ai-result')) continue;
+                // Skip if already analyzed
+                if (aiResults[m.id]) continue;
                 
-                await analyzeCard(i, m.title, m.category, impl.toFixed(1));
+                await analyzeCard(i, m.title, m.category, impl.toFixed(1), m.id);
                 
                 // Delay 500ms between requests to avoid rate limiting
-                if (i < count - 1) {
-                    await new Promise(r => setTimeout(r, 500));
-                }
+                await new Promise(r => setTimeout(r, 500));
             }
+            
+            // Re-sort after all done
+            sortAndRender();
         }
         
         function formatNum(n) { return n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'K' : n.toFixed(0); }
         
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalBtn(); });
+        
+        function clearAICache() {
+            if (confirm('ล้างข้อมูล AI วิเคราะห์ทั้งหมด?')) {
+                aiResults = {};
+                localStorage.removeItem('polytrader_ai');
+                sortAndRender();
+                alert('ล้างข้อมูล AI สำเร็จ!');
+            }
+        }
+        
         fetchMarkets();
     </script>
 </body>
