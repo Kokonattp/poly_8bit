@@ -191,6 +191,11 @@
         .card-ai-refresh:hover { background: var(--border-light); }
         
         .ai-prob-badge { background: linear-gradient(135deg, var(--primary), #8b5cf6); color: white; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 11px; }
+        
+        .analyze-progress { display: flex; align-items: center; gap: 8px; }
+        .progress-bar { width: 100px; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #8b5cf6); border-radius: 3px; transition: width 0.3s; width: 0%; }
+        .analyze-progress span { font-size: 11px; color: var(--text-muted); min-width: 40px; }
         .card-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 8px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .card-meta { display: flex; gap: 16px; font-size: 12px; color: var(--text-muted); }
         .card-meta-item { display: flex; align-items: center; gap: 4px; }
@@ -364,16 +369,20 @@
                 <div class="sort-group">
                     <label>เรียงตาม:</label>
                     <select id="sortBy" onchange="sortAndRender()">
-                        <option value="score">📊 Signal Score</option>
                         <option value="aiProb">🧠 AI วิเคราะห์</option>
+                        <option value="score">📊 Signal Score</option>
                         <option value="edge">📈 Edge</option>
                         <option value="volume">💰 Volume</option>
                         <option value="ev">💵 EV</option>
                     </select>
                 </div>
-                <button class="btn-analyze-all" onclick="analyzeAllVisible()" title="วิเคราะห์ทุกการ์ดที่แสดง">
+                <div id="analyzeProgress" class="analyze-progress" style="display: none;">
+                    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+                    <span id="progressText">0/0</span>
+                </div>
+                <button class="btn-analyze-all" id="btnAnalyzeAll" onclick="analyzeAllVisible()" title="วิเคราะห์ทุกการ์ดที่แสดง">
                     <span class="material-icons-round">psychology</span>
-                    วิเคราะห์ทั้งหมด
+                    <span id="btnAnalyzeText">วิเคราะห์ทั้งหมด</span>
                 </button>
             </div>
             
@@ -782,6 +791,9 @@
                 document.getElementById('totalMarkets').textContent = allMarkets.length;
                 document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
                 filterMarkets();
+                
+                // Auto-analyze all markets that don't have cached results
+                setTimeout(() => analyzeAllVisible(true), 500);
             } catch (err) {
                 pill.classList.add('offline');
                 text.textContent = 'ไม่สามารถเชื่อมต่อ';
@@ -1104,39 +1116,151 @@
         }
         
         // Analyze all visible cards (with delay to avoid rate limiting)
-        async function analyzeAllVisible() {
-            const count = Math.min(filteredMarketsCache.length, 10); // Max 10 at a time
+        let isAnalyzing = false;
+        
+        async function analyzeAllVisible(auto = false) {
+            if (isAnalyzing) return;
+            
+            const maxCards = 50; // Analyze up to 50 cards
+            const count = Math.min(filteredMarketsCache.length, maxCards);
             if (count === 0) return;
             
             // Count how many need analysis
-            let needAnalysis = 0;
+            let needAnalysis = [];
             for (let i = 0; i < count; i++) {
                 const m = filteredMarketsCache[i];
-                if (!aiResults[m.id]) needAnalysis++;
+                if (!aiResults[m.id]) needAnalysis.push(i);
             }
             
-            if (needAnalysis === 0) {
-                alert('ทุกตลาดที่แสดงถูกวิเคราะห์แล้ว!');
+            if (needAnalysis.length === 0) {
+                if (!auto) alert('ทุกตลาดที่แสดงถูกวิเคราะห์แล้ว!');
                 return;
             }
             
-            if (!confirm(`จะวิเคราะห์ ${needAnalysis} ตลาด\nต้องการดำเนินการ?`)) return;
+            if (!auto && !confirm(`จะวิเคราะห์ ${needAnalysis.length} ตลาด\nต้องการดำเนินการ?`)) return;
             
-            for (let i = 0; i < count; i++) {
+            isAnalyzing = true;
+            
+            // Show progress
+            const progressDiv = document.getElementById('analyzeProgress');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            const btn = document.getElementById('btnAnalyzeAll');
+            const btnText = document.getElementById('btnAnalyzeText');
+            
+            progressDiv.style.display = 'flex';
+            btn.disabled = true;
+            btn.style.opacity = '0.5';
+            btnText.textContent = 'กำลังวิเคราะห์...';
+            
+            let completed = 0;
+            const total = needAnalysis.length;
+            
+            for (const i of needAnalysis) {
                 const m = filteredMarketsCache[i];
                 const impl = m.price * 100;
                 
-                // Skip if already analyzed
-                if (aiResults[m.id]) continue;
+                try {
+                    await analyzeCardSilent(m.title, m.category, impl.toFixed(1), m.id);
+                } catch (e) {
+                    console.error('Analyze error:', e);
+                }
                 
-                await analyzeCard(i, m.title, m.category, impl.toFixed(1), m.id);
+                completed++;
+                const pct = (completed / total * 100).toFixed(0);
+                progressFill.style.width = pct + '%';
+                progressText.textContent = `${completed}/${total}`;
                 
-                // Delay 500ms between requests to avoid rate limiting
-                await new Promise(r => setTimeout(r, 500));
+                // Delay 300ms between requests
+                if (completed < total) {
+                    await new Promise(r => setTimeout(r, 300));
+                }
             }
             
-            // Re-sort after all done
+            // Done
+            isAnalyzing = false;
+            progressDiv.style.display = 'none';
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            btnText.textContent = 'วิเคราะห์ทั้งหมด';
+            
+            // Re-sort and render
             sortAndRender();
+        }
+        
+        // Silent version - no UI update per card, just store results
+        async function analyzeCardSilent(title, category, impliedPct, marketId) {
+            try {
+                const response = await fetch("/api/analyze", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ title, category, impliedPct })
+                });
+                
+                if (!response.ok) throw new Error('API Error');
+                
+                const data = await response.json();
+                const analysis = data.analysis || '';
+                
+                // Parse recommendation
+                let recommendation = 'hold';
+                let recText = '⏸️ รอดูก่อน';
+                
+                const lowerAnalysis = analysis.toLowerCase();
+                if (lowerAnalysis.includes('ควรซื้อ yes') || lowerAnalysis.includes('แนะนำซื้อ yes') || lowerAnalysis.includes('ซื้อ yes')) {
+                    recommendation = 'buy-yes';
+                    recText = '✅ ซื้อ YES';
+                } else if (lowerAnalysis.includes('ควรซื้อ no') || lowerAnalysis.includes('แนะนำซื้อ no') || lowerAnalysis.includes('ซื้อ no')) {
+                    recommendation = 'buy-no';
+                    recText = '🔴 ซื้อ NO';
+                } else if (lowerAnalysis.includes('ไม่ควรเทรด') || lowerAnalysis.includes('หลีกเลี่ยง') || lowerAnalysis.includes('ไม่แนะนำ')) {
+                    recommendation = 'avoid';
+                    recText = '⚠️ หลีกเลี่ยง';
+                }
+                
+                // Extract probability
+                let probability = 0;
+                let probText = '';
+                const probMatch = analysis.match(/(\d{1,2})-(\d{1,2})%|~(\d{1,2})%|ประมาณ\s*(\d{1,2})%|โอกาส[^\d]*(\d{1,2})%/);
+                if (probMatch) {
+                    probText = probMatch[0];
+                    const nums = probMatch[0].match(/\d+/g);
+                    if (nums && nums.length >= 2) {
+                        probability = (parseInt(nums[0]) + parseInt(nums[1])) / 2;
+                    } else if (nums && nums.length === 1) {
+                        probability = parseInt(nums[0]);
+                    }
+                }
+                
+                // Summary
+                let summary = '';
+                const lines = analysis.split('\n').filter(l => l.trim());
+                for (const line of lines) {
+                    if (line.includes('🎯') || line.includes('โอกาส')) {
+                        summary = line.replace(/🎯|โอกาสเกิดจริง:|โอกาส:/g, '').trim().substring(0, 80);
+                        break;
+                    }
+                }
+                if (!summary && lines.length > 0) {
+                    summary = lines[0].substring(0, 80);
+                }
+                
+                // Store result
+                aiResults[marketId] = {
+                    recommendation,
+                    recText,
+                    probability,
+                    probText,
+                    summary: summary + (summary.length >= 80 ? '...' : ''),
+                    newsUrl: data.newsLinks?.google || '',
+                    fullAnalysis: analysis,
+                    timestamp: Date.now()
+                };
+                localStorage.setItem('polytrader_ai', JSON.stringify(aiResults));
+                
+            } catch (err) {
+                console.error('Silent analyze error:', err);
+            }
         }
         
         function formatNum(n) { return n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'K' : n.toFixed(0); }
