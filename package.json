@@ -1,5 +1,8 @@
 {
-  "name": "polytrader-8bit",
-  "version": "1.0.0",
-  "private": true
+  "name": "polytrader-m3",
+  "version": "2.0.0",
+  "description": "PolyTrader Pro - Material Design 3 Edition",
+  "scripts": {
+    "start": "npx serve public"
+  }
 }
