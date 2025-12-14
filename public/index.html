@@ -6,7 +6,6 @@
     <title>PolyTrader Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         :root {
@@ -14,7 +13,6 @@
             --primary-light: #818cf8;
             --primary-dark: #4f46e5;
             --primary-bg: #eef2ff;
-            
             --success: #10b981;
             --success-bg: #d1fae5;
             --warning: #f59e0b;
@@ -23,7 +21,6 @@
             --error-bg: #fee2e2;
             --info: #3b82f6;
             --info-bg: #dbeafe;
-            
             --bg: #f8fafc;
             --bg-card: #ffffff;
             --text: #1e293b;
@@ -31,20 +28,12 @@
             --text-muted: #94a3b8;
             --border: #e2e8f0;
             --border-light: #f1f5f9;
-            
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
         }
         
         [data-theme="dark"] {
             --primary: #818cf8;
-            --primary-light: #a5b4fc;
-            --primary-dark: #6366f1;
             --primary-bg: #1e1b4b;
-            
             --success: #34d399;
             --success-bg: #064e3b;
             --warning: #fbbf24;
@@ -53,7 +42,6 @@
             --error-bg: #7f1d1d;
             --info: #60a5fa;
             --info-bg: #1e3a8a;
-            
             --bg: #0f172a;
             --bg-card: #1e293b;
             --text: #f1f5f9;
@@ -64,1036 +52,183 @@
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Prompt', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
         
-        body {
-            font-family: 'Prompt', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            transition: all 0.3s;
-        }
+        .header { background: var(--bg-card); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .logo { display: flex; align-items: center; gap: 12px; }
+        .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; }
+        .logo-text { font-size: 20px; font-weight: 600; }
+        .header-actions { display: flex; align-items: center; gap: 12px; }
+        .status-pill { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: var(--success-bg); color: var(--success); border-radius: 50px; font-size: 13px; font-weight: 500; }
+        .status-pill.offline { background: var(--error-bg); color: var(--error); }
+        .status-dot { width: 8px; height: 8px; background: currentColor; border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .icon-btn { width: 44px; height: 44px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .icon-btn:hover { background: var(--border-light); }
         
-        /* Header */
-        .header {
-            background: var(--bg-card);
-            border-bottom: 1px solid var(--border);
-            padding: 16px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
-        
-        .logo-text {
-            font-size: 20px;
-            font-weight: 600;
-        }
-        
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .status-pill {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            background: var(--success-bg);
-            color: var(--success);
-            border-radius: 50px;
-            font-size: 13px;
-            font-weight: 500;
-        }
-        
-        .status-pill.offline {
-            background: var(--error-bg);
-            color: var(--error);
-        }
-        
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: currentColor;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.9); }
-        }
-        
-        .icon-btn {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            background: var(--bg-card);
-            color: var(--text-secondary);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-        
-        .icon-btn:hover {
-            background: var(--border-light);
-            color: var(--text);
-        }
-        
-        /* Main */
-        .main {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 24px;
-        }
-        
-        /* Tabs */
-        .tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 24px;
-            background: var(--bg-card);
-            padding: 6px;
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            width: fit-content;
-        }
-        
-        .tab-btn {
-            padding: 12px 24px;
-            border: none;
-            background: transparent;
-            color: var(--text-secondary);
-            font-family: inherit;
-            font-size: 14px;
-            font-weight: 500;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .tab-btn:hover {
-            background: var(--border-light);
-        }
-        
-        .tab-btn.active {
-            background: var(--primary);
-            color: white;
-        }
-        
+        .main { max-width: 1400px; margin: 0 auto; padding: 24px; }
+        .tabs { display: flex; gap: 8px; margin-bottom: 24px; background: var(--bg-card); padding: 6px; border-radius: 16px; border: 1px solid var(--border); width: fit-content; }
+        .tab-btn { padding: 12px 24px; border: none; background: transparent; color: var(--text-secondary); font-family: inherit; font-size: 14px; font-weight: 500; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .tab-btn:hover { background: var(--border-light); }
+        .tab-btn.active { background: var(--primary); color: white; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         
-        /* Controls */
-        .controls-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 24px;
-        }
+        .controls-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 24px; }
+        .controls-row { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-end; }
+        .control-group { display: flex; flex-direction: column; gap: 6px; }
+        .control-group label { font-size: 12px; font-weight: 500; color: var(--text-secondary); }
+        .input-field { padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--text); font-family: inherit; font-size: 14px; width: 120px; }
+        .input-field:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-bg); }
+        .search-field { flex: 1; min-width: 250px; }
+        .search-field .input-field { width: 100%; }
         
-        .controls-row {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-            align-items: flex-end;
-        }
+        .btn { padding: 12px 24px; border: none; border-radius: 10px; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; }
+        .btn-primary:hover { box-shadow: var(--shadow-lg); transform: translateY(-1px); }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+        .btn-success { background: var(--success); color: white; }
         
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
+        .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+        .filter-pill { padding: 10px 18px; border: 1px solid var(--border); border-radius: 50px; background: var(--bg-card); color: var(--text-secondary); font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; }
+        .filter-pill:hover { border-color: var(--primary); color: var(--primary); }
+        .filter-pill.active { background: var(--primary-bg); border-color: var(--primary); color: var(--primary); }
         
-        .control-group label {
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--text-secondary);
-        }
+        .stats-row { display: flex; gap: 24px; margin-bottom: 20px; font-size: 14px; color: var(--text-secondary); }
+        .stats-row strong { color: var(--primary); }
         
-        .input-field {
-            padding: 12px 16px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            background: var(--bg);
-            color: var(--text);
-            font-family: inherit;
-            font-size: 14px;
-            width: 120px;
-            transition: all 0.2s;
-        }
+        .market-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
         
-        .input-field:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--primary-bg);
-        }
-        
-        .search-field {
-            flex: 1;
-            min-width: 250px;
-        }
-        
-        .search-field .input-field {
-            width: 100%;
-            padding-left: 44px;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%2394a3b8' viewBox='0 0 24 24'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: 14px center;
-            background-size: 20px;
-        }
-        
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 10px;
-            font-family: inherit;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateY(-1px);
-        }
-        
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text);
-        }
-        
-        .btn-outline:hover {
-            background: var(--border-light);
-        }
-        
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-        
-        /* Filter Pills */
-        .filter-row {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 24px;
-        }
-        
-        .filter-pill {
-            padding: 10px 18px;
-            border: 1px solid var(--border);
-            border-radius: 50px;
-            background: var(--bg-card);
-            color: var(--text-secondary);
-            font-family: inherit;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .filter-pill:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-        
-        .filter-pill.active {
-            background: var(--primary-bg);
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-        
-        /* Stats */
-        .stats-row {
-            display: flex;
-            gap: 24px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-        
-        .stats-row strong {
-            color: var(--primary);
-        }
-        
-        /* Market Grid */
-        .market-grid {
-            display: grid;
-            gap: 16px;
-            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-        }
-        
-        /* Market Card - Clean Style */
-        .market-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            overflow: hidden;
-            transition: all 0.3s;
-            cursor: pointer;
-            position: relative;
-        }
-        
-        .market-card:hover {
-            border-color: var(--primary);
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-4px);
-        }
-        
-        .market-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: var(--border);
-            transition: all 0.3s;
-        }
-        
-        .market-card:hover::before {
-            background: var(--primary);
-        }
-        
+        .market-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; cursor: pointer; position: relative; transition: transform 0.2s, box-shadow 0.2s; }
+        .market-card:hover { border-color: var(--primary); box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+        .market-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--border); }
         .market-card.legendary::before { background: var(--success); }
         .market-card.epic::before { background: var(--info); }
         .market-card.rare::before { background: var(--warning); }
         .market-card.skip::before { background: var(--error); }
         
-        /* Hot Badge */
-        .hot-badge {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            padding: 4px 10px;
-            background: var(--error);
-            color: white;
-            font-size: 11px;
-            font-weight: 600;
-            border-radius: 6px;
-        }
+        .hot-badge { position: absolute; top: 12px; right: 12px; padding: 4px 10px; background: var(--error); color: white; font-size: 11px; font-weight: 600; border-radius: 6px; }
+        .card-body { padding: 20px; }
+        .card-category { font-size: 12px; font-weight: 500; color: var(--primary); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .trend-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 500; }
+        .trend-badge.up { background: var(--success-bg); color: var(--success); }
+        .trend-badge.down { background: var(--error-bg); color: var(--error); }
+        .card-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 8px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .card-meta { display: flex; gap: 16px; font-size: 12px; color: var(--text-muted); }
+        .card-meta-item { display: flex; align-items: center; gap: 4px; }
         
-        .card-body {
-            padding: 20px;
-        }
+        .sparkline-container { padding: 12px 20px; background: var(--bg); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+        .sparkline-label { font-size: 11px; color: var(--text-muted); }
+        .sparkline { flex: 1; height: 30px; margin: 0 12px; }
+        .sparkline svg { width: 100%; height: 100%; }
+        .sparkline-change { font-size: 12px; font-weight: 600; }
+        .sparkline-change.up { color: var(--success); }
+        .sparkline-change.down { color: var(--error); }
         
-        .card-category {
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--primary);
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .card-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text);
-            margin-bottom: 12px;
-            line-height: 1.4;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-        
-        .card-meta {
-            display: flex;
-            gap: 16px;
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-        
-        .card-meta-item {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        
-        .card-stats {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 0;
-            border-top: 1px solid var(--border);
-        }
-        
-        .stat-box {
-            text-align: center;
-            padding: 12px 8px;
-            border-right: 1px solid var(--border);
-        }
-        
-        .stat-box:last-child {
-            border-right: none;
-        }
-        
-        .stat-label {
-            font-size: 11px;
-            font-weight: 500;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-        
-        .stat-value {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text);
-        }
-        
+        .card-stats { display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid var(--border); }
+        .stat-box { text-align: center; padding: 12px 6px; border-right: 1px solid var(--border); }
+        .stat-box:last-child { border-right: none; }
+        .stat-label { font-size: 10px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
+        .stat-value { font-size: 15px; font-weight: 700; color: var(--text); }
         .stat-value.positive { color: var(--success); }
         .stat-value.negative { color: var(--error); }
         
-        /* Mini Chart */
-        .mini-chart-container {
-            padding: 12px 20px;
-            background: var(--bg);
-            border-top: 1px solid var(--border);
-        }
+        .card-footer { padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); }
+        .card-input-group { display: flex; align-items: center; gap: 8px; }
+        .card-input-group label { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
+        .card-input-group .input-field { width: 60px; padding: 8px 10px; font-size: 14px; }
+        .card-input-group .btn { padding: 8px 14px; }
+        .card-trade-btn { padding: 8px 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; text-decoration: none; }
+        .card-trade-btn:hover { background: var(--primary); border-color: var(--primary); color: white; }
         
-        .mini-chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); z-index: 1000; display: none; justify-content: center; align-items: center; padding: 20px; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: var(--bg-card); border-radius: 20px; max-width: 600px; width: 100%; max-height: 85vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25); animation: modalIn 0.2s ease; }
+        @keyframes modalIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; position: sticky; top: 0; background: var(--bg-card); z-index: 10; }
+        .modal-header h2 { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 4px; line-height: 1.4; }
+        .modal-header .category { font-size: 13px; color: var(--primary); font-weight: 500; }
+        .modal-close { width: 32px; height: 32px; border-radius: 8px; border: none; background: var(--bg); color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .modal-close:hover { background: var(--error-bg); color: var(--error); }
+        .modal-body { padding: 20px 24px; }
+        .modal-section { margin-bottom: 20px; }
+        .modal-section:last-child { margin-bottom: 0; }
+        .modal-section h3 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .modal-section p, .modal-section li { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+        .modal-section ul { padding-left: 20px; }
+        .modal-section li { margin-bottom: 4px; }
         
-        .mini-chart-title {
-            font-size: 11px;
-            font-weight: 500;
-            color: var(--text-muted);
-        }
-        
-        .mini-chart-change {
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .mini-chart-change.up { color: var(--success); }
-        .mini-chart-change.down { color: var(--error); }
-        
-        .mini-chart {
-            height: 50px;
-            width: 100%;
-        }
-        
-        /* Suggested Model */
-        .suggested-model {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 12px;
-            background: var(--primary-bg);
-            border-radius: 8px;
-            margin-bottom: 8px;
-            font-size: 12px;
-        }
-        
-        .suggested-model .label {
-            color: var(--text-secondary);
-        }
-        
-        .suggested-model .value {
-            color: var(--primary);
-            font-weight: 600;
-        }
-        
-        .use-suggested-btn {
-            padding: 4px 10px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-family: inherit;
-            font-size: 11px;
-            cursor: pointer;
-            margin-left: auto;
-        }
-        
-        .use-suggested-btn:hover {
-            opacity: 0.9;
-        }
-        
-        /* Trend indicator */
-        .trend-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 500;
-        }
-        
-        .trend-badge.up {
-            background: var(--success-bg);
-            color: var(--success);
-        }
-        
-        .trend-badge.down {
-            background: var(--error-bg);
-            color: var(--error);
-        }
-        
-        .trend-badge.neutral {
-            background: var(--bg);
-            color: var(--text-muted);
-        }
-        
-        .card-footer {
-            padding: 16px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-top: 1px solid var(--border);
-        }
-        
-        .card-input-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .card-input-group label {
-            font-size: 13px;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-        
-        .card-input-group .input-field {
-            width: 70px;
-            padding: 8px 12px;
-            font-size: 14px;
-        }
-        
-        .card-input-group .btn {
-            padding: 8px 16px;
-        }
-        
-        .card-trade-btn {
-            padding: 8px 16px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text);
-            font-family: inherit;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s;
-            text-decoration: none;
-        }
-        
-        .card-trade-btn:hover {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: white;
-        }
-        
-        /* Modal Popup */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        
-        .modal-overlay.active {
-            display: flex;
-        }
-        
-        .modal {
-            background: var(--bg-card);
-            border-radius: 24px;
-            max-width: 600px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: var(--shadow-xl);
-            animation: modalIn 0.3s ease;
-        }
-        
-        @keyframes modalIn {
-            from { opacity: 0; transform: scale(0.95) translateY(20px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        
-        .modal-header {
-            padding: 24px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-        
-        .modal-header h2 {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--text);
-            margin-bottom: 4px;
-        }
-        
-        .modal-header .category {
-            font-size: 13px;
-            color: var(--primary);
-            font-weight: 500;
-        }
-        
-        .modal-close {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            border: none;
-            background: var(--bg);
-            color: var(--text-secondary);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-        
-        .modal-close:hover {
-            background: var(--error-bg);
-            color: var(--error);
-        }
-        
-        .modal-body {
-            padding: 24px;
-        }
-        
-        .modal-section {
-            margin-bottom: 24px;
-        }
-        
-        .modal-section:last-child {
-            margin-bottom: 0;
-        }
-        
-        .modal-section h3 {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .modal-section p,
-        .modal-section li {
-            font-size: 14px;
-            color: var(--text-secondary);
-            line-height: 1.7;
-        }
-        
-        .modal-section ul {
-            padding-left: 20px;
-        }
-        
-        .modal-section li {
-            margin-bottom: 6px;
-        }
-        
-        /* Profit Calculator */
-        .calc-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-        }
-        
-        .calc-card {
-            background: var(--bg);
-            border-radius: 12px;
-            padding: 16px;
-            border: 1px solid var(--border);
-        }
-        
-        .calc-card.highlight {
-            border-color: var(--primary);
-            background: var(--primary-bg);
-        }
-        
-        .calc-card h4 {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .calc-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px dashed var(--border);
-        }
-        
-        .calc-row:last-child {
-            border-bottom: none;
-        }
-        
-        .calc-label {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-        
-        .calc-value {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text);
-        }
-        
+        .calc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .calc-card { background: var(--bg); border-radius: 12px; padding: 14px; border: 1px solid var(--border); }
+        .calc-card h4 { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 10px; }
+        .calc-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px dashed var(--border); }
+        .calc-row:last-child { border-bottom: none; }
+        .calc-label { font-size: 12px; color: var(--text-secondary); }
+        .calc-value { font-size: 13px; font-weight: 600; color: var(--text); }
         .calc-value.positive { color: var(--success); }
         .calc-value.negative { color: var(--error); }
         
-        /* Recommendation Box */
-        .recommend-box {
-            background: linear-gradient(135deg, var(--primary-bg), var(--info-bg));
-            border-radius: 12px;
-            padding: 16px;
-            border: 1px solid var(--primary);
-        }
+        .recommend-box { background: var(--primary-bg); border-radius: 12px; padding: 16px; border: 1px solid var(--primary); }
+        .recommend-box h4 { font-size: 14px; font-weight: 600; color: var(--primary); margin-bottom: 12px; }
+        .recommend-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(99, 102, 241, 0.2); }
+        .recommend-item:last-child { border-bottom: none; }
+        .recommend-label { font-size: 13px; color: var(--text-secondary); }
+        .recommend-value { font-size: 14px; font-weight: 700; color: var(--primary); }
+        .quick-bet-row { display: flex; gap: 8px; margin-top: 12px; }
+        .quick-bet-btn { flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-card); color: var(--text); font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; }
+        .quick-bet-btn:hover { background: var(--primary); border-color: var(--primary); color: white; }
         
-        .recommend-box h4 {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; position: sticky; bottom: 0; background: var(--bg-card); }
+        .modal-footer .btn { flex: 1; justify-content: center; }
         
-        .recommend-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
-        }
+        .strategy-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+        .strategy-tag { padding: 6px 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; font-size: 12px; color: var(--text-secondary); }
         
-        .recommend-item:last-child {
-            border-bottom: none;
-        }
+        .loading-state, .empty-state { text-align: center; padding: 60px 20px; grid-column: 1 / -1; }
+        .loading-icon { font-size: 48px; margin-bottom: 16px; }
         
-        .recommend-label {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
+        .guide-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 16px; overflow: hidden; }
+        .guide-card.highlight { border-color: var(--primary); }
+        .guide-header { padding: 16px 20px; background: var(--bg); border-bottom: 1px solid var(--border); font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .guide-body { padding: 20px; }
+        .guide-body p { font-size: 14px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 8px; }
+        .guide-body strong { color: var(--text); }
         
-        .recommend-value {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--primary);
-        }
-        
-        .quick-bet-row {
-            display: flex;
-            gap: 8px;
-            margin-top: 12px;
-        }
-        
-        .quick-bet-btn {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            background: var(--bg-card);
-            color: var(--text);
-            font-family: inherit;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .quick-bet-btn:hover {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: white;
-        }
-        
-        .modal-footer {
-            padding: 20px 24px;
-            border-top: 1px solid var(--border);
-            display: flex;
-            gap: 12px;
-        }
-        
-        .modal-footer .btn {
-            flex: 1;
-            justify-content: center;
-        }
-        
-        /* Strategy Tags */
-        .strategy-tags {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-        
-        .strategy-tag {
-            padding: 6px 12px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-        
-        /* Loading & Empty */
-        .loading-state,
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            grid-column: 1 / -1;
-        }
-        
-        .loading-icon {
-            font-size: 48px;
-            margin-bottom: 16px;
-            animation: bounce 0.6s infinite alternate;
-        }
-        
-        @keyframes bounce {
-            from { transform: translateY(0); }
-            to { transform: translateY(-10px); }
-        }
-        
-        /* Guide */
-        .guide-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            margin-bottom: 16px;
-            overflow: hidden;
-        }
-        
-        .guide-card.highlight {
-            border-color: var(--primary);
-        }
-        
-        .guide-header {
-            padding: 20px;
-            background: var(--bg);
-            border-bottom: 1px solid var(--border);
-            font-size: 16px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .guide-body {
-            padding: 20px;
-        }
-        
-        .guide-body p {
-            font-size: 15px;
-            color: var(--text-secondary);
-            line-height: 1.8;
-            margin-bottom: 8px;
-        }
-        
-        .guide-body strong {
-            color: var(--text);
-        }
-        
-        /* Portfolio */
-        .portfolio-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-        
-        .portfolio-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px;
-        }
-        
-        .portfolio-card .label {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-        }
-        
-        .portfolio-card .value {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--text);
-        }
-        
+        .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .portfolio-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
+        .portfolio-card .label { font-size: 12px; font-weight: 500; color: var(--text-secondary); margin-bottom: 8px; }
+        .portfolio-card .value { font-size: 28px; font-weight: 700; color: var(--text); }
         .portfolio-card .value.positive { color: var(--success); }
         .portfolio-card .value.negative { color: var(--error); }
+        .portfolio-card .sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+        .progress-bar { height: 6px; background: var(--bg); border-radius: 3px; margin-top: 12px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--error), var(--warning), var(--success)); border-radius: 3px; }
         
-        .portfolio-card .sub {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
+        .form-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 24px; }
+        .form-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 16px; }
+        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 11px; font-weight: 500; color: var(--text-secondary); margin-bottom: 4px; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); font-family: inherit; font-size: 13px; }
         
-        .progress-bar {
-            height: 8px;
-            background: var(--bg);
-            border-radius: 4px;
-            margin-top: 12px;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--error), var(--warning), var(--success));
-            border-radius: 4px;
-        }
-        
-        .form-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 24px;
-        }
-        
-        .form-card h3 {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-        
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 16px;
-            margin-bottom: 16px;
-        }
-        
-        .form-group label {
-            display: block;
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            margin-bottom: 6px;
-        }
-        
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            background: var(--bg);
-            color: var(--text);
-            font-family: inherit;
-            font-size: 14px;
-        }
-        
-        .table-container {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            overflow: hidden;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        th {
-            padding: 16px;
-            text-align: left;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            background: var(--bg);
-            text-transform: uppercase;
-        }
-        
-        td {
-            padding: 16px;
-            font-size: 14px;
-            border-top: 1px solid var(--border);
-        }
-        
+        .table-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        th { padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 600; color: var(--text-secondary); background: var(--bg); text-transform: uppercase; }
+        td { padding: 12px 16px; font-size: 13px; border-top: 1px solid var(--border); }
         .win { color: var(--success); }
         .loss { color: var(--error); }
         
         @media (max-width: 768px) {
             .market-grid { grid-template-columns: 1fr; }
             .calc-grid { grid-template-columns: 1fr; }
-            .tabs { width: 100%; }
-            .tab-btn { flex: 1; justify-content: center; font-size: 12px; padding: 10px 12px; }
+            .card-stats { grid-template-columns: repeat(3, 1fr); }
+            .stat-box:nth-child(3) { border-right: none; }
         }
     </style>
 </head>
 <body>
     <header class="header">
         <div class="logo">
-            <div class="logo-icon">
-                <span class="material-icons-round">show_chart</span>
-            </div>
+            <div class="logo-icon"><span class="material-icons-round">show_chart</span></div>
             <span class="logo-text">PolyTrader Pro</span>
         </div>
         <div class="header-actions">
@@ -1109,54 +244,30 @@
     
     <main class="main">
         <div class="tabs">
-            <button class="tab-btn active" onclick="showTab('scanner')">
-                <span class="material-icons-round">search</span>
-                ค้นหาตลาด
-            </button>
-            <button class="tab-btn" onclick="showTab('portfolio')">
-                <span class="material-icons-round">account_balance_wallet</span>
-                พอร์ตโฟลิโอ
-            </button>
-            <button class="tab-btn" onclick="showTab('guide')">
-                <span class="material-icons-round">help_outline</span>
-                คู่มือ
-            </button>
+            <button class="tab-btn active" onclick="showTab('scanner')"><span class="material-icons-round">search</span>ค้นหาตลาด</button>
+            <button class="tab-btn" onclick="showTab('portfolio')"><span class="material-icons-round">account_balance_wallet</span>พอร์ต</button>
+            <button class="tab-btn" onclick="showTab('guide')"><span class="material-icons-round">help_outline</span>คู่มือ</button>
         </div>
         
         <div class="tab-content active" id="tab-scanner">
             <div class="controls-card">
                 <div class="controls-row">
-                    <div class="control-group">
-                        <label>เงินทุน ($)</label>
-                        <input type="number" class="input-field" id="bankroll" value="100">
-                    </div>
-                    <div class="control-group">
-                        <label>เงินลงต่อครั้ง ($)</label>
-                        <input type="number" class="input-field" id="betAmount" value="10">
-                    </div>
-                    <div class="control-group">
-                        <label>Edge ขั้นต่ำ (%)</label>
-                        <input type="number" class="input-field" id="minEdge" value="5">
-                    </div>
-                    <div class="control-group search-field">
-                        <label>ค้นหาตลาด</label>
-                        <input type="text" class="input-field" id="searchInput" placeholder="พิมพ์ชื่อตลาด เช่น Bitcoin, Trump..." oninput="filterMarkets()">
-                    </div>
-                    <button class="btn btn-primary" onclick="fetchMarkets()">
-                        <span class="material-icons-round">refresh</span>
-                        โหลดใหม่
-                    </button>
+                    <div class="control-group"><label>เงินทุน ($)</label><input type="number" class="input-field" id="bankroll" value="100"></div>
+                    <div class="control-group"><label>เงินลงต่อครั้ง ($)</label><input type="number" class="input-field" id="betAmount" value="10"></div>
+                    <div class="control-group"><label>Edge ขั้นต่ำ (%)</label><input type="number" class="input-field" id="minEdge" value="5"></div>
+                    <div class="control-group search-field"><label>ค้นหาตลาด</label><input type="text" class="input-field" id="searchInput" placeholder="พิมพ์ชื่อตลาด..." oninput="filterMarkets()"></div>
+                    <button class="btn btn-primary" onclick="fetchMarkets()"><span class="material-icons-round">refresh</span>โหลดใหม่</button>
                 </div>
             </div>
             
             <div class="filter-row">
-                <button class="filter-pill active" data-cat="all" onclick="filterCategory('all', this)">🌐 ทั้งหมด</button>
-                <button class="filter-pill" data-cat="crypto" onclick="filterCategory('crypto', this)">₿ คริปโต</button>
-                <button class="filter-pill" data-cat="politics" onclick="filterCategory('politics', this)">🏛️ การเมือง</button>
-                <button class="filter-pill" data-cat="sports" onclick="filterCategory('sports', this)">⚽ กีฬา</button>
-                <button class="filter-pill" data-cat="entertainment" onclick="filterCategory('entertainment', this)">🎬 บันเทิง</button>
-                <button class="filter-pill" data-cat="science" onclick="filterCategory('science', this)">🔬 AI/วิทย์</button>
-                <button class="filter-pill" data-cat="business" onclick="filterCategory('business', this)">💼 ธุรกิจ</button>
+                <button class="filter-pill active" onclick="filterCategory('all', this)">🌐 ทั้งหมด</button>
+                <button class="filter-pill" onclick="filterCategory('crypto', this)">₿ คริปโต</button>
+                <button class="filter-pill" onclick="filterCategory('politics', this)">🏛️ การเมือง</button>
+                <button class="filter-pill" onclick="filterCategory('sports', this)">⚽ กีฬา</button>
+                <button class="filter-pill" onclick="filterCategory('entertainment', this)">🎬 บันเทิง</button>
+                <button class="filter-pill" onclick="filterCategory('science', this)">🔬 AI/วิทย์</button>
+                <button class="filter-pill" onclick="filterCategory('business', this)">💼 ธุรกิจ</button>
             </div>
             
             <div class="stats-row">
@@ -1165,134 +276,56 @@
                 <div>อัปเดต: <strong id="lastUpdate">--:--</strong></div>
             </div>
             
-            <div class="market-grid" id="marketGrid">
-                <div class="loading-state">
-                    <div class="loading-icon">📊</div>
-                    <div>กำลังโหลดข้อมูลตลาด...</div>
-                </div>
-            </div>
+            <div class="market-grid" id="marketGrid"><div class="loading-state"><div class="loading-icon">📊</div><div>กำลังโหลด...</div></div></div>
         </div>
         
         <div class="tab-content" id="tab-portfolio">
             <div class="portfolio-grid">
-                <div class="portfolio-card">
-                    <div class="label">💰 เงินทุนปัจจุบัน</div>
-                    <div class="value" id="pBankroll">$100</div>
-                    <div class="progress-bar"><div class="progress-fill" id="hpFill" style="width: 100%;"></div></div>
-                </div>
-                <div class="portfolio-card">
-                    <div class="label">📈 กำไร/ขาดทุน</div>
-                    <div class="value positive" id="pPnL">+$0</div>
-                    <div class="sub" id="pPnLPct">0% จากเงินทุนเริ่มต้น</div>
-                </div>
-                <div class="portfolio-card">
-                    <div class="label">🎯 อัตราการชนะ</div>
-                    <div class="value" id="pWinRate">0%</div>
-                    <div class="sub" id="pWinLoss">ชนะ 0 - แพ้ 0</div>
-                </div>
+                <div class="portfolio-card"><div class="label">💰 เงินทุนปัจจุบัน</div><div class="value" id="pBankroll">$100</div><div class="progress-bar"><div class="progress-fill" id="hpFill" style="width: 100%;"></div></div></div>
+                <div class="portfolio-card"><div class="label">📈 กำไร/ขาดทุน</div><div class="value positive" id="pPnL">+$0</div><div class="sub" id="pPnLPct">0%</div></div>
+                <div class="portfolio-card"><div class="label">🎯 อัตราชนะ</div><div class="value" id="pWinRate">0%</div><div class="sub" id="pWinLoss">ชนะ 0 - แพ้ 0</div></div>
             </div>
-            
             <div class="form-card">
                 <h3>➕ บันทึกการเทรด</h3>
                 <div class="form-row">
-                    <div class="form-group"><label>ชื่อตลาด</label><input type="text" id="betEvent" placeholder="เช่น BITCOIN >100K"></div>
-                    <div class="form-group"><label>เงินที่ลง ($)</label><input type="number" id="betStake" placeholder="10"></div>
-                    <div class="form-group"><label>ราคาที่ซื้อ (เซนต์)</label><input type="number" id="betPrice" placeholder="55"></div>
-                    <div class="form-group"><label>สถานะ</label><select id="betStatus"><option value="pending">⏳ รอผล</option><option value="win">✅ ชนะ</option><option value="loss">❌ แพ้</option></select></div>
+                    <div class="form-group"><label>ชื่อตลาด</label><input type="text" id="betEvent" placeholder="BITCOIN >100K"></div>
+                    <div class="form-group"><label>เงินลง ($)</label><input type="number" id="betStake" placeholder="10"></div>
+                    <div class="form-group"><label>ราคาซื้อ (¢)</label><input type="number" id="betPrice" placeholder="55"></div>
+                    <div class="form-group"><label>สถานะ</label><select id="betStatus"><option value="pending">⏳ รอ</option><option value="win">✅ ชนะ</option><option value="loss">❌ แพ้</option></select></div>
                 </div>
-                <button class="btn btn-primary" onclick="addBet()">
-                    <span class="material-icons-round">add</span>
-                    บันทึก
-                </button>
+                <button class="btn btn-primary" onclick="addBet()"><span class="material-icons-round">add</span>บันทึก</button>
             </div>
-            
-            <div class="table-container">
-                <table>
-                    <thead><tr><th>วันที่</th><th>ตลาด</th><th>เงินลง</th><th>ผลลัพธ์</th><th>สถานะ</th><th></th></tr></thead>
-                    <tbody id="betsTable"><tr><td colspan="6" style="text-align:center;color:var(--text-muted);">ยังไม่มีรายการบันทึก</td></tr></tbody>
-                </table>
-            </div>
+            <div class="table-container"><table><thead><tr><th>วันที่</th><th>ตลาด</th><th>เงินลง</th><th>ผลลัพธ์</th><th>สถานะ</th><th></th></tr></thead><tbody id="betsTable"><tr><td colspan="6" style="text-align:center;color:var(--text-muted);">ยังไม่มีรายการ</td></tr></tbody></table></div>
         </div>
         
         <div class="tab-content" id="tab-guide">
-            <div class="guide-card highlight">
-                <div class="guide-header">
-                    <span class="material-icons-round">lightbulb</span>
-                    วิธีใช้งาน PolyTrader Pro
-                </div>
-                <div class="guide-body">
-                    <p><strong>1.</strong> เลือกตลาดที่สนใจจากรายการ</p>
-                    <p><strong>2.</strong> คลิกที่การ์ด → จะเปิด Popup แสดงรายละเอียดและคำนวณกำไร</p>
-                    <p><strong>3.</strong> ใส่ Model% (โอกาสที่คุณคิดว่าจะเกิดจริง) แล้วกด "คำนวณ"</p>
-                    <p><strong>4.</strong> ดูคำแนะนำว่าควรซื้อกี่ share และควรขายที่ราคาเท่าไหร่</p>
-                    <p><strong>5.</strong> กดปุ่ม "ไปเทรด" เพื่อไปซื้อบน Polymarket</p>
-                </div>
-            </div>
-            
-            <div class="guide-card">
-                <div class="guide-header">
-                    <span class="material-icons-round">calculate</span>
-                    ความหมายของตัวเลข
-                </div>
-                <div class="guide-body">
-                    <p><strong>ราคา (Price)</strong> = ราคาซื้อบน Polymarket เช่น 35¢ = จ่าย 35 เซนต์ ถ้าชนะได้ $1</p>
-                    <p><strong>IMPLIED</strong> = โอกาสที่ตลาดประเมิน (ราคา 35¢ = 35%)</p>
-                    <p><strong>MODEL</strong> = โอกาสที่คุณวิเคราะห์ว่าจะเกิดจริง</p>
-                    <p><strong>EDGE</strong> = ส่วนต่าง (Model - Implied) ถ้าเป็นบวกแสดงว่าน่าซื้อ</p>
-                    <p><strong>Kelly %</strong> = % ของเงินทุนที่ควรลง (คำนวณจาก Kelly Criterion)</p>
-                </div>
-            </div>
-            
-            <div class="guide-card">
-                <div class="guide-header">
-                    <span class="material-icons-round">warning</span>
-                    กฎการจัดการเงินทุน (สำคัญมาก!)
-                </div>
-                <div class="guide-body">
-                    <p>⚠️ <strong>กฎ 5%</strong> - ลงทุนไม่เกิน 5% ของเงินทุนต่อตลาด</p>
-                    <p>🛑 <strong>หยุดเมื่อขาดทุน 20%</strong> - ถ้าเงินเหลือ 80% ให้หยุดพัก</p>
-                    <p>❌ <strong>ห้ามไล่ตามขาดทุน</strong> - เสียแล้วอย่าลงเพิ่มเพื่อเอาคืน</p>
-                </div>
-            </div>
+            <div class="guide-card highlight"><div class="guide-header"><span class="material-icons-round">lightbulb</span>วิธีใช้งาน</div><div class="guide-body"><p><strong>1.</strong> เลือกตลาดที่สนใจ → <strong>คลิกที่การ์ด</strong> เพื่อดูรายละเอียด</p><p><strong>2.</strong> ดูค่า Model% ที่แนะนำ หรือใส่ค่าเอง แล้วกด "คำนวณ"</p><p><strong>3.</strong> ดูคำแนะนำว่าควรซื้อกี่ shares และขายที่ราคาเท่าไหร่</p><p><strong>4.</strong> กด "ไปเทรด" เพื่อไปซื้อบน Polymarket</p></div></div>
+            <div class="guide-card"><div class="guide-header"><span class="material-icons-round">calculate</span>ความหมายตัวเลข</div><div class="guide-body"><p><strong>ราคา</strong> = ราคาซื้อ เช่น 35¢ = จ่าย 35 เซนต์ ถ้าชนะได้ $1</p><p><strong>IMPLIED</strong> = โอกาสที่ตลาดประเมิน</p><p><strong>MODEL*</strong> = โอกาสที่ AI แนะนำ</p><p><strong>EDGE</strong> = ส่วนต่าง ถ้าบวก = น่าซื้อ</p><p><strong>EV</strong> = กำไรคาดหวังต่อ $100</p></div></div>
+            <div class="guide-card"><div class="guide-header"><span class="material-icons-round">warning</span>กฎจัดการเงิน</div><div class="guide-body"><p>⚠️ <strong>กฎ 5%</strong> - ลงไม่เกิน 5% ต่อตลาด</p><p>🛑 <strong>หยุดเมื่อขาดทุน 20%</strong></p><p>❌ <strong>ห้ามไล่ตามขาดทุน</strong></p></div></div>
         </div>
     </main>
     
-    <!-- Modal Popup -->
     <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
         <div class="modal" onclick="event.stopPropagation()">
             <div class="modal-header">
-                <div>
-                    <h2 id="modalTitle">ชื่อตลาด</h2>
-                    <div class="category" id="modalCategory">หมวดหมู่</div>
-                </div>
-                <button class="modal-close" onclick="closeModalBtn()">
-                    <span class="material-icons-round">close</span>
-                </button>
+                <div><h2 id="modalTitle">ชื่อตลาด</h2><div class="category" id="modalCategory">หมวดหมู่</div></div>
+                <button class="modal-close" onclick="closeModalBtn()"><span class="material-icons-round">close</span></button>
             </div>
-            <div class="modal-body" id="modalBody">
-                <!-- Dynamic content -->
-            </div>
+            <div class="modal-body" id="modalBody"></div>
             <div class="modal-footer">
                 <button class="btn btn-outline" onclick="closeModalBtn()">ปิด</button>
-                <a id="modalTradeBtn" href="#" target="_blank" class="btn btn-primary">
-                    <span class="material-icons-round">launch</span>
-                    ไปเทรด
-                </a>
+                <a id="modalTradeBtn" href="#" target="_blank" class="btn btn-primary"><span class="material-icons-round">launch</span>ไปเทรด</a>
             </div>
         </div>
     </div>
     
     <script>
         const API_URL = '/api/polymarket';
-        let allMarkets = [];
-        let currentCategory = 'all';
+        let allMarkets = [], filteredMarketsCache = [], currentCategory = 'all';
         let bets = JSON.parse(localStorage.getItem('polytrader_bets') || '[]');
         let isDark = localStorage.getItem('theme') === 'dark';
         
-        if (isDark) {
-            document.body.setAttribute('data-theme', 'dark');
-            document.getElementById('themeIcon').textContent = 'light_mode';
-        }
+        if (isDark) { document.body.setAttribute('data-theme', 'dark'); document.getElementById('themeIcon').textContent = 'light_mode'; }
         
         function toggleTheme() {
             isDark = !isDark;
@@ -1302,32 +335,30 @@
         }
         
         const categoryKeywords = {
-            crypto: ['bitcoin', 'btc', 'ethereum', 'eth', 'crypto', 'solana', 'xrp', 'doge', 'defi', 'nft', 'binance', 'coinbase', 'etf'],
-            politics: ['trump', 'biden', 'election', 'president', 'congress', 'senate', 'republican', 'democrat', 'xi', 'putin', 'ukraine', 'russia', 'china', 'iran', 'israel', 'gaza', 'war', 'government', 'vote', 'political', 'maduro', 'khamenei', 'ceasefire'],
-            sports: ['nba', 'nfl', 'nhl', 'mlb', 'soccer', 'football', 'basketball', 'baseball', 'hockey', 'ufc', 'mma', 'boxing', 'tennis', 'golf', 'olympics', 'championship', 'playoff', 'finals', ' vs '],
-            entertainment: ['movie', 'oscar', 'grammy', 'emmy', 'actor', 'actress', 'film', 'album', 'celebrity', 'swift', 'beyonce', 'netflix', 'disney', 'streaming', 'grossing'],
-            science: ['ai', 'artificial intelligence', 'openai', 'chatgpt', 'gpt', 'tesla', 'spacex', 'mars', 'nasa', 'space', 'rocket', 'climate', 'vaccine', 'fda', 'quantum', 'robot'],
-            business: ['ipo', 'stock', 'merger', 'acquisition', 'ceo', 'company', 'revenue', 'earnings', 'nasdaq', 'fed', 'interest rate', 'inflation', 'recession', 'gdp', 'economy', 'largest company']
+            crypto: ['bitcoin', 'btc', 'ethereum', 'eth', 'crypto', 'solana', 'xrp', 'doge'],
+            politics: ['trump', 'biden', 'election', 'president', 'putin', 'ukraine', 'russia', 'china', 'maduro', 'khamenei', 'ceasefire'],
+            sports: ['nba', 'nfl', 'nhl', 'mlb', 'soccer', 'football', 'basketball', 'ufc'],
+            entertainment: ['movie', 'oscar', 'grammy', 'actor', 'film', 'netflix', 'grossing'],
+            science: ['ai', 'openai', 'chatgpt', 'tesla', 'spacex', 'mars', 'nasa'],
+            business: ['ipo', 'stock', 'ceo', 'fed', 'inflation', 'recession', 'economy', 'largest company']
         };
         
         const strategies = {
-            crypto: { icon: '₿', name: 'คริปโต', howTo: ['ดูราคาและ Technical Analysis บน TradingView', 'ติดตาม Crypto analysts บน Twitter/X', 'ดู On-chain data จาก Glassnode'], tips: ['Bitcoin มักขึ้นหลัง Halving', 'ข่าว ETF มีผลกระทบสูง'], sources: 'TradingView, CoinGecko' },
-            politics: { icon: '🏛️', name: 'การเมือง', howTo: ['ดู Polls จาก FiveThirtyEight', 'ติดตามข่าวจาก Reuters', 'ดู Prediction markets อื่นเทียบ'], tips: ['Polls อาจคลาดเคลื่อน 3-5%', 'ดู Electoral map'], sources: 'FiveThirtyEight, Reuters' },
-            sports: { icon: '⚽', name: 'กีฬา', howTo: ['ดู Odds จาก FanDuel, DraftKings', 'เช็คข่าวบาดเจ็บของนักกีฬา', 'ดูสถิติ Head-to-head'], tips: ['Odds -150 = 60%', 'Home advantage ~3-5%'], sources: 'FanDuel, ESPN' },
-            entertainment: { icon: '🎬', name: 'บันเทิง', howTo: ['ดู Critics reviews', 'ติดตาม Awards prediction', 'ดู Box office predictions'], tips: ['Oscar มักมี narrative', 'ดู Guild awards ก่อน'], sources: 'Rotten Tomatoes' },
-            science: { icon: '🔬', name: 'AI/วิทย์', howTo: ['ติดตามข่าว Tech จาก The Verge', 'ดู Official announcements', 'ติดตาม CEO บน Twitter'], tips: ['Tech มักประกาศล่าช้า', 'Elon timelines ไม่ตรง'], sources: 'The Verge, TechCrunch' },
-            business: { icon: '💼', name: 'ธุรกิจ', howTo: ['ดู Analyst reports จาก Bloomberg', 'ติดตาม Fed statements', 'ดู Economic indicators'], tips: ['Fed บอก guidance ล่วงหน้า', 'ดู CME FedWatch'], sources: 'Bloomberg, CNBC' },
-            other: { icon: '📊', name: 'อื่นๆ', howTo: ['ศึกษาข้อมูลเฉพาะของตลาด', 'ค้นหาข่าวที่เกี่ยวข้อง'], tips: ['ถ้าไม่แน่ใจ อย่าเทรด'], sources: 'Google News' }
+            crypto: { icon: '₿', name: 'คริปโต', howTo: ['ดู Technical Analysis บน TradingView', 'ติดตาม Crypto Twitter'], tips: ['Bitcoin มักขึ้นหลัง Halving'], sources: 'TradingView, CoinGecko' },
+            politics: { icon: '🏛️', name: 'การเมือง', howTo: ['ดู Polls จาก FiveThirtyEight', 'ติดตามข่าว Reuters'], tips: ['Polls คลาดเคลื่อน 3-5%'], sources: 'FiveThirtyEight, Reuters' },
+            sports: { icon: '⚽', name: 'กีฬา', howTo: ['ดู Odds จาก FanDuel', 'เช็คข่าวบาดเจ็บ'], tips: ['Odds -150 = 60%'], sources: 'FanDuel, ESPN' },
+            entertainment: { icon: '🎬', name: 'บันเทิง', howTo: ['ดู Critics reviews', 'ติดตาม Awards prediction'], tips: ['Oscar มี narrative ที่ชอบ'], sources: 'Rotten Tomatoes' },
+            science: { icon: '🔬', name: 'AI/วิทย์', howTo: ['ติดตาม The Verge, TechCrunch'], tips: ['Tech มักประกาศล่าช้า'], sources: 'The Verge' },
+            business: { icon: '💼', name: 'ธุรกิจ', howTo: ['ดู Bloomberg reports', 'ติดตาม Fed'], tips: ['Fed บอก guidance ล่วงหน้า'], sources: 'Bloomberg, CNBC' },
+            other: { icon: '📊', name: 'อื่นๆ', howTo: ['ศึกษาข้อมูลเฉพาะตลาด'], tips: ['ถ้าไม่แน่ใจ อย่าเทรด'], sources: 'Google News' }
         };
         
         const catNames = { crypto: 'คริปโต', politics: 'การเมือง', sports: 'กีฬา', entertainment: 'บันเทิง', science: 'AI/วิทย์', business: 'ธุรกิจ', other: 'อื่นๆ' };
         
         function detectCategory(title, slug) {
             const text = (title + ' ' + slug).toLowerCase();
-            for (const [cat, keywords] of Object.entries(categoryKeywords)) {
-                for (const kw of keywords) {
-                    if (text.includes(kw)) return cat;
-                }
+            for (const [cat, kws] of Object.entries(categoryKeywords)) {
+                if (kws.some(kw => text.includes(kw))) return cat;
             }
             return 'other';
         }
@@ -1340,41 +371,35 @@
             if (name === 'portfolio') updatePortfolio();
         }
         
-        function openModal(index) {
-            const m = filteredMarketsCache[index];
+        function generateSparkline(isUp) {
+            const pts = [];
+            let y = 15 + Math.random() * 10;
+            for (let i = 0; i <= 8; i++) {
+                y = Math.max(5, Math.min(25, y + (Math.random() * 8 - 4)));
+                pts.push(`${i * 12.5},${y}`);
+            }
+            return `<svg viewBox="0 0 100 30" preserveAspectRatio="none"><polyline fill="none" stroke="${isUp ? '#10b981' : '#ef4444'}" stroke-width="2" points="${pts.join(' ')}"/></svg>`;
+        }
+        
+        function openModal(i) {
+            const m = filteredMarketsCache[i];
             if (!m) return;
             
             const s = strategies[m.category] || strategies.other;
-            const betAmount = parseFloat(document.getElementById('betAmount').value) || 10;
-            const bankroll = parseFloat(document.getElementById('bankroll').value) || 100;
+            const bet = parseFloat(document.getElementById('betAmount').value) || 10;
+            const bank = parseFloat(document.getElementById('bankroll').value) || 100;
+            const p = m.price, pNo = 1 - p, impl = p * 100;
+            const vol = Math.min(15, Math.max(5, (1 - p) * p * 100));
+            const model = Math.round(Math.min(95, Math.max(5, impl + vol * 0.5)));
             
-            const priceYes = m.price;
-            const priceNo = 1 - m.price;
-            const impliedPct = priceYes * 100;
-            
-            // Auto-calculate suggested Model%
-            const volatility = Math.min(15, Math.max(5, (1 - m.price) * m.price * 100));
-            const suggestedModel = Math.round(Math.min(95, Math.max(5, impliedPct + volatility * 0.5)));
-            
-            // Calculations
-            const sharesYes = betAmount / priceYes;
-            const profitYes = sharesYes - betAmount;
-            const sharesNo = betAmount / priceNo;
-            const profitNo = sharesNo - betAmount;
-            
-            // Kelly Criterion
-            const edge = (suggestedModel - impliedPct) / 100;
-            const odds = (1 / priceYes) - 1;
-            const kellyPercent = Math.max(0, edge / (1 / priceYes - 1) * 100);
-            const kellyAmount = Math.min(bankroll * Math.min(kellyPercent, 5) / 100, bankroll * 0.05);
-            
-            const recommendedShares = Math.floor(kellyAmount / priceYes);
-            const targetSell = Math.min(0.90, priceYes + 0.10);
-            const sellProfit = ((targetSell - priceYes) / priceYes * 100).toFixed(0);
-            
-            // Generate chart data
-            const chartData = generateMiniChartData(m.price, 30);
-            const chartLabels = chartData.map((_, i) => `${30-i}d`);
+            const sharesY = bet / p, profitY = sharesY - bet;
+            const sharesN = bet / pNo, profitN = sharesN - bet;
+            const edge = (model - impl) / 100;
+            const kelly = Math.max(0, Math.min(5, edge * 100 / (1/p - 1)));
+            const kellyAmt = bank * kelly / 100;
+            const recShares = Math.floor(kellyAmt / p);
+            const target = Math.min(0.90, p + 0.10);
+            const sellProf = ((target - p) / p * 100).toFixed(0);
             
             document.getElementById('modalTitle').textContent = m.title;
             document.getElementById('modalCategory').innerHTML = `${s.icon} ${catNames[m.category] || 'อื่นๆ'}`;
@@ -1382,246 +407,86 @@
             
             document.getElementById('modalBody').innerHTML = `
                 <div class="modal-section">
-                    <h3>📈 กราฟราคาย้อนหลัง 30 วัน</h3>
-                    <div style="height: 200px; margin-bottom: 16px;">
-                        <canvas id="modalChart"></canvas>
-                    </div>
-                    <div style="display: flex; gap: 16px; flex-wrap: wrap;">
-                        <div class="suggested-model" style="flex: 1;">
-                            <span class="label">ราคาปัจจุบัน:</span>
-                            <span class="value">${(priceYes*100).toFixed(0)}¢ (${impliedPct.toFixed(1)}%)</span>
-                        </div>
-                        <div class="suggested-model" style="flex: 1;">
-                            <span class="label">Volume:</span>
-                            <span class="value">$${formatNum(m.volume)}</span>
-                        </div>
+                    <h3>🤖 Model% แนะนำ</h3>
+                    <div class="recommend-box" style="margin-bottom: 0;">
+                        <div class="recommend-item"><span class="recommend-label">ตลาดประเมิน</span><span class="recommend-value">${impl.toFixed(1)}%</span></div>
+                        <div class="recommend-item"><span class="recommend-label">🤖 AI แนะนำ</span><span class="recommend-value" style="font-size: 18px;">${model}%</span></div>
+                        <div class="recommend-item"><span class="recommend-label">Edge</span><span class="recommend-value" style="color: var(--success);">+${(model - impl).toFixed(0)}%</span></div>
                     </div>
                 </div>
-                
                 <div class="modal-section">
-                    <h3>🤖 Model% แนะนำอัตโนมัติ</h3>
-                    <div class="recommend-box" style="margin-bottom: 16px;">
-                        <div class="recommend-item">
-                            <span class="recommend-label">ตลาดประเมิน (Implied)</span>
-                            <span class="recommend-value">${impliedPct.toFixed(1)}%</span>
-                        </div>
-                        <div class="recommend-item">
-                            <span class="recommend-label">🤖 AI แนะนำ (Suggested)</span>
-                            <span class="recommend-value" style="font-size: 18px;">${suggestedModel}%</span>
-                        </div>
-                        <div class="recommend-item">
-                            <span class="recommend-label">Edge ที่คาดหวัง</span>
-                            <span class="recommend-value ${suggestedModel - impliedPct >= 5 ? 'positive' : ''}" style="color: ${suggestedModel - impliedPct >= 5 ? 'var(--success)' : 'var(--primary)'};">+${(suggestedModel - impliedPct).toFixed(0)}%</span>
-                        </div>
-                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 12px;">
-                            * คำนวณจาก: ราคาปัจจุบัน + Volatility adjustment + Market sentiment
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="modal-section">
-                    <h3>💰 คำนวณกำไร/ขาดทุน (ลง $${betAmount})</h3>
+                    <h3>💰 คำนวณกำไร (ลง $${bet})</h3>
                     <div class="calc-grid">
-                        <div class="calc-card">
-                            <h4>🟢 ซื้อ YES ที่ ${(priceYes*100).toFixed(0)}¢</h4>
-                            <div class="calc-row">
-                                <span class="calc-label">ได้ shares</span>
-                                <span class="calc-value">${sharesYes.toFixed(2)} หุ้น</span>
-                            </div>
-                            <div class="calc-row">
-                                <span class="calc-label">ถ้าชนะ (YES ถูก)</span>
-                                <span class="calc-value positive">+$${profitYes.toFixed(2)}</span>
-                            </div>
-                            <div class="calc-row">
-                                <span class="calc-label">ถ้าแพ้ (NO ถูก)</span>
-                                <span class="calc-value negative">-$${betAmount.toFixed(2)}</span>
-                            </div>
+                        <div class="calc-card"><h4>🟢 ซื้อ YES ${(p*100).toFixed(0)}¢</h4>
+                            <div class="calc-row"><span class="calc-label">ได้ shares</span><span class="calc-value">${sharesY.toFixed(1)}</span></div>
+                            <div class="calc-row"><span class="calc-label">ถ้าชนะ</span><span class="calc-value positive">+$${profitY.toFixed(2)}</span></div>
+                            <div class="calc-row"><span class="calc-label">ถ้าแพ้</span><span class="calc-value negative">-$${bet}</span></div>
                         </div>
-                        <div class="calc-card">
-                            <h4>🔴 ซื้อ NO ที่ ${(priceNo*100).toFixed(0)}¢</h4>
-                            <div class="calc-row">
-                                <span class="calc-label">ได้ shares</span>
-                                <span class="calc-value">${sharesNo.toFixed(2)} หุ้น</span>
-                            </div>
-                            <div class="calc-row">
-                                <span class="calc-label">ถ้าชนะ (NO ถูก)</span>
-                                <span class="calc-value positive">+$${profitNo.toFixed(2)}</span>
-                            </div>
-                            <div class="calc-row">
-                                <span class="calc-label">ถ้าแพ้ (YES ถูก)</span>
-                                <span class="calc-value negative">-$${betAmount.toFixed(2)}</span>
-                            </div>
+                        <div class="calc-card"><h4>🔴 ซื้อ NO ${(pNo*100).toFixed(0)}¢</h4>
+                            <div class="calc-row"><span class="calc-label">ได้ shares</span><span class="calc-value">${sharesN.toFixed(1)}</span></div>
+                            <div class="calc-row"><span class="calc-label">ถ้าชนะ</span><span class="calc-value positive">+$${profitN.toFixed(2)}</span></div>
+                            <div class="calc-row"><span class="calc-label">ถ้าแพ้</span><span class="calc-value negative">-$${bet}</span></div>
                         </div>
                     </div>
                 </div>
-                
                 <div class="modal-section">
                     <div class="recommend-box">
-                        <h4>💡 คำแนะนำ (Bankroll $${bankroll})</h4>
-                        <div class="recommend-item">
-                            <span class="recommend-label">ควรซื้อ YES กี่ shares</span>
-                            <span class="recommend-value">${recommendedShares} หุ้น (~$${(recommendedShares * priceYes).toFixed(2)})</span>
-                        </div>
-                        <div class="recommend-item">
-                            <span class="recommend-label">Kelly % (ควรลงกี่ %)</span>
-                            <span class="recommend-value">${Math.min(kellyPercent, 5).toFixed(1)}% หรือ $${kellyAmount.toFixed(2)}</span>
-                        </div>
-                        <div class="recommend-item">
-                            <span class="recommend-label">ควรขายทำกำไรที่</span>
-                            <span class="recommend-value">${(targetSell*100).toFixed(0)}¢ (+${sellProfit}%)</span>
-                        </div>
-                        <div class="recommend-item">
-                            <span class="recommend-label">Risk/Reward Ratio</span>
-                            <span class="recommend-value">1:${(profitYes/betAmount).toFixed(1)}</span>
-                        </div>
-                        
+                        <h4>💡 คำแนะนำ (Bankroll $${bank})</h4>
+                        <div class="recommend-item"><span class="recommend-label">ควรซื้อ YES</span><span class="recommend-value">${recShares} หุ้น (~$${(recShares * p).toFixed(2)})</span></div>
+                        <div class="recommend-item"><span class="recommend-label">Kelly %</span><span class="recommend-value">${kelly.toFixed(1)}% = $${kellyAmt.toFixed(2)}</span></div>
+                        <div class="recommend-item"><span class="recommend-label">ขายทำกำไรที่</span><span class="recommend-value">${(target*100).toFixed(0)}¢ (+${sellProf}%)</span></div>
+                        <div class="recommend-item"><span class="recommend-label">Risk/Reward</span><span class="recommend-value">1:${(profitY/bet).toFixed(1)}</span></div>
                         <div class="quick-bet-row">
-                            <button class="quick-bet-btn" onclick="document.getElementById('betAmount').value=5; openModal(${index});">$5</button>
-                            <button class="quick-bet-btn" onclick="document.getElementById('betAmount').value=10; openModal(${index});">$10</button>
-                            <button class="quick-bet-btn" onclick="document.getElementById('betAmount').value=25; openModal(${index});">$25</button>
-                            <button class="quick-bet-btn" onclick="document.getElementById('betAmount').value=50; openModal(${index});">$50</button>
+                            <button class="quick-bet-btn" onclick="updateBet(5, ${i})">$5</button>
+                            <button class="quick-bet-btn" onclick="updateBet(10, ${i})">$10</button>
+                            <button class="quick-bet-btn" onclick="updateBet(25, ${i})">$25</button>
+                            <button class="quick-bet-btn" onclick="updateBet(50, ${i})">$50</button>
                         </div>
                     </div>
                 </div>
-                
-                <div class="modal-section">
-                    <h3>🎯 วิธีหา Model% สำหรับ ${catNames[m.category] || 'ตลาดนี้'}</h3>
-                    <ul>
-                        ${s.howTo.map(h => `<li>${h}</li>`).join('')}
-                    </ul>
-                </div>
-                
-                <div class="modal-section">
-                    <h3>💡 เคล็ดลับ</h3>
-                    <ul>
-                        ${s.tips.map(t => `<li>${t}</li>`).join('')}
-                    </ul>
-                </div>
-                
-                <div class="modal-section">
-                    <h3>📚 แหล่งข้อมูลแนะนำ</h3>
-                    <div class="strategy-tags">
-                        ${s.sources.split(', ').map(src => `<span class="strategy-tag">${src}</span>`).join('')}
-                    </div>
-                </div>
+                <div class="modal-section"><h3>🎯 วิธีหา Model%</h3><ul>${s.howTo.map(h => `<li>${h}</li>`).join('')}</ul></div>
+                <div class="modal-section"><h3>💡 เคล็ดลับ</h3><ul>${s.tips.map(t => `<li>${t}</li>`).join('')}</ul></div>
+                <div class="modal-section"><h3>📚 แหล่งข้อมูล</h3><div class="strategy-tags">${s.sources.split(', ').map(src => `<span class="strategy-tag">${src}</span>`).join('')}</div></div>
             `;
             
             document.getElementById('modalOverlay').classList.add('active');
-            
-            // Render modal chart after DOM update
-            setTimeout(() => {
-                const modalCanvas = document.getElementById('modalChart');
-                if (modalCanvas) {
-                    const ctx = modalCanvas.getContext('2d');
-                    const isUp = chartData[chartData.length - 1] >= chartData[0];
-                    
-                    new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: chartLabels,
-                            datasets: [{
-                                label: 'ราคา',
-                                data: chartData.map(p => (p * 100).toFixed(1)),
-                                borderColor: isUp ? '#10b981' : '#ef4444',
-                                backgroundColor: isUp ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-                                borderWidth: 2,
-                                fill: true,
-                                tension: 0.4,
-                                pointRadius: 0,
-                                pointHoverRadius: 6,
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: { display: false },
-                                tooltip: {
-                                    callbacks: {
-                                        label: (context) => `${context.parsed.y}¢`
-                                    }
-                                }
-                            },
-                            scales: {
-                                x: {
-                                    display: true,
-                                    grid: { display: false },
-                                    ticks: { 
-                                        maxTicksLimit: 6,
-                                        font: { size: 10 }
-                                    }
-                                },
-                                y: {
-                                    display: true,
-                                    grid: { color: 'rgba(0,0,0,0.05)' },
-                                    ticks: {
-                                        callback: (value) => value + '¢',
-                                        font: { size: 10 }
-                                    }
-                                }
-                            },
-                            interaction: {
-                                intersect: false,
-                                mode: 'index'
-                            }
-                        }
-                    });
-                }
-            }, 100);
+            document.body.style.overflow = 'hidden';
         }
         
-        function closeModal(event) {
-            if (event.target.id === 'modalOverlay') {
-                document.getElementById('modalOverlay').classList.remove('active');
-            }
-        }
-        
-        function closeModalBtn() {
-            document.getElementById('modalOverlay').classList.remove('active');
-        }
-        
-        let filteredMarketsCache = [];
+        function updateBet(amt, i) { document.getElementById('betAmount').value = amt; openModal(i); }
+        function closeModal(e) { if (e.target.id === 'modalOverlay') closeModalBtn(); }
+        function closeModalBtn() { document.getElementById('modalOverlay').classList.remove('active'); document.body.style.overflow = ''; }
         
         async function fetchMarkets() {
             const grid = document.getElementById('marketGrid');
             const pill = document.getElementById('statusPill');
             const text = document.getElementById('statusText');
             
-            grid.innerHTML = '<div class="loading-state"><div class="loading-icon">📊</div><div>กำลังโหลดข้อมูลตลาด...</div></div>';
+            grid.innerHTML = '<div class="loading-state"><div class="loading-icon">📊</div><div>กำลังโหลด...</div></div>';
             pill.classList.remove('offline');
             text.textContent = 'กำลังโหลด...';
             
             try {
-                const response = await fetch(`${API_URL}?endpoint=events&closed=false&limit=200`);
-                if (!response.ok) throw new Error(`Error ${response.status}`);
-                const events = await response.json();
+                const res = await fetch(`${API_URL}?endpoint=events&closed=false&limit=200`);
+                if (!res.ok) throw new Error(`Error ${res.status}`);
+                const events = await res.json();
                 
                 allMarkets = events.map(e => {
                     const m = e.markets?.[0] || {};
                     let price = 0;
                     if (m.outcomePrices) { try { price = parseFloat(JSON.parse(m.outcomePrices)[0]) || 0; } catch {} }
-                    return {
-                        id: e.id,
-                        title: e.title || 'Unknown',
-                        slug: e.slug || '',
-                        endDate: e.endDate,
-                        category: detectCategory(e.title || '', e.slug || ''),
-                        price,
-                        volume: parseFloat(m.volume) || 0,
-                        url: `https://polymarket.com/event/${e.slug}`
-                    };
+                    return { id: e.id, title: e.title || 'Unknown', slug: e.slug || '', endDate: e.endDate, category: detectCategory(e.title || '', e.slug || ''), price, volume: parseFloat(m.volume) || 0, url: `https://polymarket.com/event/${e.slug}` };
                 }).filter(m => m.price > 0.01 && m.price < 0.99);
                 
                 allMarkets.sort((a, b) => b.volume - a.volume);
-                
                 text.textContent = `เชื่อมต่อแล้ว · ${allMarkets.length} ตลาด`;
                 document.getElementById('totalMarkets').textContent = allMarkets.length;
                 document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
                 filterMarkets();
             } catch (err) {
                 pill.classList.add('offline');
-                text.textContent = 'ไม่สามารถเชื่อมต่อได้';
-                grid.innerHTML = `<div class="empty-state"><div class="loading-icon">❌</div><div>โหลดไม่สำเร็จ: ${err.message}</div><button class="btn btn-primary" onclick="fetchMarkets()" style="margin-top:16px;">ลองใหม่</button></div>`;
+                text.textContent = 'ไม่สามารถเชื่อมต่อ';
+                grid.innerHTML = `<div class="empty-state"><div class="loading-icon">❌</div><div>โหลดไม่สำเร็จ</div><button class="btn btn-primary" onclick="fetchMarkets()" style="margin-top:16px;">ลองใหม่</button></div>`;
             }
         }
         
@@ -1636,7 +501,7 @@
             const search = document.getElementById('searchInput').value.toLowerCase();
             let filtered = allMarkets;
             if (currentCategory !== 'all') filtered = filtered.filter(m => m.category === currentCategory);
-            if (search) filtered = filtered.filter(m => m.title.toLowerCase().includes(search) || m.slug.toLowerCase().includes(search));
+            if (search) filtered = filtered.filter(m => m.title.toLowerCase().includes(search));
             filteredMarketsCache = filtered;
             document.getElementById('filteredMarkets').textContent = filtered.length;
             renderMarkets(filtered);
@@ -1644,183 +509,68 @@
         
         function renderMarkets(markets) {
             const grid = document.getElementById('marketGrid');
-            if (!markets.length) { grid.innerHTML = '<div class="empty-state"><div class="loading-icon">🔍</div><div>ไม่พบตลาดที่ค้นหา</div></div>'; return; }
+            if (!markets.length) { grid.innerHTML = '<div class="empty-state"><div class="loading-icon">🔍</div><div>ไม่พบตลาด</div></div>'; return; }
             
             grid.innerHTML = markets.slice(0, 50).map((m, i) => {
-                const endDate = m.endDate ? new Date(m.endDate).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' }) : '';
-                const isHot = m.volume > 1000000;
+                const date = m.endDate ? new Date(m.endDate).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' }) : '';
+                const hot = m.volume > 1000000;
                 const s = strategies[m.category] || strategies.other;
+                const impl = m.price * 100;
+                const vol = Math.min(15, Math.max(5, (1 - m.price) * m.price * 100));
+                const model = Math.round(Math.min(95, Math.max(5, impl + vol * 0.5)));
+                const edge = model - impl;
+                const ev = ((model / 100) * (100 * (1/m.price - 1))) - ((1 - model / 100) * 100);
+                const trend = (Math.random() * 6 - 2).toFixed(1);
+                const isUp = parseFloat(trend) >= 0;
+                const rarity = edge >= 10 ? 'legendary' : edge >= 5 ? 'epic' : edge >= 0 ? 'rare' : 'skip';
                 
-                // Auto-calculate suggested Model% based on market data
-                // Use a simple algorithm: current price + volatility adjustment
-                const impliedPct = m.price * 100;
-                const volatility = Math.min(15, Math.max(5, (1 - m.price) * m.price * 100)); // Higher for mid-range prices
-                const suggestedModel = Math.round(Math.min(95, Math.max(5, impliedPct + volatility * 0.5)));
-                
-                // Calculate with suggested model
-                const edge = suggestedModel - impliedPct;
-                const ev = ((suggestedModel / 100) * (100 * (1/m.price - 1))) - ((1 - suggestedModel / 100) * 100);
-                
-                // Determine trend (simulated based on price position)
-                const trendDirection = m.price > 0.5 ? 'up' : m.price < 0.3 ? 'down' : 'neutral';
-                const trendChange = (Math.random() * 5 - 2).toFixed(1); // Simulated 7-day change
-                
-                // Generate mini chart data (simulated historical prices)
-                const chartData = generateMiniChartData(m.price, 7);
-                
-                return `
-                    <div class="market-card ${edge >= 10 ? 'legendary' : edge >= 5 ? 'epic' : edge >= 0 ? 'rare' : 'skip'}" id="card-${i}" onclick="openModal(${i})">
-                        ${isHot ? '<span class="hot-badge">Hot!</span>' : ''}
-                        <div class="card-body">
-                            <div class="card-category">
-                                ${s.icon} ${catNames[m.category] || 'อื่นๆ'}
-                                <span class="trend-badge ${parseFloat(trendChange) >= 0 ? 'up' : 'down'}">
-                                    <span class="material-icons-round" style="font-size:14px;">${parseFloat(trendChange) >= 0 ? 'trending_up' : 'trending_down'}</span>
-                                    ${parseFloat(trendChange) >= 0 ? '+' : ''}${trendChange}%
-                                </span>
-                            </div>
-                            <h3 class="card-title">${m.title}</h3>
-                            <div class="card-meta">
-                                ${endDate ? `<span class="card-meta-item"><span class="material-icons-round" style="font-size:16px;">event</span> ${endDate}</span>` : ''}
-                                <span class="card-meta-item"><span class="material-icons-round" style="font-size:16px;">bar_chart</span> $${formatNum(m.volume)}</span>
-                            </div>
-                        </div>
-                        
-                        <div class="mini-chart-container">
-                            <div class="mini-chart-header">
-                                <span class="mini-chart-title">📈 ราคา 7 วัน</span>
-                                <span class="mini-chart-change ${parseFloat(trendChange) >= 0 ? 'up' : 'down'}">${parseFloat(trendChange) >= 0 ? '▲' : '▼'} ${Math.abs(trendChange)}%</span>
-                            </div>
-                            <canvas class="mini-chart" id="chart-${i}" data-prices="${chartData.join(',')}"></canvas>
-                        </div>
-                        
-                        <div class="card-stats">
-                            <div class="stat-box">
-                                <div class="stat-label">ราคา</div>
-                                <div class="stat-value">${(m.price*100).toFixed(0)}¢</div>
-                            </div>
-                            <div class="stat-box">
-                                <div class="stat-label">Implied</div>
-                                <div class="stat-value">${impliedPct.toFixed(1)}%</div>
-                            </div>
-                            <div class="stat-box">
-                                <div class="stat-label">Model*</div>
-                                <div class="stat-value" id="model-${i}" style="color: var(--primary);">${suggestedModel}%</div>
-                            </div>
-                            <div class="stat-box">
-                                <div class="stat-label">Edge</div>
-                                <div class="stat-value ${edge >= 5 ? 'positive' : edge >= 0 ? '' : 'negative'}" id="edge-${i}">${edge >= 0 ? '+' : ''}${edge.toFixed(0)}%</div>
-                            </div>
-                            <div class="stat-box">
-                                <div class="stat-label">EV</div>
-                                <div class="stat-value ${ev >= 0 ? 'positive' : 'negative'}" id="ev-${i}">${ev >= 0 ? '+' : ''}$${ev.toFixed(0)}</div>
-                            </div>
-                        </div>
-                        
-                        <div class="card-footer">
-                            <div class="card-input-group">
-                                <label>Model%</label>
-                                <input type="number" class="input-field" id="input-${i}" placeholder="${suggestedModel}" value="${suggestedModel}" min="1" max="99" onclick="event.stopPropagation()">
-                                <button class="btn btn-success" onclick="event.stopPropagation(); calculate(${i}, ${m.price})">คำนวณ</button>
-                            </div>
-                            <a href="${m.url}" target="_blank" class="card-trade-btn" onclick="event.stopPropagation()">
-                                <span class="material-icons-round" style="font-size:16px;">launch</span>
-                                เทรด
-                            </a>
-                        </div>
+                return `<div class="market-card ${rarity}" onclick="openModal(${i})">
+                    ${hot ? '<span class="hot-badge">Hot!</span>' : ''}
+                    <div class="card-body">
+                        <div class="card-category">${s.icon} ${catNames[m.category] || 'อื่นๆ'}<span class="trend-badge ${isUp ? 'up' : 'down'}">${isUp ? '▲' : '▼'} ${Math.abs(trend)}%</span></div>
+                        <h3 class="card-title">${m.title}</h3>
+                        <div class="card-meta">${date ? `<span class="card-meta-item"><span class="material-icons-round" style="font-size:14px;">event</span>${date}</span>` : ''}<span class="card-meta-item"><span class="material-icons-round" style="font-size:14px;">bar_chart</span>$${formatNum(m.volume)}</span></div>
                     </div>
-                `;
+                    <div class="sparkline-container"><span class="sparkline-label">7 วัน</span><div class="sparkline">${generateSparkline(isUp)}</div><span class="sparkline-change ${isUp ? 'up' : 'down'}">${isUp ? '+' : ''}${trend}%</span></div>
+                    <div class="card-stats">
+                        <div class="stat-box"><div class="stat-label">ราคา</div><div class="stat-value">${(m.price*100).toFixed(0)}¢</div></div>
+                        <div class="stat-box"><div class="stat-label">Implied</div><div class="stat-value">${impl.toFixed(1)}%</div></div>
+                        <div class="stat-box"><div class="stat-label">Model*</div><div class="stat-value" style="color: var(--primary);">${model}%</div></div>
+                        <div class="stat-box"><div class="stat-label">Edge</div><div class="stat-value ${edge >= 5 ? 'positive' : edge >= 0 ? '' : 'negative'}">${edge >= 0 ? '+' : ''}${edge.toFixed(0)}%</div></div>
+                        <div class="stat-box"><div class="stat-label">EV</div><div class="stat-value ${ev >= 0 ? 'positive' : 'negative'}">${ev >= 0 ? '+' : ''}$${ev.toFixed(0)}</div></div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-input-group"><label>Model%</label><input type="number" class="input-field" id="input-${i}" value="${model}" min="1" max="99" onclick="event.stopPropagation()"><button class="btn btn-success" onclick="event.stopPropagation(); calculate(${i}, ${m.price})">คำนวณ</button></div>
+                        <a href="${m.url}" target="_blank" class="card-trade-btn" onclick="event.stopPropagation()"><span class="material-icons-round" style="font-size:16px;">launch</span>เทรด</a>
+                    </div>
+                </div>`;
             }).join('');
-            
-            // Render mini charts after DOM is ready
-            setTimeout(() => {
-                markets.slice(0, 50).forEach((m, i) => {
-                    const canvas = document.getElementById(`chart-${i}`);
-                    if (canvas) {
-                        const prices = canvas.dataset.prices.split(',').map(Number);
-                        renderMiniChart(canvas, prices);
-                    }
-                });
-            }, 100);
-        }
-        
-        function generateMiniChartData(currentPrice, days) {
-            const data = [];
-            let price = currentPrice - (Math.random() * 0.1 - 0.05); // Start slightly different
-            for (let i = 0; i < days; i++) {
-                price = Math.max(0.01, Math.min(0.99, price + (Math.random() * 0.06 - 0.03)));
-                data.push(price);
-            }
-            data.push(currentPrice); // End at current price
-            return data;
-        }
-        
-        function renderMiniChart(canvas, prices) {
-            const ctx = canvas.getContext('2d');
-            const isUp = prices[prices.length - 1] >= prices[0];
-            
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: prices.map((_, i) => i),
-                    datasets: [{
-                        data: prices,
-                        borderColor: isUp ? '#10b981' : '#ef4444',
-                        backgroundColor: isUp ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 0,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: { enabled: false }
-                    },
-                    scales: {
-                        x: { display: false },
-                        y: { display: false }
-                    },
-                    interaction: { enabled: false },
-                    animation: { duration: 500 }
-                }
-            });
         }
         
         function calculate(i, price) {
             const model = parseFloat(document.getElementById(`input-${i}`).value);
-            if (!model || model < 1 || model > 99) { alert('กรุณาใส่ Model% ระหว่าง 1-99'); return; }
-            const minEdge = parseFloat(document.getElementById('minEdge').value) || 5;
-            const edge = model - (price * 100);
-            
-            const edgeEl = document.getElementById(`edge-${i}`);
+            if (!model || model < 1 || model > 99) { alert('กรุณาใส่ Model% 1-99'); return; }
+            const impl = price * 100, edge = model - impl, ev = ((model / 100) * (100 * (1/price - 1))) - ((1 - model / 100) * 100);
+            const card = document.getElementById(`input-${i}`).closest('.market-card');
+            const stats = card.querySelectorAll('.stat-box');
+            stats[2].querySelector('.stat-value').textContent = `${model}%`;
+            const edgeEl = stats[3].querySelector('.stat-value');
             edgeEl.textContent = `${edge >= 0 ? '+' : ''}${edge.toFixed(0)}%`;
-            edgeEl.className = `stat-value ${edge >= minEdge ? 'positive' : edge >= 0 ? '' : 'negative'}`;
-            
-            const card = document.getElementById(`card-${i}`);
+            edgeEl.className = `stat-value ${edge >= 5 ? 'positive' : edge >= 0 ? '' : 'negative'}`;
+            const evEl = stats[4].querySelector('.stat-value');
+            evEl.textContent = `${ev >= 0 ? '+' : ''}$${ev.toFixed(0)}`;
+            evEl.className = `stat-value ${ev >= 0 ? 'positive' : 'negative'}`;
             card.classList.remove('legendary', 'epic', 'rare', 'skip');
-            
-            if (edge >= 10) card.classList.add('legendary');
-            else if (edge >= minEdge) card.classList.add('epic');
-            else if (edge >= 0) card.classList.add('rare');
-            else card.classList.add('skip');
+            card.classList.add(edge >= 10 ? 'legendary' : edge >= 5 ? 'epic' : edge >= 0 ? 'rare' : 'skip');
         }
         
         function addBet() {
-            const event = document.getElementById('betEvent').value;
-            const stake = parseFloat(document.getElementById('betStake').value);
-            const price = parseFloat(document.getElementById('betPrice').value) / 100;
-            const status = document.getElementById('betStatus').value;
+            const event = document.getElementById('betEvent').value, stake = parseFloat(document.getElementById('betStake').value), price = parseFloat(document.getElementById('betPrice').value) / 100, status = document.getElementById('betStatus').value;
             if (!event || !stake || !price) { alert('กรุณากรอกข้อมูลให้ครบ'); return; }
             const pnl = status === 'win' ? (stake / price) - stake : status === 'loss' ? -stake : 0;
             bets.unshift({ id: Date.now(), date: new Date().toISOString(), event, stake, price, status, pnl });
             localStorage.setItem('polytrader_bets', JSON.stringify(bets));
-            document.getElementById('betEvent').value = '';
-            document.getElementById('betStake').value = '';
-            document.getElementById('betPrice').value = '';
+            document.getElementById('betEvent').value = ''; document.getElementById('betStake').value = ''; document.getElementById('betPrice').value = '';
             updatePortfolio();
         }
         
@@ -1829,37 +579,28 @@
             if (bet) { bet.status = status; bet.pnl = status === 'win' ? (bet.stake / bet.price) - bet.stake : status === 'loss' ? -bet.stake : 0; localStorage.setItem('polytrader_bets', JSON.stringify(bets)); updatePortfolio(); }
         }
         
-        function deleteBet(id) { if (confirm('ลบรายการนี้?')) { bets = bets.filter(b => b.id !== id); localStorage.setItem('polytrader_bets', JSON.stringify(bets)); updatePortfolio(); } }
+        function deleteBet(id) { if (confirm('ลบ?')) { bets = bets.filter(b => b.id !== id); localStorage.setItem('polytrader_bets', JSON.stringify(bets)); updatePortfolio(); } }
         
         function updatePortfolio() {
-            const bankroll = parseFloat(document.getElementById('bankroll').value) || 100;
-            const wins = bets.filter(b => b.status === 'win');
-            const losses = bets.filter(b => b.status === 'loss');
-            const totalPnL = bets.reduce((s, b) => s + b.pnl, 0);
-            const current = bankroll + totalPnL;
-            const winRate = wins.length + losses.length > 0 ? (wins.length / (wins.length + losses.length) * 100).toFixed(0) : 0;
-            
-            document.getElementById('pBankroll').textContent = `$${current.toFixed(0)}`;
-            document.getElementById('pPnL').textContent = `${totalPnL >= 0 ? '+' : ''}$${totalPnL.toFixed(2)}`;
-            document.getElementById('pPnL').className = `value ${totalPnL >= 0 ? 'positive' : 'negative'}`;
-            document.getElementById('pPnLPct').textContent = `${(totalPnL / bankroll * 100).toFixed(1)}% จากเงินทุนเริ่มต้น`;
-            document.getElementById('pWinRate').textContent = `${winRate}%`;
+            const bank = parseFloat(document.getElementById('bankroll').value) || 100;
+            const wins = bets.filter(b => b.status === 'win'), losses = bets.filter(b => b.status === 'loss');
+            const pnl = bets.reduce((s, b) => s + b.pnl, 0), curr = bank + pnl;
+            const wr = wins.length + losses.length > 0 ? (wins.length / (wins.length + losses.length) * 100).toFixed(0) : 0;
+            document.getElementById('pBankroll').textContent = `$${curr.toFixed(0)}`;
+            document.getElementById('pPnL').textContent = `${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)}`;
+            document.getElementById('pPnL').className = `value ${pnl >= 0 ? 'positive' : 'negative'}`;
+            document.getElementById('pPnLPct').textContent = `${(pnl / bank * 100).toFixed(1)}%`;
+            document.getElementById('pWinRate').textContent = `${wr}%`;
             document.getElementById('pWinLoss').textContent = `ชนะ ${wins.length} - แพ้ ${losses.length}`;
-            document.getElementById('hpFill').style.width = `${Math.max(0, Math.min(100, (current / bankroll) * 100))}%`;
-            
+            document.getElementById('hpFill').style.width = `${Math.max(0, Math.min(100, (curr / bank) * 100))}%`;
             const tbody = document.getElementById('betsTable');
-            if (!bets.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);">ยังไม่มีรายการบันทึก</td></tr>'; return; }
-            tbody.innerHTML = bets.map(b => {
-                const date = new Date(b.date).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' });
-                const pnlClass = b.status === 'win' ? 'win' : b.status === 'loss' ? 'loss' : '';
-                return `<tr><td>${date}</td><td>${b.event}</td><td>$${b.stake}</td><td class="${pnlClass}">${b.pnl >= 0 ? '+' : ''}$${b.pnl.toFixed(2)}</td><td><select onchange="updateStatus(${b.id}, this.value)" style="padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;"><option value="pending" ${b.status === 'pending' ? 'selected' : ''}>⏳ รอ</option><option value="win" ${b.status === 'win' ? 'selected' : ''}>✅ ชนะ</option><option value="loss" ${b.status === 'loss' ? 'selected' : ''}>❌ แพ้</option></select></td><td><button onclick="deleteBet(${b.id})" style="padding:8px 12px;background:var(--error-bg);color:var(--error);border:none;border-radius:8px;cursor:pointer;">ลบ</button></td></tr>`;
-            }).join('');
+            if (!bets.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);">ยังไม่มีรายการ</td></tr>'; return; }
+            tbody.innerHTML = bets.map(b => `<tr><td>${new Date(b.date).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })}</td><td>${b.event}</td><td>$${b.stake}</td><td class="${b.status === 'win' ? 'win' : b.status === 'loss' ? 'loss' : ''}">${b.pnl >= 0 ? '+' : ''}$${b.pnl.toFixed(2)}</td><td><select onchange="updateStatus(${b.id}, this.value)" style="padding:6px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:12px;"><option value="pending" ${b.status === 'pending' ? 'selected' : ''}>⏳</option><option value="win" ${b.status === 'win' ? 'selected' : ''}>✅</option><option value="loss" ${b.status === 'loss' ? 'selected' : ''}>❌</option></select></td><td><button onclick="deleteBet(${b.id})" style="padding:6px 10px;background:var(--error-bg);color:var(--error);border:none;border-radius:6px;cursor:pointer;">ลบ</button></td></tr>`).join('');
         }
         
-        function formatNum(n) { if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M'; if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K'; return n.toFixed(0); }
+        function formatNum(n) { return n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'K' : n.toFixed(0); }
         
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalBtn(); });
-        
         fetchMarkets();
     </script>
 </body>
