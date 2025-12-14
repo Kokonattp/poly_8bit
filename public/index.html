@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PolyTrader - 8bitcn Edition</title>
+    <title>PolyTrader Pro - All Markets</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     
     <style>
@@ -20,6 +20,8 @@
             --success: #22c55e;
             --warning: #f59e0b;
             --info: #3b82f6;
+            --purple: #a855f7;
+            --pink: #ec4899;
             --border: #3f3f46;
         }
         
@@ -34,40 +36,6 @@
             line-height: 2;
         }
         
-        /* NES-style box shadow border */
-        .nes-container {
-            position: relative;
-            margin: 4px;
-            padding: 16px;
-            background: var(--card);
-            box-shadow:
-                0 0 0 4px var(--border),
-                inset -4px -4px 0 0 #18181b,
-                inset 4px 4px 0 0 #3f3f46;
-        }
-        
-        .nes-container.is-primary {
-            box-shadow:
-                0 0 0 4px var(--primary),
-                inset -4px -4px 0 0 #ca8a04,
-                inset 4px 4px 0 0 #fde047;
-        }
-        
-        .nes-container.is-success {
-            box-shadow:
-                0 0 0 4px var(--success),
-                inset -4px -4px 0 0 #15803d,
-                inset 4px 4px 0 0 #4ade80;
-        }
-        
-        .nes-container.is-error {
-            box-shadow:
-                0 0 0 4px var(--destructive),
-                inset -4px -4px 0 0 #b91c1c,
-                inset 4px 4px 0 0 #f87171;
-        }
-        
-        /* Header */
         .header {
             background: var(--card);
             padding: 12px 16px;
@@ -79,418 +47,152 @@
             gap: 12px;
         }
         
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .logo-text {
-            font-size: 12px;
-            color: var(--primary);
-            text-shadow: 2px 2px 0 #ca8a04;
-        }
-        
-        .logo-badge {
-            background: var(--primary);
-            color: var(--primary-foreground);
-            font-size: 6px;
-            padding: 4px 8px;
-            animation: blink 1s steps(2) infinite;
-        }
+        .logo { display: flex; align-items: center; gap: 12px; }
+        .logo-text { font-size: 12px; color: var(--primary); text-shadow: 2px 2px 0 #ca8a04; }
+        .logo-badge { background: var(--purple); color: white; font-size: 6px; padding: 4px 8px; animation: blink 1s steps(2) infinite; }
         
         @keyframes blink { 50% { opacity: 0; } }
         
-        .status-badge {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 8px;
-            color: var(--muted-foreground);
-        }
-        
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--success);
-            animation: pulse 1s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-        
+        .status-badge { display: flex; align-items: center; gap: 8px; font-size: 8px; color: var(--muted-foreground); }
+        .status-dot { width: 8px; height: 8px; background: var(--success); animation: pulse 1s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
         .status-badge.error .status-dot { background: var(--destructive); }
         .status-badge.loading .status-dot { background: var(--warning); }
         
-        .main { max-width: 1100px; margin: 0 auto; padding: 16px; }
+        .main { max-width: 1200px; margin: 0 auto; padding: 16px; }
         
-        /* NES Button */
-        .nes-btn {
-            position: relative;
-            display: inline-block;
-            padding: 8px 16px;
-            font-family: inherit;
-            font-size: 10px;
-            color: var(--foreground);
-            background: var(--secondary);
-            border: none;
-            cursor: pointer;
-            text-transform: uppercase;
-            box-shadow:
-                inset -4px -4px 0 0 #18181b,
-                inset 4px 4px 0 0 #52525b;
-        }
-        
+        .nes-btn { display: inline-block; padding: 8px 16px; font-family: inherit; font-size: 10px; color: var(--foreground); background: var(--secondary); border: none; cursor: pointer; text-transform: uppercase; box-shadow: inset -4px -4px 0 0 #18181b, inset 4px 4px 0 0 #52525b; }
         .nes-btn:hover { color: var(--muted-foreground); }
         .nes-btn:active { box-shadow: inset 4px 4px 0 0 #18181b, inset -4px -4px 0 0 #52525b; }
+        .nes-btn.is-primary { background: var(--primary); color: var(--primary-foreground); box-shadow: inset -4px -4px 0 0 #a16207, inset 4px 4px 0 0 #fef08a; }
+        .nes-btn.is-success { background: var(--success); color: #052e16; box-shadow: inset -4px -4px 0 0 #15803d, inset 4px 4px 0 0 #86efac; }
+        .nes-btn.is-error { background: var(--destructive); color: white; box-shadow: inset -4px -4px 0 0 #b91c1c, inset 4px 4px 0 0 #fca5a5; }
         
-        .nes-btn.is-primary {
-            background: var(--primary);
-            color: var(--primary-foreground);
-            box-shadow: inset -4px -4px 0 0 #a16207, inset 4px 4px 0 0 #fef08a;
-        }
-        
-        .nes-btn.is-success {
-            background: var(--success);
-            color: #052e16;
-            box-shadow: inset -4px -4px 0 0 #15803d, inset 4px 4px 0 0 #86efac;
-        }
-        
-        .nes-btn.is-error {
-            background: var(--destructive);
-            color: white;
-            box-shadow: inset -4px -4px 0 0 #b91c1c, inset 4px 4px 0 0 #fca5a5;
-        }
-        
-        /* Tabs */
-        .tabs {
-            display: flex;
-            gap: 4px;
-            margin-bottom: 16px;
-            border-bottom: 4px solid var(--border);
-            padding-bottom: 4px;
-        }
-        
-        .tab-btn {
-            padding: 12px 16px;
-            font-family: inherit;
-            font-size: 8px;
-            background: var(--secondary);
-            color: var(--muted-foreground);
-            border: none;
-            cursor: pointer;
-            box-shadow: inset -4px -4px 0 0 #18181b, inset 4px 4px 0 0 #52525b;
-        }
-        
+        .tabs { display: flex; gap: 4px; margin-bottom: 16px; border-bottom: 4px solid var(--border); padding-bottom: 4px; flex-wrap: wrap; }
+        .tab-btn { padding: 12px 16px; font-family: inherit; font-size: 8px; background: var(--secondary); color: var(--muted-foreground); border: none; cursor: pointer; box-shadow: inset -4px -4px 0 0 #18181b, inset 4px 4px 0 0 #52525b; }
         .tab-btn:hover { color: var(--foreground); }
-        
-        .tab-btn.active {
-            background: var(--primary);
-            color: var(--primary-foreground);
-            box-shadow: inset -4px -4px 0 0 #a16207, inset 4px 4px 0 0 #fef08a;
-        }
-        
+        .tab-btn.active { background: var(--primary); color: var(--primary-foreground); box-shadow: inset -4px -4px 0 0 #a16207, inset 4px 4px 0 0 #fef08a; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         
-        /* Controls */
-        .controls-row {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-            align-items: flex-end;
-        }
-        
+        .controls-row { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; align-items: flex-end; }
         .control-group { display: flex; flex-direction: column; gap: 4px; }
         .control-label { font-size: 8px; color: var(--muted-foreground); }
         
-        .nes-input {
-            padding: 8px 12px;
-            font-family: inherit;
-            font-size: 10px;
-            color: var(--foreground);
-            background: var(--background);
-            border: none;
-            width: 80px;
-            box-shadow: inset -4px -4px 0 0 #52525b, inset 4px 4px 0 0 #18181b;
-        }
+        .nes-input { padding: 8px 12px; font-family: inherit; font-size: 10px; color: var(--foreground); background: var(--background); border: none; width: 100px; box-shadow: inset -4px -4px 0 0 #52525b, inset 4px 4px 0 0 #18181b; }
+        .nes-input:focus { outline: none; box-shadow: inset -4px -4px 0 0 var(--primary), inset 4px 4px 0 0 #a16207; }
         
-        .nes-input:focus {
-            outline: none;
-            box-shadow: inset -4px -4px 0 0 var(--primary), inset 4px 4px 0 0 #a16207;
-        }
-        
-        /* Filters */
-        .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
-        
-        .filter-btn {
-            padding: 6px 12px;
-            font-family: inherit;
-            font-size: 8px;
-            background: var(--secondary);
-            color: var(--muted-foreground);
-            border: 2px solid var(--border);
-            cursor: pointer;
-        }
-        
+        .filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+        .filter-btn { padding: 6px 10px; font-family: inherit; font-size: 7px; background: var(--secondary); color: var(--muted-foreground); border: 2px solid var(--border); cursor: pointer; }
         .filter-btn:hover { border-color: var(--primary); color: var(--primary); }
         .filter-btn.active { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); }
+        .filter-btn[data-cat="crypto"].active { background: #f7931a; border-color: #f7931a; }
+        .filter-btn[data-cat="politics"].active { background: var(--destructive); border-color: var(--destructive); color: white; }
+        .filter-btn[data-cat="sports"].active { background: var(--success); border-color: var(--success); }
+        .filter-btn[data-cat="entertainment"].active { background: var(--pink); border-color: var(--pink); }
+        .filter-btn[data-cat="science"].active { background: var(--info); border-color: var(--info); color: white; }
+        .filter-btn[data-cat="business"].active { background: var(--purple); border-color: var(--purple); color: white; }
         
-        /* Stats */
         .stats-row { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-        
-        .stat-badge {
-            padding: 8px 12px;
-            background: var(--secondary);
-            font-size: 8px;
-            color: var(--muted-foreground);
-            box-shadow: inset -2px -2px 0 0 #18181b, inset 2px 2px 0 0 #3f3f46;
-        }
-        
+        .stat-badge { padding: 8px 12px; background: var(--secondary); font-size: 8px; color: var(--muted-foreground); box-shadow: inset -2px -2px 0 0 #18181b, inset 2px 2px 0 0 #3f3f46; }
         .stat-badge span { color: var(--primary); margin-left: 4px; }
         
-        /* Quest Card */
-        .quest-grid { display: grid; gap: 16px; }
+        .quest-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
         
-        .quest-card {
-            background: var(--card);
-            box-shadow: 0 0 0 4px var(--border), inset -4px -4px 0 0 #18181b, inset 4px 4px 0 0 #3f3f46;
-        }
+        .quest-card { background: var(--card); box-shadow: 0 0 0 4px var(--border), inset -4px -4px 0 0 #18181b, inset 4px 4px 0 0 #3f3f46; }
+        .quest-card.is-legendary { box-shadow: 0 0 0 4px var(--success), inset -4px -4px 0 0 #15803d, inset 4px 4px 0 0 #4ade80, 0 0 20px rgba(34, 197, 94, 0.3); }
+        .quest-card.is-epic { box-shadow: 0 0 0 4px var(--info), inset -4px -4px 0 0 #1d4ed8, inset 4px 4px 0 0 #60a5fa; }
+        .quest-card.is-rare { box-shadow: 0 0 0 4px var(--warning), inset -4px -4px 0 0 #b45309, inset 4px 4px 0 0 #fbbf24; }
+        .quest-card.is-common { box-shadow: 0 0 0 4px var(--destructive), inset -4px -4px 0 0 #b91c1c, inset 4px 4px 0 0 #f87171; opacity: 0.7; }
         
-        .quest-card.is-legendary {
-            box-shadow: 0 0 0 4px var(--success), inset -4px -4px 0 0 #15803d, inset 4px 4px 0 0 #4ade80, 0 0 20px rgba(34, 197, 94, 0.3);
-        }
+        .quest-header { padding: 12px 16px; border-bottom: 4px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; }
+        .quest-title { font-size: 9px; color: var(--foreground); line-height: 1.8; }
+        .quest-meta { font-size: 7px; color: var(--muted-foreground); margin-top: 4px; display: flex; gap: 8px; flex-wrap: wrap; }
+        .quest-meta .cat { padding: 2px 6px; font-size: 6px; }
+        .quest-meta .cat.crypto { background: #f7931a; color: #000; }
+        .quest-meta .cat.politics { background: var(--destructive); color: white; }
+        .quest-meta .cat.sports { background: var(--success); color: #000; }
+        .quest-meta .cat.entertainment { background: var(--pink); color: #000; }
+        .quest-meta .cat.science { background: var(--info); color: white; }
+        .quest-meta .cat.business { background: var(--purple); color: white; }
+        .quest-meta .cat.other { background: var(--muted); color: var(--foreground); }
         
-        .quest-card.is-epic {
-            box-shadow: 0 0 0 4px var(--info), inset -4px -4px 0 0 #1d4ed8, inset 4px 4px 0 0 #60a5fa;
-        }
-        
-        .quest-card.is-rare {
-            box-shadow: 0 0 0 4px var(--warning), inset -4px -4px 0 0 #b45309, inset 4px 4px 0 0 #fbbf24;
-        }
-        
-        .quest-card.is-common {
-            box-shadow: 0 0 0 4px var(--destructive), inset -4px -4px 0 0 #b91c1c, inset 4px 4px 0 0 #f87171;
-            opacity: 0.7;
-        }
-        
-        .quest-header {
-            padding: 12px 16px;
-            border-bottom: 4px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        
-        .quest-title { font-size: 10px; color: var(--foreground); line-height: 1.8; }
-        .quest-meta { font-size: 8px; color: var(--primary); margin-top: 4px; }
-        
-        .quest-badge {
-            padding: 4px 8px;
-            font-size: 6px;
-            text-transform: uppercase;
-            animation: blink 1.5s steps(2) infinite;
-        }
-        
+        .quest-badge { padding: 4px 8px; font-size: 6px; text-transform: uppercase; animation: blink 1.5s steps(2) infinite; }
         .quest-badge.legendary { background: var(--success); color: #052e16; }
         .quest-badge.epic { background: var(--info); color: white; }
         .quest-badge.rare { background: var(--warning); color: #451a03; }
         .quest-badge.common { background: var(--muted); color: var(--muted-foreground); animation: none; }
         .quest-badge.pending { background: var(--secondary); color: var(--muted-foreground); animation: none; }
         
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            border-bottom: 4px solid var(--border);
-        }
-        
-        .stat-cell {
-            padding: 12px 8px;
-            text-align: center;
-            border-right: 2px solid var(--border);
-        }
-        
+        .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); border-bottom: 4px solid var(--border); }
+        .stat-cell { padding: 10px 6px; text-align: center; border-right: 2px solid var(--border); }
         .stat-cell:last-child { border-right: none; }
         .stat-cell .label { font-size: 6px; color: var(--muted-foreground); margin-bottom: 4px; }
-        .stat-cell .value { font-size: 12px; color: var(--foreground); }
+        .stat-cell .value { font-size: 11px; color: var(--foreground); }
         .stat-cell .value.positive { color: var(--success); }
         .stat-cell .value.negative { color: var(--destructive); }
         .stat-cell .value.neutral { color: var(--warning); }
         
-        .quest-input {
-            padding: 12px 16px;
-            background: rgba(250, 204, 21, 0.05);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        
+        .quest-input { padding: 10px 16px; background: rgba(250, 204, 21, 0.05); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
         .quest-input .nes-input { width: 60px; }
         .quest-input .label { font-size: 8px; color: var(--muted-foreground); }
         
-        .quest-footer {
-            padding: 12px 16px;
-            border-top: 4px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 8px;
-            color: var(--muted-foreground);
-        }
-        
+        .quest-footer { padding: 10px 16px; border-top: 4px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 7px; color: var(--muted-foreground); }
         .quest-footer a { text-decoration: none; }
         
-        /* Progress Bar */
-        .progress-bar {
-            height: 16px;
-            background: var(--secondary);
-            box-shadow: inset -4px -4px 0 0 #18181b, inset 4px 4px 0 0 #3f3f46;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--destructive), var(--warning), var(--success));
-            transition: width 0.3s;
-        }
-        
-        /* Loading */
-        .loading-state { text-align: center; padding: 48px 16px; }
+        .loading-state { text-align: center; padding: 48px 16px; grid-column: 1 / -1; }
         .loading-icon { font-size: 32px; animation: bounce 0.5s infinite alternate; }
         @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-8px); } }
         .loading-text { margin-top: 16px; font-size: 10px; color: var(--primary); animation: blink 1s steps(2) infinite; }
         
-        .empty-state { text-align: center; padding: 48px 16px; color: var(--muted-foreground); }
+        .empty-state { text-align: center; padding: 48px 16px; color: var(--muted-foreground); grid-column: 1 / -1; }
         .empty-icon { font-size: 32px; margin-bottom: 16px; }
         
-        /* Portfolio */
-        .portfolio-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 12px;
-            margin-bottom: 16px;
-        }
+        .search-box { flex: 1; min-width: 200px; }
+        .search-box .nes-input { width: 100%; }
         
-        .portfolio-card {
-            padding: 16px;
-            background: var(--card);
-            box-shadow: 0 0 0 4px var(--border), inset -4px -4px 0 0 #18181b, inset 4px 4px 0 0 #3f3f46;
-        }
-        
+        .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px; }
+        .portfolio-card { padding: 16px; background: var(--card); box-shadow: 0 0 0 4px var(--border), inset -4px -4px 0 0 #18181b, inset 4px 4px 0 0 #3f3f46; }
         .portfolio-card .label { font-size: 8px; color: var(--primary); margin-bottom: 8px; }
         .portfolio-card .value { font-size: 18px; color: var(--foreground); }
         .portfolio-card .value.positive { color: var(--success); }
         .portfolio-card .value.negative { color: var(--destructive); }
         .portfolio-card .sub { font-size: 8px; color: var(--muted-foreground); margin-top: 4px; }
         
-        /* Form */
-        .form-card {
-            padding: 16px;
-            margin-bottom: 16px;
-            background: var(--card);
-            box-shadow: 0 0 0 4px var(--primary), inset -4px -4px 0 0 #a16207, inset 4px 4px 0 0 #fef08a;
-        }
+        .progress-bar { height: 16px; background: var(--secondary); box-shadow: inset -4px -4px 0 0 #18181b, inset 4px 4px 0 0 #3f3f46; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--destructive), var(--warning), var(--success)); transition: width 0.3s; }
         
+        .form-card { padding: 16px; margin-bottom: 16px; background: var(--card); box-shadow: 0 0 0 4px var(--primary), inset -4px -4px 0 0 #a16207, inset 4px 4px 0 0 #fef08a; }
         .form-card h3 { font-size: 10px; color: var(--primary); margin-bottom: 16px; }
-        
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 12px;
-            margin-bottom: 12px;
-        }
-        
+        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 12px; }
         .form-group label { display: block; font-size: 8px; color: var(--muted-foreground); margin-bottom: 4px; }
+        .form-group input, .form-group select { width: 100%; padding: 8px; font-family: inherit; font-size: 8px; color: var(--foreground); background: var(--background); border: none; box-shadow: inset -4px -4px 0 0 #52525b, inset 4px 4px 0 0 #18181b; }
         
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 8px;
-            font-family: inherit;
-            font-size: 8px;
-            color: var(--foreground);
-            background: var(--background);
-            border: none;
-            box-shadow: inset -4px -4px 0 0 #52525b, inset 4px 4px 0 0 #18181b;
-        }
-        
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            box-shadow: inset -4px -4px 0 0 var(--primary), inset 4px 4px 0 0 #a16207;
-        }
-        
-        /* Table */
-        .table-container {
-            overflow-x: auto;
-            box-shadow: 0 0 0 4px var(--border), inset -4px -4px 0 0 #18181b, inset 4px 4px 0 0 #3f3f46;
-        }
-        
+        .table-container { overflow-x: auto; box-shadow: 0 0 0 4px var(--border), inset -4px -4px 0 0 #18181b, inset 4px 4px 0 0 #3f3f46; }
         table { width: 100%; border-collapse: collapse; background: var(--card); }
-        
-        th {
-            padding: 12px;
-            text-align: left;
-            font-size: 8px;
-            color: var(--primary);
-            background: var(--secondary);
-            border-bottom: 4px solid var(--border);
-        }
-        
+        th { padding: 12px; text-align: left; font-size: 8px; color: var(--primary); background: var(--secondary); border-bottom: 4px solid var(--border); }
         td { padding: 12px; font-size: 8px; border-bottom: 2px solid var(--border); }
-        tr:hover { background: rgba(255, 255, 255, 0.02); }
-        
         .win { color: var(--success); }
         .loss { color: var(--destructive); }
         .pending { color: var(--warning); }
         
-        /* Guide */
-        .guide-card {
-            padding: 16px;
-            margin-bottom: 16px;
-            background: var(--card);
-            box-shadow: 0 0 0 4px var(--border), inset -4px -4px 0 0 #18181b, inset 4px 4px 0 0 #3f3f46;
-        }
-        
-        .guide-card.is-primary {
-            box-shadow: 0 0 0 4px var(--primary), inset -4px -4px 0 0 #a16207, inset 4px 4px 0 0 #fef08a, 0 0 20px rgba(250, 204, 21, 0.2);
-        }
-        
-        .guide-card.is-error {
-            box-shadow: 0 0 0 4px var(--destructive), inset -4px -4px 0 0 #b91c1c, inset 4px 4px 0 0 #f87171;
-        }
-        
+        .guide-card { padding: 16px; margin-bottom: 16px; background: var(--card); box-shadow: 0 0 0 4px var(--border), inset -4px -4px 0 0 #18181b, inset 4px 4px 0 0 #3f3f46; }
+        .guide-card.is-primary { box-shadow: 0 0 0 4px var(--primary), inset -4px -4px 0 0 #a16207, inset 4px 4px 0 0 #fef08a; }
+        .guide-card.is-error { box-shadow: 0 0 0 4px var(--destructive), inset -4px -4px 0 0 #b91c1c, inset 4px 4px 0 0 #f87171; }
         .guide-card h3 { font-size: 10px; color: var(--foreground); margin-bottom: 16px; }
         .guide-card.is-primary h3 { color: var(--primary); }
         .guide-card.is-error h3 { color: var(--destructive); }
         .guide-card p { font-size: 8px; color: var(--muted-foreground); line-height: 2.5; }
         .guide-card strong { color: var(--foreground); }
         
-        /* Message Box */
-        .message-box {
-            padding: 16px;
-            margin-bottom: 16px;
-            background: var(--card);
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-        }
-        
-        .message-box.is-success {
-            box-shadow: 0 0 0 4px var(--success), inset -4px -4px 0 0 #15803d, inset 4px 4px 0 0 #4ade80;
-        }
-        
+        .message-box { padding: 16px; margin-bottom: 16px; background: var(--card); display: flex; align-items: flex-start; gap: 12px; box-shadow: 0 0 0 4px var(--info), inset -4px -4px 0 0 #1d4ed8, inset 4px 4px 0 0 #60a5fa; }
         .message-icon { font-size: 20px; }
         .message-content h4 { font-size: 10px; color: var(--foreground); margin-bottom: 4px; }
         .message-content p { font-size: 8px; color: var(--muted-foreground); }
         
         @media (max-width: 600px) {
             .stats-grid { grid-template-columns: repeat(3, 1fr); }
-            .controls-row { flex-direction: column; align-items: stretch; }
-            .nes-input { width: 100%; }
+            .quest-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -499,7 +201,7 @@
         <div class="logo">
             <span style="font-size: 20px;">🎮</span>
             <span class="logo-text">POLYTRADER</span>
-            <span class="logo-badge">8BIT</span>
+            <span class="logo-badge">PRO</span>
         </div>
         <div class="status-badge" id="statusBadge">
             <div class="status-dot"></div>
@@ -509,7 +211,7 @@
     
     <main class="main">
         <div class="tabs">
-            <button class="tab-btn active" onclick="showTab('scanner')">⚔️ SCANNER</button>
+            <button class="tab-btn active" onclick="showTab('scanner')">🔍 MARKETS</button>
             <button class="tab-btn" onclick="showTab('portfolio')">💰 PORTFOLIO</button>
             <button class="tab-btn" onclick="showTab('guide')">📜 GUIDE</button>
         </div>
@@ -517,34 +219,40 @@
         <div class="tab-content active" id="tab-scanner">
             <div class="controls-row">
                 <div class="control-group">
-                    <span class="control-label">💰 GOLD (USD)</span>
+                    <span class="control-label">💰 BANKROLL</span>
                     <input type="number" class="nes-input" id="bankroll" value="100">
                 </div>
                 <div class="control-group">
                     <span class="control-label">🎯 MIN EDGE</span>
                     <input type="number" class="nes-input" id="minEdge" value="5">
                 </div>
+                <div class="control-group search-box">
+                    <span class="control-label">🔍 SEARCH</span>
+                    <input type="text" class="nes-input" id="searchInput" placeholder="BITCOIN, TRUMP..." oninput="filterMarkets()">
+                </div>
                 <button class="nes-btn is-primary" onclick="fetchMarkets()">⟳ RELOAD</button>
             </div>
             
             <div class="filter-row">
-                <button class="filter-btn active" onclick="filterSport('all', this)">🌐 ALL</button>
-                <button class="filter-btn" onclick="filterSport('nba', this)">🏀 NBA</button>
-                <button class="filter-btn" onclick="filterSport('nhl', this)">🏒 NHL</button>
-                <button class="filter-btn" onclick="filterSport('nfl', this)">🏈 NFL</button>
-                <button class="filter-btn" onclick="filterSport('soccer', this)">⚽ SOCCER</button>
+                <button class="filter-btn active" data-cat="all" onclick="filterCategory('all', this)">🌐 ALL</button>
+                <button class="filter-btn" data-cat="crypto" onclick="filterCategory('crypto', this)">₿ CRYPTO</button>
+                <button class="filter-btn" data-cat="politics" onclick="filterCategory('politics', this)">🏛️ POLITICS</button>
+                <button class="filter-btn" data-cat="sports" onclick="filterCategory('sports', this)">⚽ SPORTS</button>
+                <button class="filter-btn" data-cat="entertainment" onclick="filterCategory('entertainment', this)">🎬 ENTERTAINMENT</button>
+                <button class="filter-btn" data-cat="science" onclick="filterCategory('science', this)">🔬 SCIENCE/AI</button>
+                <button class="filter-btn" data-cat="business" onclick="filterCategory('business', this)">💼 BUSINESS</button>
             </div>
             
             <div class="stats-row">
-                <div class="stat-badge">QUESTS:<span id="totalMarkets">0</span></div>
-                <div class="stat-badge">RARE+:<span id="valueMarkets">0</span></div>
+                <div class="stat-badge">MARKETS:<span id="totalMarkets">0</span></div>
+                <div class="stat-badge">SHOWING:<span id="filteredMarkets">0</span></div>
                 <div class="stat-badge">TIME:<span id="lastUpdate">--:--</span></div>
             </div>
             
             <div class="quest-grid" id="questGrid">
                 <div class="loading-state">
-                    <div class="loading-icon">⚔️</div>
-                    <div class="loading-text">LOADING QUESTS...</div>
+                    <div class="loading-icon">🔮</div>
+                    <div class="loading-text">LOADING MARKETS...</div>
                 </div>
             </div>
         </div>
@@ -552,15 +260,13 @@
         <div class="tab-content" id="tab-portfolio">
             <div class="portfolio-grid">
                 <div class="portfolio-card">
-                    <div class="label">💰 GOLD</div>
-                    <div class="value" id="pBankroll">100G</div>
-                    <div class="progress-bar" style="margin-top: 8px;">
-                        <div class="progress-fill" id="hpFill" style="width: 100%;"></div>
-                    </div>
+                    <div class="label">💰 BANKROLL</div>
+                    <div class="value" id="pBankroll">$100</div>
+                    <div class="progress-bar" style="margin-top: 8px;"><div class="progress-fill" id="hpFill" style="width: 100%;"></div></div>
                 </div>
                 <div class="portfolio-card">
                     <div class="label">📈 P&L</div>
-                    <div class="value positive" id="pPnL">+0G</div>
+                    <div class="value positive" id="pPnL">+$0</div>
                     <div class="sub" id="pPnLPct">0%</div>
                 </div>
                 <div class="portfolio-card">
@@ -571,59 +277,65 @@
             </div>
             
             <div class="form-card">
-                <h3>➕ NEW QUEST LOG</h3>
+                <h3>➕ LOG TRADE</h3>
                 <div class="form-row">
-                    <div class="form-group"><label>QUEST NAME</label><input type="text" id="betEvent" placeholder="LAKERS VS CELTICS"></div>
-                    <div class="form-group"><label>BET (G)</label><input type="number" id="betStake" placeholder="5"></div>
-                    <div class="form-group"><label>ODDS (¢)</label><input type="number" id="betPrice" placeholder="55"></div>
-                    <div class="form-group"><label>STATUS</label><select id="betStatus"><option value="pending">⏳ PENDING</option><option value="win">✅ VICTORY</option><option value="loss">💀 DEFEAT</option></select></div>
+                    <div class="form-group"><label>MARKET</label><input type="text" id="betEvent" placeholder="BITCOIN >100K"></div>
+                    <div class="form-group"><label>STAKE ($)</label><input type="number" id="betStake" placeholder="5"></div>
+                    <div class="form-group"><label>PRICE (¢)</label><input type="number" id="betPrice" placeholder="55"></div>
+                    <div class="form-group"><label>STATUS</label><select id="betStatus"><option value="pending">⏳ PENDING</option><option value="win">✅ WIN</option><option value="loss">❌ LOSS</option></select></div>
                 </div>
-                <button class="nes-btn is-primary" onclick="addBet()">+ LOG QUEST</button>
+                <button class="nes-btn is-primary" onclick="addBet()">+ LOG</button>
             </div>
             
             <div class="table-container">
                 <table>
-                    <thead><tr><th>DATE</th><th>QUEST</th><th>BET</th><th>LOOT</th><th>STATUS</th><th></th></tr></thead>
-                    <tbody id="betsTable"><tr><td colspan="6" style="text-align:center;">NO QUESTS LOGGED</td></tr></tbody>
+                    <thead><tr><th>DATE</th><th>MARKET</th><th>STAKE</th><th>P&L</th><th>STATUS</th><th></th></tr></thead>
+                    <tbody id="betsTable"><tr><td colspan="6" style="text-align:center;">NO TRADES</td></tr></tbody>
                 </table>
             </div>
         </div>
         
         <div class="tab-content" id="tab-guide">
-            <div class="message-box is-success">
-                <span class="message-icon">ℹ️</span>
+            <div class="message-box">
+                <span class="message-icon">💡</span>
                 <div class="message-content">
-                    <h4>Quest Guide</h4>
-                    <p>Only accept quests with EDGE ≥ 5% for maximum loot!</p>
+                    <h4>Pro Tip</h4>
+                    <p>ใช้ได้กับทุกตลาด! Crypto, Politics, Sports และอื่นๆ</p>
                 </div>
             </div>
             
             <div class="guide-card is-primary">
-                <h3>💰 GOLD MANAGEMENT</h3>
-                <div class="portfolio-grid" style="margin-bottom: 0;">
-                    <div class="portfolio-card"><div class="label">MIN GOLD</div><div class="value">100G</div></div>
-                    <div class="portfolio-card"><div class="label">BET SIZE</div><div class="value">5%</div></div>
-                    <div class="portfolio-card"><div class="label">QUESTS/DAY</div><div class="value">2-3</div></div>
-                </div>
+                <h3>📊 MARKET CATEGORIES</h3>
+                <p>
+                    <strong>₿ CRYPTO:</strong> Bitcoin, Ethereum, ETFs<br>
+                    <strong>🏛️ POLITICS:</strong> Trump, Elections, Xi, Putin<br>
+                    <strong>⚽ SPORTS:</strong> NBA, NFL, Soccer, UFC<br>
+                    <strong>🎬 ENTERTAINMENT:</strong> Movies, Awards<br>
+                    <strong>🔬 SCIENCE/AI:</strong> OpenAI, SpaceX, Tech<br>
+                    <strong>💼 BUSINESS:</strong> IPOs, Stocks, Economy
+                </p>
             </div>
             
             <div class="guide-card">
-                <h3>📊 EXPECTED LOOT (55% WIN)</h3>
-                <div class="table-container">
-                    <table>
-                        <thead><tr><th>GOLD</th><th>BET</th><th>LOOT/MO</th><th>MAX LOSS</th></tr></thead>
-                        <tbody>
-                            <tr><td>100G</td><td>5G</td><td class="win">+15-25G</td><td class="loss">-30G</td></tr>
-                            <tr><td>200G</td><td>10G</td><td class="win">+30-50G</td><td class="loss">-60G</td></tr>
-                            <tr><td>500G</td><td>25G</td><td class="win">+75-125G</td><td class="loss">-150G</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+                <h3>🎯 HOW TO FIND MODEL%</h3>
+                <p>
+                    <strong>₿ Crypto:</strong> ดู Prediction Markets อื่น, Expert Analysis<br>
+                    <strong>🏛️ Politics:</strong> ดู Polls, 538, RealClearPolitics<br>
+                    <strong>⚽ Sports:</strong> FanDuel, DraftKings, ESPN<br>
+                    <strong>🔬 Science:</strong> Expert opinions, Research papers<br>
+                    <strong>💼 Business:</strong> Analyst reports, News
+                </p>
             </div>
             
             <div class="guide-card is-error">
-                <h3>⚠️ WARRIOR'S CODE</h3>
-                <p><strong>1.</strong> NEVER BET MORE THAN 5% PER QUEST<br><strong>2.</strong> DON'T CHASE LOSSES<br><strong>3.</strong> ONLY BET GOLD YOU CAN LOSE<br><strong>4.</strong> ONLY ACCEPT QUESTS WITH EDGE ≥ 5%<br><strong>5.</strong> REST IF DOWN 20%</p>
+                <h3>⚠️ RISK WARNING</h3>
+                <p>
+                    <strong>1.</strong> NEVER BET MORE THAN 5% PER TRADE<br>
+                    <strong>2.</strong> DON'T CHASE LOSSES<br>
+                    <strong>3.</strong> ONLY USE MONEY YOU CAN LOSE<br>
+                    <strong>4.</strong> VERIFY MODEL% FROM RELIABLE SOURCES<br>
+                    <strong>5.</strong> STOP IF DOWN 20%
+                </p>
             </div>
         </div>
     </main>
@@ -631,8 +343,27 @@
     <script>
         const API_URL = '/api/polymarket';
         let allMarkets = [];
-        let currentFilter = 'all';
+        let currentCategory = 'all';
         let bets = JSON.parse(localStorage.getItem('polytrader_bets') || '[]');
+        
+        const categoryKeywords = {
+            crypto: ['bitcoin', 'btc', 'ethereum', 'eth', 'crypto', 'solana', 'xrp', 'doge', 'memecoin', 'defi', 'nft', 'binance', 'coinbase', 'etf'],
+            politics: ['trump', 'biden', 'election', 'president', 'congress', 'senate', 'republican', 'democrat', 'xi', 'putin', 'ukraine', 'russia', 'china', 'iran', 'israel', 'gaza', 'war', 'government', 'vote', 'governor', 'mayor', 'political', 'gop', 'white house', 'cabinet'],
+            sports: ['nba', 'nfl', 'nhl', 'mlb', 'soccer', 'football', 'basketball', 'baseball', 'hockey', 'ufc', 'mma', 'boxing', 'tennis', 'golf', 'olympics', 'championship', 'playoff', 'finals', 'super bowl', 'world cup', ' vs ', 'lakers', 'celtics', 'warriors', 'chiefs', 'eagles'],
+            entertainment: ['movie', 'oscar', 'grammy', 'emmy', 'actor', 'actress', 'film', 'album', 'celebrity', 'swift', 'beyonce', 'netflix', 'disney', 'box office', 'streaming', 'youtube', 'tiktok'],
+            science: ['ai', 'artificial intelligence', 'openai', 'chatgpt', 'gpt', 'tesla', 'spacex', 'mars', 'nasa', 'space', 'rocket', 'climate', 'vaccine', 'fda', 'research', 'quantum', 'robot', 'autonomous', 'anthropic', 'google ai'],
+            business: ['ipo', 'stock', 'merger', 'acquisition', 'ceo', 'company', 'revenue', 'earnings', 'market cap', 'nasdaq', 'nyse', 'fed', 'interest rate', 'inflation', 'recession', 'gdp', 'economy', 'layoff', 'startup', 'valuation', 's&p']
+        };
+        
+        function detectCategory(title, slug) {
+            const text = (title + ' ' + slug).toLowerCase();
+            for (const [category, keywords] of Object.entries(categoryKeywords)) {
+                for (const keyword of keywords) {
+                    if (text.includes(keyword)) return category;
+                }
+            }
+            return 'other';
+        }
         
         function showTab(name) {
             document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
@@ -647,63 +378,71 @@
             const statusBadge = document.getElementById('statusBadge');
             const statusText = document.getElementById('statusText');
             
-            grid.innerHTML = '<div class="loading-state"><div class="loading-icon">⚔️</div><div class="loading-text">LOADING...</div></div>';
+            grid.innerHTML = '<div class="loading-state"><div class="loading-icon">🔮</div><div class="loading-text">LOADING...</div></div>';
             statusBadge.className = 'status-badge loading';
             statusText.textContent = 'LOADING...';
             
             try {
-                const response = await fetch(`${API_URL}?endpoint=events&closed=false&limit=100`);
+                const response = await fetch(`${API_URL}?endpoint=events&closed=false&limit=200`);
                 if (!response.ok) throw new Error(`ERROR ${response.status}`);
                 const events = await response.json();
                 
-                allMarkets = events.filter(e => {
-                    const t = (e.title || '').toLowerCase();
-                    const s = (e.slug || '').toLowerCase();
-                    return t.includes(' vs ') || s.includes('nba') || s.includes('nhl') || s.includes('nfl') || s.includes('soccer');
-                }).map(e => {
+                allMarkets = events.map(e => {
                     const m = e.markets?.[0] || {};
                     let price = 0;
                     if (m.outcomePrices) { try { price = parseFloat(JSON.parse(m.outcomePrices)[0]) || 0; } catch {} }
-                    let sport = 'other';
-                    const t = (e.title || '').toLowerCase();
-                    const s = (e.slug || '').toLowerCase();
-                    if (s.includes('nba') || t.includes('lakers')) sport = 'nba';
-                    else if (s.includes('nhl')) sport = 'nhl';
-                    else if (s.includes('nfl')) sport = 'nfl';
-                    else if (s.includes('soccer') || s.includes('premier')) sport = 'soccer';
-                    return { id: e.id, title: e.title?.toUpperCase(), slug: e.slug, startDate: e.startDate, sport, price, volume: parseFloat(m.volume) || 0, url: `https://polymarket.com/event/${e.slug}` };
-                }).filter(m => m.price > 0.05 && m.price < 0.95);
+                    return {
+                        id: e.id,
+                        title: e.title?.toUpperCase() || 'UNKNOWN',
+                        slug: e.slug || '',
+                        endDate: e.endDate,
+                        category: detectCategory(e.title || '', e.slug || ''),
+                        price,
+                        volume: parseFloat(m.volume) || 0,
+                        url: `https://polymarket.com/event/${e.slug}`
+                    };
+                }).filter(m => m.price > 0.01 && m.price < 0.99);
+                
+                allMarkets.sort((a, b) => b.volume - a.volume);
                 
                 statusBadge.className = 'status-badge';
                 statusText.textContent = `LIVE · ${allMarkets.length}`;
                 document.getElementById('totalMarkets').textContent = allMarkets.length;
                 document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
-                renderMarkets();
+                filterMarkets();
             } catch (err) {
                 statusBadge.className = 'status-badge error';
                 statusText.textContent = 'OFFLINE';
-                grid.innerHTML = `<div class="empty-state"><div class="empty-icon">💀</div><p>QUEST FAILED</p><p style="margin-top:8px;color:var(--destructive);">${err.message}</p><button class="nes-btn is-primary" onclick="fetchMarkets()" style="margin-top:16px;">↻ RETRY</button></div>`;
+                grid.innerHTML = `<div class="empty-state"><div class="empty-icon">💀</div><p>FAILED</p><p style="margin-top:8px;color:var(--destructive);">${err.message}</p><button class="nes-btn is-primary" onclick="fetchMarkets()" style="margin-top:16px;">↻ RETRY</button></div>`;
             }
         }
         
-        function filterSport(sport, btn) {
-            currentFilter = sport;
+        function filterCategory(category, btn) {
+            currentCategory = category;
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            renderMarkets();
+            filterMarkets();
         }
         
-        function renderMarkets() {
+        function filterMarkets() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            let filtered = allMarkets;
+            if (currentCategory !== 'all') filtered = filtered.filter(m => m.category === currentCategory);
+            if (searchTerm) filtered = filtered.filter(m => m.title.toLowerCase().includes(searchTerm) || m.slug.toLowerCase().includes(searchTerm));
+            document.getElementById('filteredMarkets').textContent = filtered.length;
+            renderMarkets(filtered);
+        }
+        
+        function renderMarkets(markets) {
             const grid = document.getElementById('questGrid');
-            let filtered = currentFilter === 'all' ? allMarkets : allMarkets.filter(m => m.sport === currentFilter);
-            if (!filtered.length) { grid.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><p>NO QUESTS FOUND</p></div>'; return; }
+            if (!markets.length) { grid.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><p>NO MARKETS FOUND</p></div>'; return; }
             
-            const icons = { nba: '🏀', nhl: '🏒', nfl: '🏈', soccer: '⚽', other: '⚔️' };
+            const catIcons = { crypto: '₿', politics: '🏛️', sports: '⚽', entertainment: '🎬', science: '🔬', business: '💼', other: '📊' };
             
-            grid.innerHTML = filtered.map((m, i) => {
-                let time = '--:--';
-                if (m.startDate) time = new Date(m.startDate).toLocaleString('th-TH', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
-                return `<div class="quest-card" id="card-${i}"><div class="quest-header"><div><div class="quest-title">${icons[m.sport] || '⚔️'} ${m.title}</div><div class="quest-meta">⏰ ${time}</div></div><span class="quest-badge pending" id="badge-${i}">INPUT MODEL%</span></div><div class="stats-grid"><div class="stat-cell"><div class="label">PRICE</div><div class="value">${(m.price*100).toFixed(0)}¢</div></div><div class="stat-cell"><div class="label">IMPLIED</div><div class="value">${(m.price*100).toFixed(1)}%</div></div><div class="stat-cell"><div class="label">MODEL</div><div class="value" id="model-${i}">--</div></div><div class="stat-cell"><div class="label">EDGE</div><div class="value" id="edge-${i}">--</div></div><div class="stat-cell"><div class="label">EV</div><div class="value" id="ev-${i}">--</div></div></div><div class="quest-input"><span class="label">MODEL%:</span><input type="number" class="nes-input" id="input-${i}" placeholder="65" min="1" max="99"><button class="nes-btn is-success" onclick="calculate(${i}, ${m.price})">CALC</button></div><div class="quest-footer"><span>VOL: ${formatNum(m.volume)}G</span><a href="${m.url}" target="_blank" class="nes-btn is-primary">🎮 TRADE</a></div></div>`;
+            grid.innerHTML = markets.slice(0, 50).map((m, i) => {
+                const icon = catIcons[m.category] || '📊';
+                let endDate = m.endDate ? new Date(m.endDate).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' }) : '';
+                return `<div class="quest-card" id="card-${i}"><div class="quest-header"><div><div class="quest-title">${icon} ${m.title}</div><div class="quest-meta"><span class="cat ${m.category}">${m.category.toUpperCase()}</span>${endDate ? `<span>📅 ${endDate}</span>` : ''}</div></div><span class="quest-badge pending" id="badge-${i}">INPUT MODEL%</span></div><div class="stats-grid"><div class="stat-cell"><div class="label">PRICE</div><div class="value">${(m.price*100).toFixed(0)}¢</div></div><div class="stat-cell"><div class="label">IMPLIED</div><div class="value">${(m.price*100).toFixed(1)}%</div></div><div class="stat-cell"><div class="label">MODEL</div><div class="value" id="model-${i}">--</div></div><div class="stat-cell"><div class="label">EDGE</div><div class="value" id="edge-${i}">--</div></div><div class="stat-cell"><div class="label">EV</div><div class="value" id="ev-${i}">--</div></div></div><div class="quest-input"><span class="label">MODEL%:</span><input type="number" class="nes-input" id="input-${i}" placeholder="65" min="1" max="99"><button class="nes-btn is-success" onclick="calculate(${i}, ${m.price})">CALC</button></div><div class="quest-footer"><span>VOL: $${formatNum(m.volume)}</span><a href="${m.url}" target="_blank" class="nes-btn is-primary">🎮 TRADE</a></div></div>`;
             }).join('');
         }
         
@@ -712,8 +451,7 @@
             if (!model || model < 1 || model > 99) { alert('ENTER MODEL% (1-99)'); return; }
             const minEdge = parseFloat(document.getElementById('minEdge').value) || 5;
             const edge = model - (price * 100);
-            const odds = 1 / price;
-            const ev = ((model / 100) * (100 * (odds - 1))) - ((1 - model / 100) * 100);
+            const ev = ((model / 100) * (100 * (1/price - 1))) - ((1 - model / 100) * 100);
             
             document.getElementById(`model-${i}`).textContent = `${model}%`;
             document.getElementById(`model-${i}`).className = 'value positive';
@@ -723,7 +461,7 @@
             edgeEl.className = `value ${edge >= minEdge ? 'positive' : edge >= 0 ? 'neutral' : 'negative'}`;
             
             const evEl = document.getElementById(`ev-${i}`);
-            evEl.textContent = `${ev >= 0 ? '+' : ''}${ev.toFixed(0)}G`;
+            evEl.textContent = `${ev >= 0 ? '+' : ''}$${ev.toFixed(0)}`;
             evEl.className = `value ${ev >= 0 ? 'positive' : 'negative'}`;
             
             const badge = document.getElementById(`badge-${i}`);
@@ -766,8 +504,8 @@
             const current = bankroll + totalPnL;
             const winRate = wins.length + losses.length > 0 ? (wins.length / (wins.length + losses.length) * 100).toFixed(0) : 0;
             
-            document.getElementById('pBankroll').textContent = `${current.toFixed(0)}G`;
-            document.getElementById('pPnL').textContent = `${totalPnL >= 0 ? '+' : ''}${totalPnL.toFixed(0)}G`;
+            document.getElementById('pBankroll').textContent = `$${current.toFixed(0)}`;
+            document.getElementById('pPnL').textContent = `${totalPnL >= 0 ? '+' : ''}$${totalPnL.toFixed(0)}`;
             document.getElementById('pPnL').className = `value ${totalPnL >= 0 ? 'positive' : 'negative'}`;
             document.getElementById('pPnLPct').textContent = `${(totalPnL / bankroll * 100).toFixed(0)}%`;
             document.getElementById('pWinRate').textContent = `${winRate}%`;
@@ -775,11 +513,11 @@
             document.getElementById('hpFill').style.width = `${Math.max(0, Math.min(100, (current / bankroll) * 100))}%`;
             
             const tbody = document.getElementById('betsTable');
-            if (!bets.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">NO QUESTS LOGGED</td></tr>'; return; }
+            if (!bets.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">NO TRADES</td></tr>'; return; }
             tbody.innerHTML = bets.map(b => {
                 const date = new Date(b.date).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' });
                 const pnlClass = b.status === 'win' ? 'win' : b.status === 'loss' ? 'loss' : 'pending';
-                return `<tr><td>${date}</td><td>${b.event}</td><td>${b.stake}G</td><td class="${pnlClass}">${b.pnl >= 0 ? '+' : ''}${b.pnl.toFixed(0)}G</td><td><select onchange="updateStatus(${b.id}, this.value)" style="background:var(--background);border:none;color:var(--foreground);font-family:inherit;font-size:8px;padding:4px;box-shadow:inset -2px -2px 0 0 #52525b,inset 2px 2px 0 0 #18181b;"><option value="pending" ${b.status === 'pending' ? 'selected' : ''}>⏳</option><option value="win" ${b.status === 'win' ? 'selected' : ''}>✅</option><option value="loss" ${b.status === 'loss' ? 'selected' : ''}>💀</option></select></td><td><button onclick="deleteBet(${b.id})" class="nes-btn is-error" style="padding:4px 8px;font-size:8px;">X</button></td></tr>`;
+                return `<tr><td>${date}</td><td>${b.event}</td><td>$${b.stake}</td><td class="${pnlClass}">${b.pnl >= 0 ? '+' : ''}$${b.pnl.toFixed(0)}</td><td><select onchange="updateStatus(${b.id}, this.value)" style="background:var(--background);border:none;color:var(--foreground);font-family:inherit;font-size:8px;padding:4px;"><option value="pending" ${b.status === 'pending' ? 'selected' : ''}>⏳</option><option value="win" ${b.status === 'win' ? 'selected' : ''}>✅</option><option value="loss" ${b.status === 'loss' ? 'selected' : ''}>❌</option></select></td><td><button onclick="deleteBet(${b.id})" class="nes-btn is-error" style="padding:4px 8px;font-size:8px;">X</button></td></tr>`;
             }).join('');
         }
         

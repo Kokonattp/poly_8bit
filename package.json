@@ -1,17 +1,5 @@
 {
-  "name": "polytrader-pro",
+  "name": "polytrader-8bit",
   "version": "1.0.0",
-  "description": "PolyTrader Pro - Polymarket Value Betting Scanner",
-  "private": true,
-  "scripts": {
-    "dev": "vercel dev",
-    "deploy": "vercel --prod"
-  },
-  "dependencies": {},
-  "devDependencies": {
-    "vercel": "^32.0.0"
-  },
-  "engines": {
-    "node": ">=18"
-  }
+  "private": true
 }

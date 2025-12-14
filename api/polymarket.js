@@ -1,4 +1,5 @@
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
+  // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -7,11 +8,10 @@ module.exports = async (req, res) => {
     return res.status(200).end();
   }
 
-  const endpoint = req.query.endpoint || 'events';
-  const closed = req.query.closed || 'false';
-  const limit = req.query.limit || '100';
+  const { endpoint = 'events', ...params } = req.query;
   
-  const url = `https://gamma-api.polymarket.com/${endpoint}?closed=${closed}&limit=${limit}`;
+  const queryString = new URLSearchParams(params).toString();
+  const url = `https://gamma-api.polymarket.com/${endpoint}${queryString ? '?' + queryString : ''}`;
 
   try {
     const response = await fetch(url, {
@@ -22,14 +22,16 @@ module.exports = async (req, res) => {
     });
 
     if (!response.ok) {
-      return res.status(response.status).json({ error: 'API Error' });
+      throw new Error(`Polymarket API error: ${response.status}`);
     }
 
     const data = await response.json();
-    res.setHeader('Cache-Control', 's-maxage=30');
+    
+    res.setHeader('Cache-Control', 's-maxage=30, stale-while-revalidate=60');
     return res.status(200).json(data);
     
   } catch (error) {
+    console.error('API Error:', error);
     return res.status(500).json({ error: error.message });
   }
-};
+}
