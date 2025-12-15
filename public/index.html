@@ -347,6 +347,39 @@
                     <div class="control-group search-field"><label>ค้นหาตลาด</label><input type="text" class="input-field" id="searchInput" placeholder="พิมพ์ชื่อตลาด..." oninput="filterMarkets()"></div>
                     <button class="btn btn-primary" onclick="fetchMarkets()"><span class="material-icons-round">refresh</span>โหลดใหม่</button>
                 </div>
+                <div class="controls-row" style="margin-top: 12px;">
+                    <div class="control-group">
+                        <label>📅 จบภายใน</label>
+                        <select class="input-field" id="endDateFilter" onchange="filterMarkets()">
+                            <option value="0">ทั้งหมด</option>
+                            <option value="1">1 วัน</option>
+                            <option value="3">3 วัน</option>
+                            <option value="7" selected>7 วัน</option>
+                            <option value="14">14 วัน</option>
+                            <option value="30">30 วัน</option>
+                            <option value="90">90 วัน</option>
+                            <option value="365">1 ปี</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>💰 ราคาต่ำสุด (¢)</label>
+                        <input type="number" class="input-field" id="minPrice" value="20" min="1" max="99" onchange="filterMarkets()">
+                    </div>
+                    <div class="control-group">
+                        <label>💰 ราคาสูงสุด (¢)</label>
+                        <input type="number" class="input-field" id="maxPrice" value="80" min="1" max="99" onchange="filterMarkets()">
+                    </div>
+                    <div class="control-group">
+                        <label>📊 Volume ขั้นต่ำ ($)</label>
+                        <select class="input-field" id="minVolume" onchange="filterMarkets()">
+                            <option value="0">ทั้งหมด</option>
+                            <option value="1000">$1K+</option>
+                            <option value="10000">$10K+</option>
+                            <option value="100000" selected>$100K+</option>
+                            <option value="1000000">$1M+</option>
+                        </select>
+                    </div>
+                </div>
             </div>
             
             <div class="filter-row">
@@ -834,9 +867,39 @@
         
         function filterMarkets() {
             const search = document.getElementById('searchInput').value.toLowerCase();
+            const endDateFilter = parseInt(document.getElementById('endDateFilter')?.value) || 0;
+            const minPrice = parseInt(document.getElementById('minPrice')?.value) || 1;
+            const maxPrice = parseInt(document.getElementById('maxPrice')?.value) || 99;
+            const minVolume = parseInt(document.getElementById('minVolume')?.value) || 0;
+            
             let filtered = allMarkets;
+            
+            // Filter by category
             if (currentCategory !== 'all') filtered = filtered.filter(m => m.category === currentCategory);
+            
+            // Filter by search
             if (search) filtered = filtered.filter(m => m.title.toLowerCase().includes(search));
+            
+            // Filter by end date
+            if (endDateFilter > 0) {
+                const now = new Date();
+                const maxDate = new Date(now.getTime() + endDateFilter * 24 * 60 * 60 * 1000);
+                filtered = filtered.filter(m => {
+                    if (!m.endDate) return false;
+                    const end = new Date(m.endDate);
+                    return end >= now && end <= maxDate;
+                });
+            }
+            
+            // Filter by price range (convert to 0-1 scale)
+            const minP = minPrice / 100;
+            const maxP = maxPrice / 100;
+            filtered = filtered.filter(m => m.price >= minP && m.price <= maxP);
+            
+            // Filter by minimum volume
+            if (minVolume > 0) {
+                filtered = filtered.filter(m => m.volume >= minVolume);
+            }
             
             // Apply signal filter
             if (currentSignal !== 'all') {
