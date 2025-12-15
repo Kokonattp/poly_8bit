@@ -202,6 +202,14 @@
         .progress-bar { width: 100px; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
         .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #8b5cf6); border-radius: 3px; transition: width 0.3s; width: 0%; }
         .analyze-progress span { font-size: 11px; color: var(--text-muted); min-width: 40px; }
+        
+        .pagination-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px; padding: 12px; background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border); }
+        .page-btn { padding: 8px 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: inherit; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+        .page-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        .page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .page-btn:disabled:hover { background: var(--bg); color: var(--text); border-color: var(--border); }
+        .page-info { padding: 8px 16px; font-size: 13px; color: var(--text-secondary); }
+        .page-info strong { color: var(--primary); }
         .card-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 8px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .card-meta { display: flex; gap: 16px; font-size: 12px; color: var(--text-muted); }
         .card-meta-item { display: flex; align-items: center; gap: 4px; }
@@ -351,10 +359,10 @@
                     <div class="control-group">
                         <label>📅 จบภายใน</label>
                         <select class="input-field" id="endDateFilter" onchange="filterMarkets()">
-                            <option value="0">ทั้งหมด</option>
+                            <option value="0" selected>ทั้งหมด</option>
                             <option value="1">1 วัน</option>
                             <option value="3">3 วัน</option>
-                            <option value="7" selected>7 วัน</option>
+                            <option value="7">7 วัน</option>
                             <option value="14">14 วัน</option>
                             <option value="30">30 วัน</option>
                             <option value="90">90 วัน</option>
@@ -363,19 +371,19 @@
                     </div>
                     <div class="control-group">
                         <label>💰 ราคาต่ำสุด (¢)</label>
-                        <input type="number" class="input-field" id="minPrice" value="20" min="1" max="99" onchange="filterMarkets()">
+                        <input type="number" class="input-field" id="minPrice" value="5" min="1" max="99" onchange="filterMarkets()">
                     </div>
                     <div class="control-group">
                         <label>💰 ราคาสูงสุด (¢)</label>
-                        <input type="number" class="input-field" id="maxPrice" value="80" min="1" max="99" onchange="filterMarkets()">
+                        <input type="number" class="input-field" id="maxPrice" value="95" min="1" max="99" onchange="filterMarkets()">
                     </div>
                     <div class="control-group">
                         <label>📊 Volume ขั้นต่ำ ($)</label>
                         <select class="input-field" id="minVolume" onchange="filterMarkets()">
                             <option value="0">ทั้งหมด</option>
                             <option value="1000">$1K+</option>
-                            <option value="10000">$10K+</option>
-                            <option value="100000" selected>$100K+</option>
+                            <option value="10000" selected>$10K+</option>
+                            <option value="100000">$100K+</option>
                             <option value="1000000">$1M+</option>
                         </select>
                     </div>
@@ -403,25 +411,15 @@
             
             <div class="stats-row">
                 <div>ตลาดทั้งหมด: <strong id="totalMarkets">0</strong></div>
-                <div>แสดง: <strong id="filteredMarkets">0</strong></div>
+                <div>กรองแล้ว: <strong id="filteredMarkets">0</strong></div>
                 <div>อัปเดต: <strong id="lastUpdate">--:--</strong></div>
                 <div class="sort-group">
-                    <label>แสดง:</label>
-                    <select id="displayLimit" onchange="sortAndRender()">
-                        <option value="50">50 รายการ</option>
-                        <option value="100">100 รายการ</option>
-                        <option value="200">200 รายการ</option>
-                        <option value="500">500 รายการ</option>
-                        <option value="9999">ทั้งหมด</option>
-                    </select>
-                </div>
-                <div class="sort-group">
                     <label>เรียงตาม:</label>
-                    <select id="sortBy" onchange="sortAndRender()">
+                    <select id="sortBy" onchange="currentPage=1; sortAndRender()">
                         <option value="aiProb">🧠 AI วิเคราะห์</option>
                         <option value="score">📊 Signal Score</option>
                         <option value="edge">📈 Edge</option>
-                        <option value="volume">💰 Volume</option>
+                        <option value="volume" selected>💰 Volume</option>
                         <option value="ev">💵 EV</option>
                     </select>
                 </div>
@@ -431,11 +429,27 @@
                 </div>
                 <button class="btn-analyze-all" id="btnAnalyzeAll" onclick="analyzeAllVisible()" title="วิเคราะห์ทุกการ์ดที่แสดง">
                     <span class="material-icons-round">psychology</span>
-                    <span id="btnAnalyzeText">วิเคราะห์ทั้งหมด</span>
+                    <span id="btnAnalyzeText">วิเคราะห์หน้านี้</span>
                 </button>
             </div>
             
+            <div class="pagination-row" id="paginationTop">
+                <button class="page-btn" onclick="goToPage(1)" title="หน้าแรก">«</button>
+                <button class="page-btn" onclick="prevPage()">‹ ก่อนหน้า</button>
+                <span class="page-info">หน้า <strong id="currentPageTop">1</strong> / <strong id="totalPagesTop">1</strong></span>
+                <button class="page-btn" onclick="nextPage()">ถัดไป ›</button>
+                <button class="page-btn" onclick="goToPage(totalPages())" title="หน้าสุดท้าย">»</button>
+            </div>
+            
             <div class="market-grid" id="marketGrid"><div class="loading-state"><div class="loading-icon">📊</div><div>กำลังโหลด...</div></div></div>
+            
+            <div class="pagination-row" id="paginationBottom">
+                <button class="page-btn" onclick="goToPage(1)" title="หน้าแรก">«</button>
+                <button class="page-btn" onclick="prevPage()">‹ ก่อนหน้า</button>
+                <span class="page-info">หน้า <strong id="currentPageBottom">1</strong> / <strong id="totalPagesBottom">1</strong></span>
+                <button class="page-btn" onclick="nextPage()">ถัดไป ›</button>
+                <button class="page-btn" onclick="goToPage(totalPages())" title="หน้าสุดท้าย">»</button>
+            </div>
         </div>
         
         <div class="tab-content" id="tab-portfolio">
@@ -511,6 +525,10 @@
         
         // Store AI analysis results by market ID
         let aiResults = JSON.parse(localStorage.getItem('polytrader_ai') || '{}');
+        
+        // Pagination
+        let currentPage = 1;
+        const PAGE_SIZE = 50;
         
         if (isDark) { document.body.setAttribute('data-theme', 'dark'); document.getElementById('themeIcon').textContent = 'light_mode'; }
         
@@ -819,13 +837,12 @@
             const pill = document.getElementById('statusPill');
             const text = document.getElementById('statusText');
             
-            grid.innerHTML = '<div class="loading-state"><div class="loading-icon">📊</div><div>กำลังโหลดทุกตลาด...</div></div>';
+            grid.innerHTML = '<div class="loading-state"><div class="loading-icon">📊</div><div>กำลังโหลด... (อาจใช้เวลา 5-10 วินาที)</div></div>';
             pill.classList.remove('offline');
             text.textContent = 'กำลังโหลด...';
             
             try {
-                // Fetch ALL markets with pagination
-                const res = await fetch(`${API_URL}?all=true&closed=false`);
+                const res = await fetch(`${API_URL}?closed=false`);
                 if (!res.ok) throw new Error(`Error ${res.status}`);
                 const events = await res.json();
                 
@@ -842,12 +859,12 @@
                 document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
                 filterMarkets();
                 
-                // Auto-analyze all markets that don't have cached results
+                // Auto-analyze first page
                 setTimeout(() => analyzeAllVisible(true), 500);
             } catch (err) {
                 pill.classList.add('offline');
                 text.textContent = 'ไม่สามารถเชื่อมต่อ';
-                grid.innerHTML = `<div class="empty-state"><div class="loading-icon">❌</div><div>โหลดไม่สำเร็จ</div><button class="btn btn-primary" onclick="fetchMarkets()" style="margin-top:16px;">ลองใหม่</button></div>`;
+                grid.innerHTML = `<div class="empty-state"><div class="loading-icon">❌</div><div>โหลดไม่สำเร็จ: ${err.message}</div><button class="btn btn-primary" onclick="fetchMarkets()" style="margin-top:16px;">ลองใหม่</button></div>`;
             }
         }
         
@@ -910,12 +927,51 @@
             }
             
             filteredMarketsCache = filtered;
+            document.getElementById('filteredMarkets').textContent = filtered.length;
+            currentPage = 1; // Reset to first page
             resetAnalyzePage();
             sortAndRender();
         }
         
+        // Pagination functions
+        function totalPages() {
+            return Math.ceil(filteredMarketsCache.length / PAGE_SIZE);
+        }
+        
+        function updatePagination(total) {
+            document.getElementById('currentPageTop').textContent = currentPage;
+            document.getElementById('totalPagesTop').textContent = total || 1;
+            document.getElementById('currentPageBottom').textContent = currentPage;
+            document.getElementById('totalPagesBottom').textContent = total || 1;
+        }
+        
+        function nextPage() {
+            if (currentPage < totalPages()) {
+                currentPage++;
+                sortAndRender();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+        
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                sortAndRender();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+        
+        function goToPage(page) {
+            const total = totalPages();
+            if (page >= 1 && page <= total) {
+                currentPage = page;
+                sortAndRender();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+        
         function sortAndRender() {
-            const sortBy = document.getElementById('sortBy')?.value || 'score';
+            const sortBy = document.getElementById('sortBy')?.value || 'volume';
             
             // Sort based on selected option
             filteredMarketsCache.sort((a, b) => {
@@ -950,16 +1006,28 @@
         
         function renderMarkets(markets) {
             const grid = document.getElementById('marketGrid');
-            if (!markets.length) { grid.innerHTML = '<div class="empty-state"><div class="loading-icon">🔍</div><div>ไม่พบตลาด</div></div>'; return; }
+            if (!markets.length) { 
+                grid.innerHTML = '<div class="empty-state"><div class="loading-icon">🔍</div><div>ไม่พบตลาด</div></div>'; 
+                updatePagination(0);
+                return; 
+            }
             
             const betAmount = parseFloat(document.getElementById('betAmount')?.value) || 10;
-            const displayLimit = parseInt(document.getElementById('displayLimit')?.value) || 50;
-            const marketsToShow = markets.slice(0, displayLimit);
             
-            // Update displayed count
-            document.getElementById('filteredMarkets').textContent = `${marketsToShow.length}/${markets.length}`;
+            // Pagination
+            const totalItems = markets.length;
+            const totalPagesNum = Math.ceil(totalItems / PAGE_SIZE);
+            if (currentPage > totalPagesNum) currentPage = totalPagesNum;
+            if (currentPage < 1) currentPage = 1;
             
-            grid.innerHTML = marketsToShow.map((m, i) => {
+            const startIdx = (currentPage - 1) * PAGE_SIZE;
+            const endIdx = Math.min(startIdx + PAGE_SIZE, totalItems);
+            const marketsToShow = markets.slice(startIdx, endIdx);
+            
+            updatePagination(totalPagesNum);
+            
+            grid.innerHTML = marketsToShow.map((m, idx) => {
+                const i = startIdx + idx; // Global index for modal
                 const date = m.endDate ? new Date(m.endDate).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' }) : '';
                 const hot = m.volume > 1000000;
                 const s = strategies[m.category] || strategies.other;
@@ -1198,49 +1266,33 @@
             tbody.innerHTML = bets.map(b => `<tr><td>${new Date(b.date).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })}</td><td>${b.event}</td><td>$${b.stake}</td><td class="${b.status === 'win' ? 'win' : b.status === 'loss' ? 'loss' : ''}">${b.pnl >= 0 ? '+' : ''}$${b.pnl.toFixed(2)}</td><td><select onchange="updateStatus(${b.id}, this.value)" style="padding:6px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:12px;"><option value="pending" ${b.status === 'pending' ? 'selected' : ''}>⏳</option><option value="win" ${b.status === 'win' ? 'selected' : ''}>✅</option><option value="loss" ${b.status === 'loss' ? 'selected' : ''}>❌</option></select></td><td><button onclick="deleteBet(${b.id})" style="padding:6px 10px;background:var(--error-bg);color:var(--error);border:none;border-radius:6px;cursor:pointer;">ลบ</button></td></tr>`).join('');
         }
         
-        // Analyze cards in pages of 50
+        // Analyze cards on current page
         let isAnalyzing = false;
-        let currentAnalyzePage = 0;
-        const ANALYZE_PAGE_SIZE = 50;
         
         async function analyzeAllVisible(auto = false) {
             if (isAnalyzing) return;
             
-            const totalMarkets = filteredMarketsCache.length;
-            if (totalMarkets === 0) return;
+            const totalItems = filteredMarketsCache.length;
+            if (totalItems === 0) return;
             
-            // Find next batch that needs analysis
+            // Get current page items
+            const startIdx = (currentPage - 1) * PAGE_SIZE;
+            const endIdx = Math.min(startIdx + PAGE_SIZE, totalItems);
+            
+            // Find items that need analysis on this page
             let needAnalysis = [];
-            const startIdx = currentAnalyzePage * ANALYZE_PAGE_SIZE;
-            const endIdx = Math.min(startIdx + ANALYZE_PAGE_SIZE, totalMarkets);
-            
             for (let i = startIdx; i < endIdx; i++) {
                 const m = filteredMarketsCache[i];
                 if (m && !aiResults[m.id]) needAnalysis.push(i);
             }
             
-            // If current page is done, try next pages
-            if (needAnalysis.length === 0 && endIdx < totalMarkets) {
-                currentAnalyzePage++;
-                updateAnalyzeButton();
-                if (!auto) {
-                    // Auto continue to next page
-                    analyzeAllVisible(auto);
-                }
-                return;
-            }
-            
             if (needAnalysis.length === 0) {
-                if (!auto) alert('วิเคราะห์ครบทุกตลาดแล้ว!');
-                currentAnalyzePage = 0;
+                if (!auto) alert('ตลาดในหน้านี้ถูกวิเคราะห์ครบแล้ว!');
                 updateAnalyzeButton();
                 return;
             }
             
-            const pageNum = currentAnalyzePage + 1;
-            const totalPages = Math.ceil(totalMarkets / ANALYZE_PAGE_SIZE);
-            
-            if (!auto && !confirm(`วิเคราะห์ Page ${pageNum}/${totalPages}\n(${needAnalysis.length} ตลาด, รายการ ${startIdx + 1}-${endIdx})\n\nต้องการดำเนินการ?`)) return;
+            if (!auto && !confirm(`วิเคราะห์ ${needAnalysis.length} ตลาดในหน้านี้?`)) return;
             
             isAnalyzing = true;
             
@@ -1254,7 +1306,7 @@
             progressDiv.style.display = 'flex';
             btn.disabled = true;
             btn.style.opacity = '0.5';
-            btnText.textContent = `กำลังวิเคราะห์ Page ${pageNum}...`;
+            btnText.textContent = 'กำลังวิเคราะห์...';
             
             let completed = 0;
             const total = needAnalysis.length;
@@ -1280,48 +1332,40 @@
                 }
             }
             
-            // Done with this page
+            // Done
             isAnalyzing = false;
             progressDiv.style.display = 'none';
             btn.disabled = false;
             btn.style.opacity = '1';
             
-            // Move to next page
-            currentAnalyzePage++;
             updateAnalyzeButton();
-            
-            // Re-sort and render
             sortAndRender();
         }
         
         function updateAnalyzeButton() {
-            const btn = document.getElementById('btnAnalyzeAll');
             const btnText = document.getElementById('btnAnalyzeText');
-            const totalMarkets = filteredMarketsCache.length;
-            const totalPages = Math.ceil(totalMarkets / ANALYZE_PAGE_SIZE);
-            const pageNum = currentAnalyzePage + 1;
+            const btn = document.getElementById('btnAnalyzeAll');
             
-            // Count unanalyzed
+            // Count unanalyzed on current page
+            const startIdx = (currentPage - 1) * PAGE_SIZE;
+            const endIdx = Math.min(startIdx + PAGE_SIZE, filteredMarketsCache.length);
             let unanalyzed = 0;
-            for (const m of filteredMarketsCache) {
-                if (!aiResults[m.id]) unanalyzed++;
+            
+            for (let i = startIdx; i < endIdx; i++) {
+                const m = filteredMarketsCache[i];
+                if (m && !aiResults[m.id]) unanalyzed++;
             }
             
             if (unanalyzed === 0) {
-                btnText.textContent = '✅ วิเคราะห์ครบแล้ว';
+                btnText.textContent = '✅ หน้านี้ครบแล้ว';
                 btn.style.background = 'var(--success)';
-            } else if (pageNum > totalPages) {
-                currentAnalyzePage = 0;
-                btnText.textContent = `วิเคราะห์ Page 1/${totalPages}`;
-                btn.style.background = '';
             } else {
-                btnText.textContent = `วิเคราะห์ Page ${pageNum}/${totalPages}`;
+                btnText.textContent = `วิเคราะห์หน้านี้ (${unanalyzed})`;
                 btn.style.background = '';
             }
         }
         
         function resetAnalyzePage() {
-            currentAnalyzePage = 0;
             updateAnalyzeButton();
         }
             

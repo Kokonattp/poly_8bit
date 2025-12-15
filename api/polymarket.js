@@ -8,25 +8,30 @@ module.exports = async (req, res) => {
   }
 
   const closed = req.query.closed || 'false';
-  const fetchAll = req.query.all === 'true';
   
   try {
     let allEvents = [];
     let offset = 0;
     const limit = 100; // Max per request
-    const maxPages = 50; // Safety limit: 50 pages = 5000 events max
+    const maxPages = 10; // 10 pages = 1000 events (faster load)
     
-    if (fetchAll) {
-      // Fetch all pages
-      for (let page = 0; page < maxPages; page++) {
-        const url = `https://gamma-api.polymarket.com/events?closed=${closed}&limit=${limit}&offset=${offset}&order=volume&ascending=false`;
-        
+    // Fetch pages with timeout
+    for (let page = 0; page < maxPages; page++) {
+      const url = `https://gamma-api.polymarket.com/events?closed=${closed}&limit=${limit}&offset=${offset}&order=volume&ascending=false`;
+      
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 3000); // 3s timeout per request
+      
+      try {
         const response = await fetch(url, {
           headers: {
             'User-Agent': 'PolyTrader/1.0',
             'Accept': 'application/json'
-          }
+          },
+          signal: controller.signal
         });
+        
+        clearTimeout(timeout);
         
         if (!response.ok) break;
         
@@ -38,26 +43,14 @@ module.exports = async (req, res) => {
         
         // If we got less than limit, we've reached the end
         if (data.length < limit) break;
+      } catch (fetchErr) {
+        clearTimeout(timeout);
+        console.log(`Page ${page} failed, stopping`);
+        break;
       }
-    } else {
-      // Single page for backward compatibility
-      const url = `https://gamma-api.polymarket.com/events?closed=${closed}&limit=200&order=volume&ascending=false`;
-      
-      const response = await fetch(url, {
-        headers: {
-          'User-Agent': 'PolyTrader/1.0',
-          'Accept': 'application/json'
-        }
-      });
-      
-      if (!response.ok) {
-        return res.status(response.status).json({ error: `API Error: ${response.status}` });
-      }
-      
-      allEvents = await response.json();
     }
     
-    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
+    res.setHeader('Cache-Control', 's-maxage=120, stale-while-revalidate');
     return res.status(200).json(allEvents);
   } catch (error) {
     return res.status(500).json({ error: error.message });
