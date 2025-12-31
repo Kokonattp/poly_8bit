@@ -13,48 +13,51 @@ module.exports = async (req, res) => {
   }
 
   try {
-    // Quick search - fetch just 500 events sorted by volume
-    let allEvents = [];
-    const fetchLimit = 500;
+    // Fetch 3000 events in parallel (6 batches x 500)
+    const batchSize = 500;
+    const offsets = [0, 500, 1000, 1500, 2000, 2500];
     
-    const url = `https://gamma-api.polymarket.com/events?closed=false&limit=${fetchLimit}&offset=0&order=volume&ascending=false`;
-    
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
-
-    try {
-      const response = await fetch(url, {
-        headers: { 'User-Agent': 'PolyPro/3.0', 'Accept': 'application/json' },
-        signal: controller.signal
-      });
-      clearTimeout(timeout);
+    const fetchBatch = async (offset) => {
+      const url = `https://gamma-api.polymarket.com/events?closed=false&limit=${batchSize}&offset=${offset}&order=volume&ascending=false`;
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 5000);
       
-      if (response.ok) {
-        const data = await response.json();
-        if (data && data.length > 0) {
-          // Filter matching events
-          allEvents = data.filter(event => {
-            const title = (event.title || '').toLowerCase();
-            const slug = (event.slug || '').toLowerCase();
-            const desc = (event.description || '').toLowerCase();
-            
-            // Also check market questions
-            let marketMatch = false;
-            if (event.markets && Array.isArray(event.markets)) {
-              marketMatch = event.markets.some(m => {
-                const q = (m.question || '').toLowerCase();
-                const g = (m.groupItemTitle || '').toLowerCase();
-                return q.includes(query) || g.includes(query);
-              });
-            }
-            
-            return title.includes(query) || slug.includes(query) || desc.includes(query) || marketMatch;
-          });
-        }
+      try {
+        const response = await fetch(url, {
+          headers: { 'User-Agent': 'PolyPro/3.0', 'Accept': 'application/json' },
+          signal: controller.signal
+        });
+        clearTimeout(timeout);
+        if (!response.ok) return [];
+        return await response.json();
+      } catch (e) {
+        clearTimeout(timeout);
+        return [];
       }
-    } catch (e) {
-      clearTimeout(timeout);
-    }
+    };
+    
+    // Fetch all batches in parallel
+    const batches = await Promise.all(offsets.map(fetchBatch));
+    const allData = batches.flat();
+    
+    // Filter matching events
+    const allEvents = allData.filter(event => {
+      const title = (event.title || '').toLowerCase();
+      const slug = (event.slug || '').toLowerCase();
+      const desc = (event.description || '').toLowerCase();
+      
+      // Also check market questions
+      let marketMatch = false;
+      if (event.markets && Array.isArray(event.markets)) {
+        marketMatch = event.markets.some(m => {
+          const q = (m.question || '').toLowerCase();
+          const g = (m.groupItemTitle || '').toLowerCase();
+          return q.includes(query) || g.includes(query);
+        });
+      }
+      
+      return title.includes(query) || slug.includes(query) || desc.includes(query) || marketMatch;
+    });
 
     // Transform results
     const results = allEvents.map((event, idx) => {
@@ -141,6 +144,7 @@ module.exports = async (req, res) => {
       success: true,
       query,
       count: finalResults.length,
+      searched: allData.length,
       data: finalResults
     });
 
