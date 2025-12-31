@@ -1214,6 +1214,9 @@
         const res = await fetch(`/api/prices?market=${conditionId}&interval=${interval}`);
         const json = await res.json();
         
+        // Debug log
+        console.log('Price API response:', { conditionId, interval, success: json.success, dataPoints: json.stats?.dataPoints, apiUsed: json.apiUsed, historyLength: json.history?.length });
+        
         if (json.success) {
           // Use API price if available, otherwise keep fallback
           const chartPrice = json.currentPrice > 0 ? json.currentPrice : displayPrice;

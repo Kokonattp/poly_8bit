@@ -12,8 +12,6 @@ module.exports = async (req, res) => {
   }
 
   // Map interval to API parameters
-  // interval: string like 'max', '1d', '1w'  
-  // fidelity: minutes between data points
   const intervalConfig = {
     '1h': { interval: '1h', fidelity: 1 },
     '6h': { interval: '6h', fidelity: 5 },
@@ -51,12 +49,13 @@ module.exports = async (req, res) => {
     }
 
     let priceHistory = [];
+    let apiUsed = 'none';
     
-    // Try to get price history using correct API format
+    // Try multiple APIs to get price history
     if (clobTokenIds.length > 0) {
       const yesTokenId = clobTokenIds[0];
       
-      // Correct API: /prices-history?market={token_id}&interval={interval}&fidelity={fidelity}
+      // Method 1: CLOB prices-history API
       try {
         const priceUrl = `https://clob.polymarket.com/prices-history?market=${yesTokenId}&interval=${config.interval}&fidelity=${config.fidelity}`;
         const priceRes = await fetch(priceUrl, {
@@ -68,20 +67,80 @@ module.exports = async (req, res) => {
         
         if (priceRes.ok) {
           const priceData = await priceRes.json();
-          if (priceData && priceData.history && Array.isArray(priceData.history)) {
+          if (priceData && priceData.history && Array.isArray(priceData.history) && priceData.history.length > 0) {
             priceHistory = priceData.history.map(p => ({
               timestamp: p.t * 1000,
               price: parseFloat(p.p) * 100,
             }));
+            apiUsed = 'clob';
           }
         }
       } catch (e) {
         console.log('CLOB API error:', e.message);
       }
+      
+      // Method 2: Try data-api prices endpoint if CLOB failed
+      if (priceHistory.length === 0) {
+        try {
+          const dataUrl = `https://data-api.polymarket.com/prices?market=${market}`;
+          const dataRes = await fetch(dataUrl, {
+            headers: { 'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json' }
+          });
+          
+          if (dataRes.ok) {
+            const priceData = await dataRes.json();
+            if (Array.isArray(priceData) && priceData.length > 0) {
+              priceHistory = priceData.map(p => ({
+                timestamp: new Date(p.t || p.timestamp || p.date).getTime(),
+                price: parseFloat(p.p || p.price || p.yes_price || 0) * 100,
+              })).filter(p => !isNaN(p.timestamp) && !isNaN(p.price) && p.price > 0);
+              apiUsed = 'data-api';
+            }
+          }
+        } catch (e) {
+          console.log('Data API error:', e.message);
+        }
+      }
+      
+      // Method 3: Try gamma API timeseries if both failed
+      if (priceHistory.length === 0) {
+        try {
+          const tsUrl = `https://gamma-api.polymarket.com/markets/${marketData.id}/timeseries`;
+          const tsRes = await fetch(tsUrl, {
+            headers: { 'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json' }
+          });
+          
+          if (tsRes.ok) {
+            const tsData = await tsRes.json();
+            if (Array.isArray(tsData) && tsData.length > 0) {
+              priceHistory = tsData.map(p => ({
+                timestamp: new Date(p.timestamp || p.t || p.date).getTime(),
+                price: parseFloat(p.price || p.p || p.yes_price || 0) * 100,
+              })).filter(p => !isNaN(p.timestamp) && !isNaN(p.price) && p.price > 0);
+              apiUsed = 'gamma-timeseries';
+            }
+          }
+        } catch (e) {
+          console.log('Gamma timeseries error:', e.message);
+        }
+      }
     }
 
     // Sort by timestamp
     priceHistory.sort((a, b) => a.timestamp - b.timestamp);
+    
+    // Filter based on interval time range
+    if (priceHistory.length > 0 && interval !== 'max') {
+      const now = Date.now();
+      const intervalMs = {
+        '1h': 60 * 60 * 1000,
+        '6h': 6 * 60 * 60 * 1000,
+        '1d': 24 * 60 * 60 * 1000,
+        '1w': 7 * 24 * 60 * 60 * 1000,
+      };
+      const cutoff = now - (intervalMs[interval] || intervalMs['1d']);
+      priceHistory = priceHistory.filter(p => p.timestamp >= cutoff);
+    }
 
     // Calculate stats
     const firstPrice = priceHistory.length ? priceHistory[0].price : currentPrice;
@@ -101,6 +160,7 @@ module.exports = async (req, res) => {
       outcome: marketData.outcome || 'YES',
       currentPrice: Math.round(currentPrice * 10) / 10,
       interval,
+      apiUsed,
       stats: {
         change: Math.round(change * 10) / 10,
         changePercent: Math.round(changePercent * 10) / 10,
