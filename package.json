@@ -1,6 +1,8 @@
 {
   "name": "polymarket-leaderboard",
   "version": "3.0.0",
-  "private": true,
-  "scripts": {}
+  "description": "Polymarket Leaderboard - Top 200 Traders",
+  "scripts": {
+    "start": "npx serve public"
+  }
 }
