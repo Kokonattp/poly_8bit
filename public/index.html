@@ -24,9 +24,10 @@
       --success-light: rgba(16, 185, 129, 0.1);
       --danger: #ef4444;
       --danger-light: rgba(239, 68, 68, 0.1);
-      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
-      --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
-      --shadow-lg: 0 8px 24px rgba(0,0,0,0.08);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+      --shadow-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+      --shadow-card: 0 2px 8px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.1);
     }
 
     [data-theme="dark"] {
@@ -39,9 +40,10 @@
       --text-muted: #6b6b80;
       --border: #2a2a3a;
       --border-light: #22222e;
-      --shadow-sm: 0 1px 2px rgba(0,0,0,0.2);
-      --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
-      --shadow-lg: 0 8px 24px rgba(0,0,0,0.4);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3);
+      --shadow-lg: 0 10px 15px rgba(0,0,0,0.5), 0 4px 6px rgba(0,0,0,0.4);
+      --shadow-card: 0 2px 8px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.3);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -118,8 +120,9 @@
       padding: 20px; 
       border: 1px solid var(--border);
       transition: all 0.2s;
+      box-shadow: var(--shadow-card);
     }
-    .stat-card:hover { box-shadow: var(--shadow-md); }
+    .stat-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
     .stat-card .icon { 
       width: 40px; height: 40px; border-radius: 12px; 
       display: flex; align-items: center; justify-content: center; 
@@ -179,10 +182,11 @@
       border: 1px solid var(--border);
       transition: all 0.25s; 
       cursor: pointer;
+      box-shadow: var(--shadow-card);
     }
     .market-card:hover { 
       box-shadow: var(--shadow-lg); 
-      transform: translateY(-2px);
+      transform: translateY(-3px);
       border-color: var(--accent);
     }
     .market-header { display: flex; gap: 14px; padding: 18px; }
@@ -305,22 +309,53 @@
     .event-stat p { font-size: 11px; color: var(--text-secondary); margin-top: 4px; font-weight: 600; text-transform: uppercase; }
 
     .section { padding: 20px 24px; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
     .section-title { 
-      font-size: 14px; font-weight: 700; margin-bottom: 16px; 
+      font-size: 14px; font-weight: 700; 
       display: flex; align-items: center; gap: 8px; color: var(--text-primary);
     }
+    .sort-toggle { display: flex; gap: 6px; }
+    .sort-btn {
+      padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600;
+      background: var(--bg-hover); border: 1px solid var(--border);
+      color: var(--text-secondary); cursor: pointer; transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .sort-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .sort-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
-    .outcomes-list { display: flex; flex-direction: column; gap: 8px; max-height: 350px; overflow-y: auto; }
+    /* Insights Panel */
+    .insights-panel {
+      background: var(--bg-card);
+      border-radius: 14px;
+      padding: 18px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-card);
+    }
+    .insights-title { font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .insights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+    .insight-item {
+      background: var(--bg-primary);
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    .insight-item .label { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 4px; }
+    .insight-item .value { font-size: 16px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .insight-item .hint { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+
+    .outcomes-list { display: flex; flex-direction: column; gap: 10px; max-height: 350px; overflow-y: auto; }
     .outcome-card { 
       display: flex; align-items: center; gap: 14px; 
-      padding: 14px 16px; 
-      background: var(--bg-primary); 
-      border-radius: 12px; 
+      padding: 16px 18px; 
+      background: var(--bg-card); 
+      border-radius: 14px; 
       cursor: pointer; transition: all 0.2s; 
-      border: 1px solid transparent;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-card);
     }
-    .outcome-card:hover { background: var(--bg-hover); }
-    .outcome-card.selected { border-color: var(--accent); background: var(--accent-light); }
+    .outcome-card:hover { background: var(--bg-hover); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+    .outcome-card.selected { border-color: var(--accent); background: var(--accent-light); box-shadow: 0 0 0 3px var(--accent-light); }
     .outcome-num { 
       width: 30px; height: 30px; border-radius: 8px; 
       background: var(--bg-hover); 
@@ -372,37 +407,52 @@
     }
     .holders-column-title.yes { background: var(--success-light); color: var(--success); }
     .holders-column-title.no { background: var(--danger-light); color: var(--danger); }
-    .holders-list { display: flex; flex-direction: column; gap: 6px; max-height: 280px; overflow-y: auto; }
+    .holders-list { display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto; }
     .holder-row { 
       display: flex; align-items: center; gap: 10px; 
-      padding: 10px 12px; 
-      background: var(--bg-primary); 
-      border-radius: 10px; 
+      padding: 12px 14px; 
+      background: var(--bg-card); 
+      border-radius: 12px; 
       cursor: pointer; transition: all 0.2s;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
     }
-    .holder-row:hover { background: var(--bg-hover); }
+    .holder-row:hover { background: var(--bg-hover); transform: translateX(2px); box-shadow: var(--shadow-md); }
     .holder-rank { 
-      width: 26px; height: 26px; border-radius: 8px; 
+      width: 28px; height: 28px; border-radius: 8px; 
       background: var(--bg-hover); 
       display: flex; align-items: center; justify-content: center; 
-      font-size: 11px; font-weight: 700; color: var(--text-secondary);
+      font-size: 12px; font-weight: 700; color: var(--text-secondary);
+      flex-shrink: 0;
     }
-    .holder-rank.g { background: linear-gradient(135deg, #ffd700, #ffaa00); color: #1a1a2e; }
-    .holder-rank.s { background: linear-gradient(135deg, #e0e0e0, #b0b0b0); color: #1a1a2e; }
-    .holder-rank.b { background: linear-gradient(135deg, #cd7f32, #b5651d); color: #fff; }
+    .holder-rank.g { background: linear-gradient(135deg, #ffd700, #ffaa00); color: #1a1a2e; box-shadow: 0 2px 4px rgba(255,215,0,0.3); }
+    .holder-rank.s { background: linear-gradient(135deg, #e0e0e0, #b0b0b0); color: #1a1a2e; box-shadow: 0 2px 4px rgba(192,192,192,0.3); }
+    .holder-rank.b { background: linear-gradient(135deg, #cd7f32, #b5651d); color: #fff; box-shadow: 0 2px 4px rgba(205,127,50,0.3); }
     .holder-info { flex: 1; min-width: 0; }
-    .holder-info h4 { font-size: 13px; font-weight: 600; color: var(--text-primary); }
-    .holder-info p { font-size: 10px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
-    .holder-amount h4 { font-size: 13px; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; }
+    .holder-info h4 { font-size: 13px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; }
+    .holder-info p { display: none; }
+    .holder-right { display: flex; align-items: center; gap: 8px; }
+    .holder-amount { font-size: 14px; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; }
+    .copy-btn { 
+      width: 28px; height: 28px; border-radius: 6px;
+      background: var(--bg-hover); border: 1px solid var(--border);
+      cursor: pointer; font-size: 12px; 
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; flex-shrink: 0;
+    }
+    .copy-btn:hover { background: var(--accent-light); border-color: var(--accent); }
+    .copy-btn.copied { background: var(--success-light); border-color: var(--success); }
 
     .holders-stats { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
     .holders-stat { 
-      background: var(--bg-primary); 
-      padding: 12px 16px; border-radius: 10px; flex: 1; min-width: 90px;
+      background: var(--bg-card); 
+      padding: 14px 18px; border-radius: 12px; flex: 1; min-width: 90px;
       border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      text-align: center;
     }
     .holders-stat p { font-size: 10px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
-    .holders-stat h4 { font-size: 16px; font-weight: 700; margin-top: 4px; font-family: 'JetBrains Mono', monospace; }
+    .holders-stat h4 { font-size: 18px; font-weight: 700; margin-top: 4px; font-family: 'JetBrains Mono', monospace; }
 
     .profile-header { 
       background: var(--accent-gradient); 
@@ -612,8 +662,18 @@
         <div class="event-stat"><h4 id="eventComments">0</h4><p>Comments</p></div>
       </div>
       <div class="section">
-        <div class="section-title">📊 Outcomes (by % Change)</div>
+        <div class="section-header">
+          <div class="section-title">📊 Outcomes</div>
+          <div class="sort-toggle">
+            <button class="sort-btn active" data-sort="chance">% Chance</button>
+            <button class="sort-btn" data-sort="change">% Change</button>
+          </div>
+        </div>
         <div id="outcomesList" class="outcomes-list"></div>
+        
+        <!-- Market Insights -->
+        <div id="marketInsights" class="insights-panel" style="margin-top:20px;"></div>
+        
         <div id="selectedOutcomeHolders" style="margin-top:20px; display:none;">
           <div class="selected-outcome-header">
             <span id="selectedOutcomeName">-</span>
@@ -699,6 +759,32 @@
     const fmtShares = v => v >= 1e6 ? (v/1e6).toFixed(1)+'M' : v >= 1e3 ? (v/1e3).toFixed(1)+'K' : v.toFixed(0);
     const fmtChange = v => (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
 
+    const copyWallet = async (wallet, btn) => {
+      try {
+        await navigator.clipboard.writeText(wallet);
+        btn.textContent = '✓';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = '📋';
+          btn.classList.remove('copied');
+        }, 1500);
+      } catch (e) {
+        // Fallback for older browsers
+        const input = document.createElement('input');
+        input.value = wallet;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        btn.textContent = '✓';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = '📋';
+          btn.classList.remove('copied');
+        }, 1500);
+      }
+    };
+
     const updateStats = (data) => {
       document.getElementById('statCount').textContent = data.pagination?.total || filtered.length;
       document.getElementById('statVolume').textContent = fmt(filtered.reduce((s,m) => s + m.volume, 0));
@@ -770,10 +856,16 @@
       renderMarkets();
     };
 
+    let currentOutcomeSort = 'chance'; // Default to % Chance (like Polymarket)
+
     const openEvent = async (slug) => {
       document.getElementById('eventModal').classList.add('active');
       document.getElementById('outcomesList').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
       document.getElementById('selectedOutcomeHolders').style.display = 'none';
+      document.getElementById('marketInsights').innerHTML = '';
+      currentOutcomeSort = 'chance'; // Reset to default
+      document.querySelectorAll('.sort-btn').forEach(b => b.classList.toggle('active', b.dataset.sort === 'chance'));
+      
       try {
         const res = await fetch(`/api/event?slug=${encodeURIComponent(slug)}`);
         const json = await res.json();
@@ -788,25 +880,112 @@
         document.getElementById('eventLink').href = `https://polymarket.com/event/${slug}`;
 
         if (currentEvent.outcomes?.length) {
-          const sorted = [...currentEvent.outcomes].sort((a, b) => Math.abs(b.change24h || 0) - Math.abs(a.change24h || 0));
-          document.getElementById('outcomesList').innerHTML = sorted.map((o, i) => {
-            const change = o.change24h || 0;
-            const changeClass = change > 0 ? 'text-success' : change < 0 ? 'text-danger' : '';
-            const changeBg = change > 0 ? 'background:var(--success-light)' : change < 0 ? 'background:var(--danger-light)' : '';
-            const escapedName = (o.name || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
-            return `<div class="outcome-card ${i === 0 ? 'selected' : ''}" onclick="selectOutcome('${o.conditionId}', this, '${escapedName}', ${o.yesPrice})">
-              <div class="outcome-num ${i === 0 ? 'top' : ''}">${i + 1}</div>
-              <div class="outcome-details"><h4>${o.name}</h4><p>Vol: ${fmt(o.volume)} · Liq: ${fmt(o.liquidity)}</p></div>
-              <div class="outcome-price-box">
-                <h4 class="${o.yesPrice >= 50 ? 'text-success' : 'text-danger'}">${o.yesPrice}%</h4>
-                <span class="outcome-change-badge ${changeClass}" style="${changeBg}">${fmtChange(change)}</span>
-                <div class="outcome-btns"><span class="btn-yes">Yes ${o.yesPrice}¢</span><span class="btn-no">No ${o.noPrice}¢</span></div>
-              </div>
-            </div>`;
-          }).join('');
-          if (sorted[0]?.conditionId) { document.getElementById('selectedOutcomeName').textContent = sorted[0].name || 'Selected'; document.getElementById('selectedOutcomePrice').textContent = `${sorted[0].yesPrice}%`; document.getElementById('selectedOutcomePrice').className = sorted[0].yesPrice >= 50 ? 'text-success' : 'text-danger'; loadHolders(sorted[0].conditionId); }
-        } else { document.getElementById('outcomesList').innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px">No outcomes</p>'; }
+          renderOutcomes(currentOutcomeSort);
+          generateMarketInsights();
+        } else { 
+          document.getElementById('outcomesList').innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px">No outcomes</p>'; 
+        }
       } catch (e) { document.getElementById('outcomesList').innerHTML = `<p style="color:var(--danger);padding:20px">${e.message}</p>`; }
+    };
+
+    const renderOutcomes = (sortBy) => {
+      if (!currentEvent?.outcomes?.length) return;
+      
+      let sorted = [...currentEvent.outcomes];
+      if (sortBy === 'chance') {
+        // Sort by % Chance (price) - highest first (like Polymarket)
+        sorted.sort((a, b) => b.yesPrice - a.yesPrice);
+      } else {
+        // Sort by % Change (absolute) - most volatile first
+        sorted.sort((a, b) => Math.abs(b.change24h || 0) - Math.abs(a.change24h || 0));
+      }
+
+      document.getElementById('outcomesList').innerHTML = sorted.map((o, i) => {
+        const change = o.change24h || 0;
+        const changeClass = change > 0 ? 'text-success' : change < 0 ? 'text-danger' : '';
+        const changeBg = change > 0 ? 'background:var(--success-light)' : change < 0 ? 'background:var(--danger-light)' : '';
+        const escapedName = (o.name || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        return `<div class="outcome-card ${i === 0 ? 'selected' : ''}" onclick="selectOutcome('${o.conditionId}', this, '${escapedName}', ${o.yesPrice})">
+          <div class="outcome-num ${i === 0 ? 'top' : ''}">${i + 1}</div>
+          <div class="outcome-details"><h4>${o.name}</h4><p>Vol: ${fmt(o.volume)} · Liq: ${fmt(o.liquidity)}</p></div>
+          <div class="outcome-price-box">
+            <h4 class="${o.yesPrice >= 50 ? 'text-success' : 'text-danger'}">${o.yesPrice}%</h4>
+            <span class="outcome-change-badge ${changeClass}" style="${changeBg}">${fmtChange(change)}</span>
+            <div class="outcome-btns"><span class="btn-yes">Yes ${o.yesPrice}¢</span><span class="btn-no">No ${o.noPrice}¢</span></div>
+          </div>
+        </div>`;
+      }).join('');
+      
+      // Auto-select first outcome
+      if (sorted[0]?.conditionId) { 
+        document.getElementById('selectedOutcomeName').textContent = sorted[0].name || 'Selected'; 
+        document.getElementById('selectedOutcomePrice').textContent = `${sorted[0].yesPrice}%`; 
+        document.getElementById('selectedOutcomePrice').className = sorted[0].yesPrice >= 50 ? 'text-success' : 'text-danger'; 
+        loadHolders(sorted[0].conditionId); 
+      }
+    };
+
+    const generateMarketInsights = () => {
+      if (!currentEvent) return;
+      const outcomes = currentEvent.outcomes || [];
+      if (!outcomes.length) return;
+      
+      // Calculate insights
+      const top = outcomes.reduce((a, b) => a.yesPrice > b.yesPrice ? a : b);
+      const totalVol = currentEvent.volume || 0;
+      const totalLiq = currentEvent.liquidity || 0;
+      const volLiqRatio = totalLiq > 0 ? (totalVol / totalLiq).toFixed(1) : 0;
+      
+      // Whale concentration (top 3 outcomes % of total volume)
+      const sortedByVol = [...outcomes].sort((a, b) => b.volume - a.volume);
+      const top3Vol = sortedByVol.slice(0, 3).reduce((s, o) => s + o.volume, 0);
+      const concentration = totalVol > 0 ? Math.round((top3Vol / totalVol) * 100) : 0;
+      
+      // Volatility (average absolute change)
+      const avgChange = outcomes.reduce((s, o) => s + Math.abs(o.change24h || 0), 0) / outcomes.length;
+      const volatility = avgChange > 5 ? 'High' : avgChange > 2 ? 'Medium' : 'Low';
+      const volColor = avgChange > 5 ? 'text-danger' : avgChange > 2 ? 'text-accent' : 'text-success';
+      
+      // Sentiment (YES vs NO distribution based on price)
+      const avgPrice = outcomes.reduce((s, o) => s + o.yesPrice, 0) / outcomes.length;
+      const sentiment = avgPrice > 50 ? 'Bullish' : avgPrice < 30 ? 'Bearish' : 'Neutral';
+      const sentColor = avgPrice > 50 ? 'text-success' : avgPrice < 30 ? 'text-danger' : 'text-secondary';
+      
+      document.getElementById('marketInsights').innerHTML = `
+        <div class="insights-title">💡 Market Insights</div>
+        <div class="insights-grid">
+          <div class="insight-item">
+            <div class="label">Leading Outcome</div>
+            <div class="value text-accent">${top.name}</div>
+            <div class="hint">${top.yesPrice}% chance</div>
+          </div>
+          <div class="insight-item">
+            <div class="label">Vol/Liq Ratio</div>
+            <div class="value">${volLiqRatio}x</div>
+            <div class="hint">${volLiqRatio > 10 ? 'High activity' : 'Normal activity'}</div>
+          </div>
+          <div class="insight-item">
+            <div class="label">Volatility (24h)</div>
+            <div class="value ${volColor}">${volatility}</div>
+            <div class="hint">Avg change: ${avgChange.toFixed(1)}%</div>
+          </div>
+          <div class="insight-item">
+            <div class="label">Concentration</div>
+            <div class="value">${concentration}%</div>
+            <div class="hint">Top 3 outcomes</div>
+          </div>
+          <div class="insight-item">
+            <div class="label">Market Sentiment</div>
+            <div class="value ${sentColor}">${sentiment}</div>
+            <div class="hint">Based on pricing</div>
+          </div>
+          <div class="insight-item">
+            <div class="label">Outcomes</div>
+            <div class="value">${outcomes.length}</div>
+            <div class="hint">${outcomes.length > 10 ? 'Many options' : 'Few options'}</div>
+          </div>
+        </div>
+      `;
     };
 
     const selectOutcome = (conditionId, el, name, price) => {
@@ -831,12 +1010,31 @@
           document.getElementById('holdersStats').innerHTML = `<div class="holders-stat"><p>Total</p><h4>${s.totalHolders}</h4></div><div class="holders-stat"><p>YES</p><h4 class="text-success">${s.yesHolders}</h4></div><div class="holders-stat"><p>NO</p><h4 class="text-danger">${s.noHolders}</h4></div><div class="holders-stat"><p>YES %</p><h4 class="text-success">${s.yesPct}%</h4></div>`;
           const yesH = json.data.filter(h => h.outcome === 'YES');
           const noH = json.data.filter(h => h.outcome === 'NO');
-          const renderHL = (holders) => holders.slice(0, 10).map((h, i) => {
-            const rc = i === 0 ? 'g' : i === 1 ? 's' : i === 2 ? 'b' : '';
-            return `<div class="holder-row" onclick="openProfile('${h.wallet}', '${h.displayName.replace(/'/g, "\\'")}')"><div class="holder-rank ${rc}">${i + 1}</div><div class="holder-info"><h4>${h.displayName}</h4><p>${h.wallet.slice(0,6)}...${h.wallet.slice(-4)}</p></div><div class="holder-amount"><h4>${fmtShares(h.amount)}</h4></div></div>`;
-          }).join('');
-          document.getElementById('yesHoldersList').innerHTML = yesH.length > 0 ? renderHL(yesH) : '<p style="color:var(--text-muted);text-align:center;padding:16px">No YES holders</p>';
-          document.getElementById('noHoldersList').innerHTML = noH.length > 0 ? renderHL(noH) : '<p style="color:var(--text-muted);text-align:center;padding:16px">No NO holders</p>';
+          
+          const renderHL = (holders, maxItems = 10) => {
+            // Ensure we always show exactly maxItems (pad with empty if needed)
+            const items = holders.slice(0, maxItems);
+            return items.map((h, i) => {
+              const rc = i === 0 ? 'g' : i === 1 ? 's' : i === 2 ? 'b' : '';
+              // Ensure short display name
+              let shortName = h.displayName || '';
+              if (shortName.length > 16) {
+                shortName = shortName.slice(0, 14) + '...';
+              }
+              const escapedName = shortName.replace(/'/g, "\\'");
+              return `<div class="holder-row" onclick="openProfile('${h.wallet}', '${escapedName}')">
+                <div class="holder-rank ${rc}">${i + 1}</div>
+                <div class="holder-info"><h4 title="${h.displayName}">${shortName}</h4></div>
+                <div class="holder-right">
+                  <span class="holder-amount">${fmtShares(h.amount)}</span>
+                  <button class="copy-btn" onclick="event.stopPropagation(); copyWallet('${h.wallet}', this)" title="Copy wallet">📋</button>
+                </div>
+              </div>`;
+            }).join('');
+          };
+          
+          document.getElementById('yesHoldersList').innerHTML = yesH.length > 0 ? renderHL(yesH, 10) : '<p style="color:var(--text-muted);text-align:center;padding:16px">No YES holders</p>';
+          document.getElementById('noHoldersList').innerHTML = noH.length > 0 ? renderHL(noH, 10) : '<p style="color:var(--text-muted);text-align:center;padding:16px">No NO holders</p>';
         } else { document.getElementById('yesHoldersList').innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:16px">No data</p>'; }
       } catch (e) { document.getElementById('yesHoldersList').innerHTML = `<p style="color:var(--text-muted);padding:16px">${e.message}</p>`; }
     };
@@ -914,6 +1112,16 @@
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         tab.classList.add('active');
         document.getElementById(tab.dataset.tab + 'Tab').classList.add('active');
+      });
+    });
+
+    // Sort toggle for outcomes
+    document.querySelectorAll('.sort-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentOutcomeSort = btn.dataset.sort;
+        renderOutcomes(currentOutcomeSort);
       });
     });
 

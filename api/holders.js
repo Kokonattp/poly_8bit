@@ -24,9 +24,22 @@ module.exports = async (req, res) => {
     
     // Known bot/contract addresses to filter out
     const knownBots = new Set([
-      '0xa5ef0eba2fa70f6c72bc32bd604fffd11e04c966', // Common market maker/bot
+      '0xa5ef0eba2fa70f6c72bc32bd604fffd11e04c966',
       '0x0000000000000000000000000000000000000000',
     ]);
+    
+    // Check if wallet is a known bot or matches bot patterns
+    const isBot = (wallet) => {
+      if (!wallet) return true;
+      const lower = wallet.toLowerCase();
+      // Exact matches
+      if (knownBots.has(lower)) return true;
+      // Pattern: wallets starting with 0xa5ef and ending with 2966 (known market maker pattern)
+      if (lower.startsWith('0xa5ef') && lower.endsWith('2966')) return true;
+      // Zero address
+      if (lower === '0x0000000000000000000000000000000000000000') return true;
+      return false;
+    };
     
     if (Array.isArray(data)) {
       data.forEach(tokenData => {
@@ -35,8 +48,8 @@ module.exports = async (req, res) => {
             const wallet = (holder.proxyWallet || '').toLowerCase();
             if (!wallet) return;
             
-            // Skip known bots/contracts
-            if (knownBots.has(wallet)) return;
+            // Skip known bots/contracts using pattern matching
+            if (isBot(wallet)) return;
 
             const amount = parseFloat(holder.amount) || 0;
             
@@ -57,6 +70,22 @@ module.exports = async (req, res) => {
             } else {
               // Use shortened wallet as name
               displayName = `${wallet.slice(0, 6)}...${wallet.slice(-4)}`;
+            }
+            
+            // If displayName looks like a long wallet/hex address, shorten it
+            if (displayName.length > 20 && /^0x[a-fA-F0-9]/i.test(displayName)) {
+              displayName = `${displayName.slice(0, 6)}...${displayName.slice(-4)}`;
+            }
+            // If displayName contains hyphen with long numbers (like token IDs), shorten
+            if (displayName.length > 25 && displayName.includes('-')) {
+              const parts = displayName.split('-');
+              if (parts[0].length > 10) {
+                displayName = `${parts[0].slice(0, 6)}...${parts[0].slice(-4)}`;
+              }
+            }
+            // Final check - if still too long, truncate
+            if (displayName.length > 20) {
+              displayName = displayName.slice(0, 16) + '...';
             }
 
             // Create unique key per wallet+outcome to track separate YES/NO positions
