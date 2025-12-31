@@ -29,73 +29,76 @@ module.exports = async (req, res) => {
 
       try {
         const response = await fetch(url, {
-          headers: {
-            'User-Agent': 'PolyMarkets/1.0',
-            'Accept': 'application/json'
-          },
+          headers: { 'User-Agent': 'PolyPro/1.0', 'Accept': 'application/json' },
           signal: controller.signal
         });
-
         clearTimeout(timeout);
-
         if (!response.ok) break;
-
         const data = await response.json();
         if (!data || data.length === 0) break;
-
         allEvents = allEvents.concat(data);
         offset += limit;
-
         if (data.length < limit || allEvents.length >= targetCount) break;
-      } catch (fetchErr) {
+      } catch (e) {
         clearTimeout(timeout);
         break;
       }
     }
 
-    // Transform to markets
-    const markets = [];
-    
-    allEvents.forEach((event, idx) => {
+    const markets = allEvents.map((event, idx) => {
       const volume = parseFloat(event.volume) || 0;
       const liquidity = parseFloat(event.liquidity) || 0;
       
-      let yesPrice = 50;
-      let noPrice = 50;
-      
-      // Get price from first market or event
-      if (event.markets && event.markets.length > 0) {
-        const m = event.markets[0];
-        if (m.outcomePrices) {
-          try {
-            const prices = typeof m.outcomePrices === 'string' 
-              ? JSON.parse(m.outcomePrices) 
-              : m.outcomePrices;
-            if (Array.isArray(prices) && prices.length >= 2) {
-              yesPrice = Math.round(parseFloat(prices[0]) * 100);
-              noPrice = Math.round(parseFloat(prices[1]) * 100);
-            }
-          } catch {}
-        }
+      // Get category
+      let category = 'general';
+      if (event.tags && Array.isArray(event.tags) && event.tags.length > 0) {
+        const firstTag = event.tags[0];
+        category = typeof firstTag === 'string' ? firstTag : (firstTag?.slug || firstTag?.label || 'general');
       }
 
-      markets.push({
+      // Parse outcomes
+      const outcomes = [];
+      if (event.markets && event.markets.length > 0) {
+        event.markets.forEach(m => {
+          let price = 50;
+          if (m.outcomePrices) {
+            try {
+              const prices = typeof m.outcomePrices === 'string' ? JSON.parse(m.outcomePrices) : m.outcomePrices;
+              if (Array.isArray(prices) && prices.length > 0) {
+                price = Math.round(parseFloat(prices[0]) * 100);
+              }
+            } catch {}
+          }
+          outcomes.push({
+            id: m.id,
+            conditionId: m.conditionId || '',
+            question: m.question || m.groupItemTitle || event.title,
+            price,
+            volume: parseFloat(m.volume) || 0,
+          });
+        });
+      }
+
+      // Sort outcomes by price descending
+      outcomes.sort((a, b) => b.price - a.price);
+
+      return {
         id: event.id || `event-${idx}`,
         slug: event.slug || '',
         title: event.title || 'Unknown',
+        description: event.description || '',
         image: event.image || '',
-        category: event.tags?.[0] || 'general',
+        category: String(category),
         volume,
         liquidity,
-        yesPrice,
-        noPrice,
         endDate: event.endDate || '',
         active: !event.closed,
-        marketsCount: event.markets?.length || 1,
-      });
+        outcomesCount: outcomes.length,
+        topOutcome: outcomes[0] || null,
+        outcomes: outcomes.slice(0, 10), // Top 10 outcomes
+      };
     });
 
-    // Sort by volume
     markets.sort((a, b) => b.volume - a.volume);
 
     res.setHeader('Cache-Control', 's-maxage=120, stale-while-revalidate');

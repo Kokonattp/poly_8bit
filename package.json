@@ -1,8 +1,6 @@
 {
-  "name": "polymarket-top-markets",
+  "name": "polymarket-pro",
   "version": "1.0.0",
-  "description": "Polymarket Top 200 Markets by Category",
-  "scripts": {
-    "start": "npx serve public"
-  }
+  "description": "Polymarket Top 200 Markets with Trader Profiles",
+  "private": true
 }
