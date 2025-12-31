@@ -983,12 +983,18 @@
       if (sort === 'liquidity') filtered.sort((a,b) => b.liquidity - a.liquidity);
       else if (sort === 'change') filtered.sort((a,b) => Math.abs(b.outcomes?.[0]?.change || 0) - Math.abs(a.outcomes?.[0]?.change || 0));
       else filtered.sort((a,b) => b.volume - a.volume);
-      renderMarkets();
+      
+      // Show local results or searching message
+      if (filtered.length > 0) {
+        renderMarkets();
+      } else {
+        document.getElementById('grid').innerHTML = `<div class="loading"><div class="spinner"></div><p>Searching all markets for "${search}"...</p></div>`;
+      }
       
       // Then, search API with debounce for more results
       if (search.length >= 2) {
         clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => searchAPI(search, sort), 500);
+        searchTimeout = setTimeout(() => searchAPI(search, sort), 600);
       }
     };
 
@@ -996,32 +1002,41 @@
       if (isSearching) return;
       isSearching = true;
       
+      // Show loading if no local results
+      if (filtered.length === 0) {
+        document.getElementById('grid').innerHTML = `<div class="loading"><div class="spinner"></div><p>Searching all markets for "${query}"...</p></div>`;
+      }
+      
       try {
         const res = await fetch(`/api/search?q=${encodeURIComponent(query)}&limit=50`);
         const json = await res.json();
         
         // Only update if search query hasn't changed
         const currentSearch = document.getElementById('search').value.trim();
-        if (currentSearch !== query) return;
+        if (currentSearch.toLowerCase() !== query.toLowerCase()) return;
         
         if (json.success && json.data?.length) {
           // Merge with existing results (remove duplicates)
           const existingIds = new Set(filtered.map(m => m.id));
           const newResults = json.data.filter(m => !existingIds.has(m.id));
           
-          if (newResults.length > 0) {
-            filtered = [...filtered, ...newResults];
-            
-            // Re-sort
-            if (sort === 'liquidity') filtered.sort((a,b) => b.liquidity - a.liquidity);
-            else if (sort === 'change') filtered.sort((a,b) => Math.abs(b.outcomes?.[0]?.change || 0) - Math.abs(a.outcomes?.[0]?.change || 0));
-            else filtered.sort((a,b) => b.volume - a.volume);
-            
-            renderMarkets();
-          }
+          filtered = [...filtered, ...newResults];
+          
+          // Re-sort
+          if (sort === 'liquidity') filtered.sort((a,b) => b.liquidity - a.liquidity);
+          else if (sort === 'change') filtered.sort((a,b) => Math.abs(b.outcomes?.[0]?.change || 0) - Math.abs(a.outcomes?.[0]?.change || 0));
+          else filtered.sort((a,b) => b.volume - a.volume);
+          
+          renderMarkets();
+        } else if (filtered.length === 0) {
+          // No results found anywhere
+          document.getElementById('grid').innerHTML = `<div class="loading"><p>No markets found for "${query}"</p><p style="font-size:12px;margin-top:8px;color:var(--text-muted)">Try a different search term</p></div>`;
         }
       } catch (e) {
         console.error('Search API error:', e);
+        if (filtered.length === 0) {
+          document.getElementById('grid').innerHTML = `<div class="loading"><p>No markets found for "${query}"</p></div>`;
+        }
       } finally {
         isSearching = false;
       }
