@@ -13,11 +13,11 @@ module.exports = async (req, res) => {
 
   // Map interval to API parameters
   const intervalMap = {
-    '1h': { interval: '1h', fidelity: 1 },      // 1 min intervals
-    '6h': { interval: '6h', fidelity: 5 },      // 5 min intervals
-    '1d': { interval: '1d', fidelity: 15 },     // 15 min intervals
-    '1w': { interval: '1w', fidelity: 60 },     // 1 hour intervals
-    'max': { interval: 'max', fidelity: 360 },  // 6 hour intervals
+    '1h': { interval: '1h', fidelity: 1 },
+    '6h': { interval: '6h', fidelity: 5 },
+    '1d': { interval: '1d', fidelity: 15 },
+    '1w': { interval: '1w', fidelity: 60 },
+    'max': { interval: 'max', fidelity: 360 },
   };
   
   const params = intervalMap[interval] || intervalMap['1d'];
@@ -39,38 +39,82 @@ module.exports = async (req, res) => {
     const marketData = gammaData[0];
     const clobTokenIds = marketData.clobTokenIds || [];
     
-    if (!clobTokenIds.length) {
-      return res.status(404).json({ success: false, error: 'No token IDs found' });
+    // Get current price from market data
+    let currentPrice = 50;
+    if (marketData.outcomePrices) {
+      try {
+        const prices = JSON.parse(marketData.outcomePrices);
+        currentPrice = parseFloat(prices[0]) * 100;
+      } catch {}
     }
-
-    // Get price history for YES token (first token)
-    const yesTokenId = clobTokenIds[0];
-    
-    // Try CLOB API for price history
-    const priceUrl = `https://clob.polymarket.com/prices-history?market=${yesTokenId}&interval=${params.interval}&fidelity=${params.fidelity}`;
-    const priceRes = await fetch(priceUrl, {
-      headers: { 'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json' }
-    });
 
     let priceHistory = [];
     
-    if (priceRes.ok) {
-      const priceData = await priceRes.json();
-      if (priceData && priceData.history && Array.isArray(priceData.history)) {
-        priceHistory = priceData.history.map(p => ({
-          timestamp: p.t * 1000, // Convert to milliseconds
-          price: parseFloat(p.p) * 100, // Convert to percentage
-        }));
+    // Try multiple approaches to get price history
+    if (clobTokenIds.length > 0) {
+      const yesTokenId = clobTokenIds[0];
+      
+      // Approach 1: CLOB prices-history API
+      try {
+        const priceUrl = `https://clob.polymarket.com/prices-history?market=${yesTokenId}&interval=${params.interval}&fidelity=${params.fidelity}`;
+        const priceRes = await fetch(priceUrl, {
+          headers: { 'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json' }
+        });
+        
+        if (priceRes.ok) {
+          const priceData = await priceRes.json();
+          if (priceData && priceData.history && Array.isArray(priceData.history)) {
+            priceHistory = priceData.history.map(p => ({
+              timestamp: p.t * 1000,
+              price: parseFloat(p.p) * 100,
+            }));
+          }
+        }
+      } catch (e) {
+        console.log('CLOB API failed:', e.message);
+      }
+      
+      // Approach 2: Try data-api timeseries if CLOB failed
+      if (priceHistory.length === 0) {
+        try {
+          const tsUrl = `https://data-api.polymarket.com/timeseries?market=${market}&fidelity=${params.fidelity * 60}`;
+          const tsRes = await fetch(tsUrl, {
+            headers: { 'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json' }
+          });
+          
+          if (tsRes.ok) {
+            const tsData = await tsRes.json();
+            if (Array.isArray(tsData) && tsData.length > 0) {
+              priceHistory = tsData.map(p => ({
+                timestamp: new Date(p.t || p.timestamp).getTime(),
+                price: parseFloat(p.p || p.price) * 100,
+              }));
+            }
+          }
+        } catch (e) {
+          console.log('Data API timeseries failed:', e.message);
+        }
       }
     }
 
     // Sort by timestamp
     priceHistory.sort((a, b) => a.timestamp - b.timestamp);
-
-    // Get current price
-    const currentPrice = marketData.outcomePrices ? 
-      parseFloat(JSON.parse(marketData.outcomePrices)[0]) * 100 : 
-      (priceHistory.length ? priceHistory[priceHistory.length - 1].price : 50);
+    
+    // Filter based on interval
+    if (priceHistory.length > 0) {
+      const now = Date.now();
+      const intervalMs = {
+        '1h': 60 * 60 * 1000,
+        '6h': 6 * 60 * 60 * 1000,
+        '1d': 24 * 60 * 60 * 1000,
+        '1w': 7 * 24 * 60 * 60 * 1000,
+        'max': Infinity,
+      };
+      const cutoff = now - (intervalMs[interval] || intervalMs['1d']);
+      if (interval !== 'max') {
+        priceHistory = priceHistory.filter(p => p.timestamp >= cutoff);
+      }
+    }
 
     // Calculate stats
     const firstPrice = priceHistory.length ? priceHistory[0].price : currentPrice;
@@ -86,7 +130,7 @@ module.exports = async (req, res) => {
     return res.status(200).json({
       success: true,
       market,
-      tokenId: yesTokenId,
+      tokenId: clobTokenIds[0] || null,
       outcome: marketData.outcome || 'YES',
       currentPrice: Math.round(currentPrice * 10) / 10,
       interval,
@@ -97,7 +141,7 @@ module.exports = async (req, res) => {
         low: Math.round(low * 10) / 10,
         dataPoints: priceHistory.length,
       },
-      history: priceHistory.slice(-100), // Last 100 data points
+      history: priceHistory.slice(-100),
     });
 
   } catch (error) {

@@ -24,10 +24,11 @@
       --success-light: rgba(16, 185, 129, 0.1);
       --danger: #ef4444;
       --danger-light: rgba(239, 68, 68, 0.1);
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
-      --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
-      --shadow-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
-      --shadow-card: 0 2px 8px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.1);
+      --shadow-sm: 0 2px 4px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 8px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.1);
+      --shadow-lg: 0 12px 24px rgba(0,0,0,0.15), 0 6px 12px rgba(0,0,0,0.1);
+      --shadow-card: 0 4px 12px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08);
+      --shadow-card-hover: 0 16px 32px rgba(0,0,0,0.18), 0 8px 16px rgba(0,0,0,0.12);
     }
 
     [data-theme="dark"] {
@@ -40,10 +41,11 @@
       --text-muted: #6b6b80;
       --border: #2a2a3a;
       --border-light: #22222e;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
-      --shadow-md: 0 4px 6px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3);
-      --shadow-lg: 0 10px 15px rgba(0,0,0,0.5), 0 4px 6px rgba(0,0,0,0.4);
-      --shadow-card: 0 2px 8px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.3);
+      --shadow-sm: 0 2px 4px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
+      --shadow-md: 0 4px 8px rgba(0,0,0,0.5), 0 2px 4px rgba(0,0,0,0.4);
+      --shadow-lg: 0 12px 24px rgba(0,0,0,0.6), 0 6px 12px rgba(0,0,0,0.5);
+      --shadow-card: 0 4px 12px rgba(0,0,0,0.5), 0 2px 4px rgba(0,0,0,0.4);
+      --shadow-card-hover: 0 16px 32px rgba(0,0,0,0.7), 0 8px 16px rgba(0,0,0,0.5);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -122,7 +124,7 @@
       transition: all 0.2s;
       box-shadow: var(--shadow-card);
     }
-    .stat-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+    .stat-card:hover { box-shadow: var(--shadow-card-hover); transform: translateY(-3px); }
     .stat-card .icon { 
       width: 40px; height: 40px; border-radius: 12px; 
       display: flex; align-items: center; justify-content: center; 
@@ -185,8 +187,8 @@
       box-shadow: var(--shadow-card);
     }
     .market-card:hover { 
-      box-shadow: var(--shadow-lg); 
-      transform: translateY(-3px);
+      box-shadow: var(--shadow-card-hover); 
+      transform: translateY(-4px);
       border-color: var(--accent);
     }
     .market-header { display: flex; gap: 14px; padding: 18px; }
@@ -332,6 +334,7 @@
       border: 1px solid var(--border);
       box-shadow: var(--shadow-card);
     }
+    .insights-panel:hover { box-shadow: var(--shadow-md); }
     .insights-title { font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
     .insights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
     .insight-item {
@@ -354,8 +357,8 @@
       border: 1px solid var(--border);
       box-shadow: var(--shadow-card);
     }
-    .outcome-card:hover { background: var(--bg-hover); transform: translateY(-1px); box-shadow: var(--shadow-md); }
-    .outcome-card.selected { border-color: var(--accent); background: var(--accent-light); box-shadow: 0 0 0 3px var(--accent-light); }
+    .outcome-card:hover { background: var(--bg-hover); transform: translateY(-2px); box-shadow: var(--shadow-card-hover); }
+    .outcome-card.selected { border-color: var(--accent); background: var(--accent-light); box-shadow: 0 0 0 3px var(--accent-light), var(--shadow-card); }
     .outcome-num { 
       width: 30px; height: 30px; border-radius: 8px; 
       background: var(--bg-hover); 
@@ -417,7 +420,7 @@
       border: 1px solid var(--border);
       box-shadow: var(--shadow-sm);
     }
-    .holder-row:hover { background: var(--bg-hover); transform: translateX(2px); box-shadow: var(--shadow-md); }
+    .holder-row:hover { background: var(--bg-hover); transform: translateX(3px); box-shadow: var(--shadow-md); }
     .holder-rank { 
       width: 28px; height: 28px; border-radius: 8px; 
       background: var(--bg-hover); 
@@ -1213,23 +1216,45 @@
         const res = await fetch(`/api/prices?market=${conditionId}&interval=${interval}`);
         const json = await res.json();
         
-        if (json.success && json.history?.length) {
-          renderOutcomeChart(json);
-        } else {
-          // Show no data message
-          document.getElementById('outcomeChartPrice').textContent = '-';
-          document.getElementById('outcomeChartChange').textContent = 'No data';
-          document.getElementById('outcomeChartChange').className = 'chart-change';
-          document.getElementById('outcomeChartHigh').textContent = '-';
-          document.getElementById('outcomeChartLow').textContent = '-';
-          document.getElementById('outcomeChartPoints').textContent = '0';
-          if (outcomeChart) {
-            outcomeChart.destroy();
-            outcomeChart = null;
+        if (json.success) {
+          // Always show current price
+          document.getElementById('outcomeChartPrice').textContent = `${json.currentPrice}%`;
+          document.getElementById('outcomeChartPrice').className = 'chart-value ' + (json.currentPrice >= 50 ? 'text-success' : 'text-danger');
+          
+          if (json.history?.length > 0) {
+            renderOutcomeChart(json);
+          } else {
+            // No history but show current price
+            const change = json.stats?.change || 0;
+            const changeText = (change >= 0 ? '+' : '') + change.toFixed(1) + '%';
+            document.getElementById('outcomeChartChange').textContent = changeText;
+            document.getElementById('outcomeChartChange').className = 'chart-change ' + (change >= 0 ? 'text-success' : 'text-danger');
+            document.getElementById('outcomeChartChange').style.background = change >= 0 ? 'var(--success-light)' : 'var(--danger-light)';
+            document.getElementById('outcomeChartHigh').textContent = `${json.currentPrice}%`;
+            document.getElementById('outcomeChartLow').textContent = `${json.currentPrice}%`;
+            document.getElementById('outcomeChartPoints').textContent = '0';
+            
+            // Clear chart and show message
+            if (outcomeChart) {
+              outcomeChart.destroy();
+              outcomeChart = null;
+            }
+            const ctx = document.getElementById('outcomeChart').getContext('2d');
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-muted');
+            ctx.font = '13px DM Sans';
+            ctx.textAlign = 'center';
+            ctx.fillText('No price history available for this period', ctx.canvas.width / 2, ctx.canvas.height / 2);
           }
+        } else {
+          document.getElementById('outcomeChartPrice').textContent = '-';
+          document.getElementById('outcomeChartChange').textContent = 'Error';
+          document.getElementById('outcomeChartChange').className = 'chart-change text-danger';
         }
       } catch (e) {
         console.error('Chart load error:', e);
+        document.getElementById('outcomeChartPrice').textContent = '-';
+        document.getElementById('outcomeChartChange').textContent = 'Error';
       } finally {
         loading.classList.add('hidden');
       }

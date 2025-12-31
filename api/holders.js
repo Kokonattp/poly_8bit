@@ -11,7 +11,8 @@ module.exports = async (req, res) => {
   if (!market) return res.status(400).json({ success: false, error: 'market required' });
 
   try {
-    const url = `https://data-api.polymarket.com/holders?market=${encodeURIComponent(market)}&limit=500`;
+    // Fetch more data from API to get accurate stats
+    const url = `https://data-api.polymarket.com/holders?market=${encodeURIComponent(market)}&limit=1000`;
     const response = await fetch(url, {
       headers: { 'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json' }
     });
@@ -144,8 +145,15 @@ module.exports = async (req, res) => {
     // Sort by amount descending
     holders.sort((a, b) => b.amount - a.amount);
     
-    // Add ranks
-    holders = holders.slice(0, limit).map((h, i) => ({
+    // Calculate stats from ALL holders before slicing
+    const allYesHolders = holders.filter(h => h.outcome === 'YES');
+    const allNoHolders = holders.filter(h => h.outcome === 'NO');
+    const totalYesShares = allYesHolders.reduce((s, h) => s + h.amount, 0);
+    const totalNoShares = allNoHolders.reduce((s, h) => s + h.amount, 0);
+    const totalUniqueHolders = new Set(holders.map(h => h.wallet)).size;
+    
+    // Now slice for display (top holders only)
+    const displayHolders = holders.slice(0, limit).map((h, i) => ({
       rank: i + 1,
       wallet: h.wallet,
       displayName: h.displayName,
@@ -157,26 +165,21 @@ module.exports = async (req, res) => {
       bio: h.bio,
     }));
 
-    // Calculate stats
-    const yesHolders = holders.filter(h => h.outcome === 'YES');
-    const noHolders = holders.filter(h => h.outcome === 'NO');
-    const totalYes = yesHolders.reduce((s, h) => s + h.amount, 0);
-    const totalNo = noHolders.reduce((s, h) => s + h.amount, 0);
-    const totalHolders = new Set(holders.map(h => h.wallet)).size;
-
     res.setHeader('Cache-Control', 's-maxage=30, stale-while-revalidate');
     return res.status(200).json({
       success: true,
       market,
       stats: {
-        totalHolders,
-        yesHolders: yesHolders.length,
-        noHolders: noHolders.length,
-        totalYesShares: totalYes,
-        totalNoShares: totalNo,
-        yesPct: holders.length > 0 ? Math.round((yesHolders.length / holders.length) * 100) : 50,
+        totalHolders: totalUniqueHolders,
+        yesHolders: allYesHolders.length,
+        noHolders: allNoHolders.length,
+        totalYesShares: Math.round(totalYesShares),
+        totalNoShares: Math.round(totalNoShares),
+        yesPct: (allYesHolders.length + allNoHolders.length) > 0 
+          ? Math.round((allYesHolders.length / (allYesHolders.length + allNoHolders.length)) * 100) 
+          : 50,
       },
-      data: holders
+      data: displayHolders
     });
 
   } catch (error) {
