@@ -1,6 +1,6 @@
 {
-  "name": "polymarket-pro",
-  "version": "1.0.0",
-  "description": "Polymarket Top 200 Markets with Trader Profiles",
+  "name": "polymarket-pro-v3",
+  "version": "3.0.0",
+  "description": "Polymarket Top 1000 Markets - Clean UI",
   "private": true
 }
