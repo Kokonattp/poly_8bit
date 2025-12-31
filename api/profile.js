@@ -14,7 +14,7 @@ module.exports = async (req, res) => {
       fetch(`https://data-api.polymarket.com/positions?user=${encodeURIComponent(wallet)}&sizeThreshold=0.1&limit=100`, {
         headers: { 'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json' }
       }),
-      fetch(`https://data-api.polymarket.com/activity?user=${encodeURIComponent(wallet)}&limit=100`, {
+      fetch(`https://data-api.polymarket.com/activity?user=${encodeURIComponent(wallet)}&limit=200`, {
         headers: { 'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json' }
       }),
       fetch(`https://data-api.polymarket.com/value?user=${encodeURIComponent(wallet)}`, {
@@ -89,27 +89,89 @@ module.exports = async (req, res) => {
     // Sort positions by current value
     positions.sort((a, b) => b.currentValue - a.currentValue);
 
-    // PnL by day for chart (last 30 days from activity)
+    // Calculate PnL history for chart (last 30 days)
     const pnlHistory = [];
     const now = Date.now();
     const dayMs = 24 * 60 * 60 * 1000;
+    
+    // Group activity by day
+    const activityByDay = new Map();
+    activity.forEach(a => {
+      if (!a.timestamp) return;
+      const dayKey = new Date(a.timestamp * 1000).toISOString().split('T')[0];
+      if (!activityByDay.has(dayKey)) {
+        activityByDay.set(dayKey, []);
+      }
+      activityByDay.get(dayKey).push(a);
+    });
+
+    // Generate 30-day history
     for (let i = 29; i >= 0; i--) {
-      const dayStart = now - (i * dayMs);
-      const dayEnd = dayStart + dayMs;
-      const dayActivity = activity.filter(a => {
-        const ts = a.timestamp * 1000;
-        return ts >= dayStart && ts < dayEnd;
+      const dayStart = new Date(now - (i * dayMs));
+      const dayKey = dayStart.toISOString().split('T')[0];
+      const dayActivity = activityByDay.get(dayKey) || [];
+      
+      // Calculate day's PnL from trades
+      let dayPnl = 0;
+      dayActivity.forEach(a => {
+        if (a.side === 'BUY') dayPnl -= a.usdcSize;
+        if (a.side === 'SELL') dayPnl += a.usdcSize;
       });
-      const dayPnl = dayActivity.reduce((s, a) => {
-        // Simplified: assume buy = negative, sell = positive
-        if (a.side === 'BUY') return s - a.usdcSize;
-        if (a.side === 'SELL') return s + a.usdcSize;
-        return s;
-      }, 0);
+
       pnlHistory.push({
-        date: new Date(dayStart).toISOString().split('T')[0],
-        pnl: dayPnl,
+        date: dayKey,
+        pnl: Math.round(dayPnl * 100) / 100,
+        trades: dayActivity.length,
+        volume: dayActivity.reduce((s, a) => s + a.usdcSize, 0),
       });
+    }
+
+    // Calculate additional insights
+    const avgTradeSize = activity.length > 0 
+      ? activity.filter(a => a.type === 'TRADE').reduce((s, a) => s + a.usdcSize, 0) / activity.filter(a => a.type === 'TRADE').length 
+      : 0;
+    
+    const tradesToday = activity.filter(a => {
+      if (!a.timestamp) return false;
+      const tradeDate = new Date(a.timestamp * 1000).toISOString().split('T')[0];
+      const today = new Date().toISOString().split('T')[0];
+      return tradeDate === today;
+    }).length;
+
+    const mostTradedMarket = activity.reduce((acc, a) => {
+      if (!acc[a.market]) acc[a.market] = { count: 0, volume: 0 };
+      acc[a.market].count++;
+      acc[a.market].volume += a.usdcSize;
+      return acc;
+    }, {});
+    
+    const topMarket = Object.entries(mostTradedMarket)
+      .sort((a, b) => b[1].volume - a[1].volume)[0];
+
+    // Determine trader type
+    let traderType = 'Casual';
+    if (activity.length > 100) traderType = 'Active';
+    if (totalVolume > 10000) traderType = 'High Volume';
+    if (winRate >= 60 && positions.length >= 10) traderType = 'Sharp';
+    if (avgTradeSize > 500) traderType = 'Whale';
+    if (positions.length >= 20) traderType = 'Diversified';
+
+    // Calculate streak
+    let currentStreak = 0;
+    let streakType = 'none';
+    const sortedPositions = [...positions].sort((a, b) => b.pnl - a.pnl);
+    for (const p of sortedPositions) {
+      if (p.pnl > 0) {
+        if (streakType !== 'losing') {
+          currentStreak++;
+          streakType = 'winning';
+        } else break;
+      } else if (p.pnl < 0) {
+        if (streakType !== 'winning') {
+          currentStreak++;
+          streakType = 'losing';
+        } else break;
+      }
     }
 
     res.setHeader('Cache-Control', 's-maxage=30, stale-while-revalidate');
@@ -129,6 +191,18 @@ module.exports = async (req, res) => {
           roi,
           winningPositions,
           losingPositions,
+        },
+        insights: {
+          traderType,
+          avgTradeSize: Math.round(avgTradeSize * 100) / 100,
+          tradesToday,
+          topMarket: topMarket ? { name: topMarket[0], volume: topMarket[1].volume, trades: topMarket[1].count } : null,
+          currentStreak,
+          streakType,
+          avgPositionSize: positions.length > 0 ? Math.round(totalInvested / positions.length * 100) / 100 : 0,
+          largestPosition: positions[0] ? { market: positions[0].market, value: positions[0].currentValue } : null,
+          bestPerformer: positions.filter(p => p.pnl > 0).sort((a, b) => b.pnlPercent - a.pnlPercent)[0] || null,
+          worstPerformer: positions.filter(p => p.pnl < 0).sort((a, b) => a.pnlPercent - b.pnlPercent)[0] || null,
         },
         positions: positions.slice(0, 50),
         recentActivity: activity.slice(0, 30),

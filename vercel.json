@@ -1,1 +1,19 @@
-{"version": 2}
+{
+  "version": 2,
+  "rewrites": [
+    { "source": "/api/markets", "destination": "/api/markets.js" },
+    { "source": "/api/event", "destination": "/api/event.js" },
+    { "source": "/api/holders", "destination": "/api/holders.js" },
+    { "source": "/api/profile", "destination": "/api/profile.js" },
+    { "source": "/api/comments", "destination": "/api/comments.js" }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, OPTIONS" }
+      ]
+    }
+  ]
+}
