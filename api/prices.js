@@ -12,15 +12,17 @@ module.exports = async (req, res) => {
   }
 
   // Map interval to API parameters
-  const intervalMap = {
+  // interval: string like 'max', '1d', '1w'  
+  // fidelity: minutes between data points
+  const intervalConfig = {
     '1h': { interval: '1h', fidelity: 1 },
     '6h': { interval: '6h', fidelity: 5 },
-    '1d': { interval: '1d', fidelity: 15 },
-    '1w': { interval: '1w', fidelity: 60 },
-    'max': { interval: 'max', fidelity: 360 },
+    '1d': { interval: '1d', fidelity: 30 },
+    '1w': { interval: '1w', fidelity: 120 },
+    'max': { interval: 'max', fidelity: 720 },
   };
   
-  const params = intervalMap[interval] || intervalMap['1d'];
+  const config = intervalConfig[interval] || intervalConfig['1d'];
 
   try {
     // First, get the token IDs for this market from gamma API
@@ -50,15 +52,18 @@ module.exports = async (req, res) => {
 
     let priceHistory = [];
     
-    // Try multiple approaches to get price history
+    // Try to get price history using correct API format
     if (clobTokenIds.length > 0) {
       const yesTokenId = clobTokenIds[0];
       
-      // Approach 1: CLOB prices-history API
+      // Correct API: /prices-history?market={token_id}&interval={interval}&fidelity={fidelity}
       try {
-        const priceUrl = `https://clob.polymarket.com/prices-history?market=${yesTokenId}&interval=${params.interval}&fidelity=${params.fidelity}`;
+        const priceUrl = `https://clob.polymarket.com/prices-history?market=${yesTokenId}&interval=${config.interval}&fidelity=${config.fidelity}`;
         const priceRes = await fetch(priceUrl, {
-          headers: { 'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json' }
+          headers: { 
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            'Accept': 'application/json'
+          }
         });
         
         if (priceRes.ok) {
@@ -71,50 +76,12 @@ module.exports = async (req, res) => {
           }
         }
       } catch (e) {
-        console.log('CLOB API failed:', e.message);
-      }
-      
-      // Approach 2: Try data-api timeseries if CLOB failed
-      if (priceHistory.length === 0) {
-        try {
-          const tsUrl = `https://data-api.polymarket.com/timeseries?market=${market}&fidelity=${params.fidelity * 60}`;
-          const tsRes = await fetch(tsUrl, {
-            headers: { 'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json' }
-          });
-          
-          if (tsRes.ok) {
-            const tsData = await tsRes.json();
-            if (Array.isArray(tsData) && tsData.length > 0) {
-              priceHistory = tsData.map(p => ({
-                timestamp: new Date(p.t || p.timestamp).getTime(),
-                price: parseFloat(p.p || p.price) * 100,
-              }));
-            }
-          }
-        } catch (e) {
-          console.log('Data API timeseries failed:', e.message);
-        }
+        console.log('CLOB API error:', e.message);
       }
     }
 
     // Sort by timestamp
     priceHistory.sort((a, b) => a.timestamp - b.timestamp);
-    
-    // Filter based on interval
-    if (priceHistory.length > 0) {
-      const now = Date.now();
-      const intervalMs = {
-        '1h': 60 * 60 * 1000,
-        '6h': 6 * 60 * 60 * 1000,
-        '1d': 24 * 60 * 60 * 1000,
-        '1w': 7 * 24 * 60 * 60 * 1000,
-        'max': Infinity,
-      };
-      const cutoff = now - (intervalMs[interval] || intervalMs['1d']);
-      if (interval !== 'max') {
-        priceHistory = priceHistory.filter(p => p.timestamp >= cutoff);
-      }
-    }
 
     // Calculate stats
     const firstPrice = priceHistory.length ? priceHistory[0].price : currentPrice;
@@ -126,7 +93,7 @@ module.exports = async (req, res) => {
     const high = priceHistory.length ? Math.max(...priceHistory.map(p => p.price)) : currentPrice;
     const low = priceHistory.length ? Math.min(...priceHistory.map(p => p.price)) : currentPrice;
 
-    res.setHeader('Cache-Control', 's-maxage=30, stale-while-revalidate');
+    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
     return res.status(200).json({
       success: true,
       market,
@@ -141,7 +108,7 @@ module.exports = async (req, res) => {
         low: Math.round(low * 10) / 10,
         dataPoints: priceHistory.length,
       },
-      history: priceHistory.slice(-100),
+      history: priceHistory.slice(-200),
     });
 
   } catch (error) {

@@ -446,17 +446,6 @@
     .copy-btn:hover { background: var(--accent-light); border-color: var(--accent); }
     .copy-btn.copied { background: var(--success-light); border-color: var(--success); }
 
-    .holders-stats { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
-    .holders-stat { 
-      background: var(--bg-card); 
-      padding: 14px 18px; border-radius: 12px; flex: 1; min-width: 90px;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-sm);
-      text-align: center;
-    }
-    .holders-stat p { font-size: 10px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
-    .holders-stat h4 { font-size: 18px; font-weight: 700; margin-top: 4px; font-family: 'JetBrains Mono', monospace; }
-
     /* Outcome Price Chart */
     .outcome-chart-container {
       background: var(--bg-card);
@@ -794,7 +783,6 @@
             </div>
           </div>
           
-          <div id="holdersStats" class="holders-stats"></div>
           <div id="holdersContainer" class="holders-container">
             <div class="holders-column">
               <div class="holders-column-title yes">✅ YES Top 10</div>
@@ -1374,13 +1362,10 @@
       document.getElementById('selectedOutcomeHolders').style.display = 'block';
       document.getElementById('yesHoldersList').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
       document.getElementById('noHoldersList').innerHTML = '';
-      document.getElementById('holdersStats').innerHTML = '';
       try {
         const res = await fetch(`/api/holders?market=${conditionId}&limit=50`);
         const json = await res.json();
         if (json.success && json.data?.length) {
-          const s = json.stats;
-          document.getElementById('holdersStats').innerHTML = `<div class="holders-stat"><p>Total</p><h4>${s.totalHolders}</h4></div><div class="holders-stat"><p>YES</p><h4 class="text-success">${s.yesHolders}</h4></div><div class="holders-stat"><p>NO</p><h4 class="text-danger">${s.noHolders}</h4></div><div class="holders-stat"><p>YES %</p><h4 class="text-success">${s.yesPct}%</h4></div>`;
           const yesH = json.data.filter(h => h.outcome === 'YES');
           const noH = json.data.filter(h => h.outcome === 'NO');
           
