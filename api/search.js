@@ -13,62 +13,47 @@ module.exports = async (req, res) => {
   }
 
   try {
-    // Fetch more events from API and filter by search query
-    // Polymarket gamma API doesn't have text search, so we fetch in batches and filter
+    // Quick search - fetch just 500 events sorted by volume
     let allEvents = [];
-    let offset = 0;
-    const fetchLimit = 200;
-    const maxFetches = 10; // Max 2000 events to search through
+    const fetchLimit = 500;
     
-    for (let i = 0; i < maxFetches; i++) {
-      const url = `https://gamma-api.polymarket.com/events?closed=false&limit=${fetchLimit}&offset=${offset}&order=volume&ascending=false`;
-      
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 8000);
+    const url = `https://gamma-api.polymarket.com/events?closed=false&limit=${fetchLimit}&offset=0&order=volume&ascending=false`;
+    
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
 
-      try {
-        const response = await fetch(url, {
-          headers: { 'User-Agent': 'PolyPro/3.0', 'Accept': 'application/json' },
-          signal: controller.signal
-        });
-        clearTimeout(timeout);
-        
-        if (!response.ok) break;
+    try {
+      const response = await fetch(url, {
+        headers: { 'User-Agent': 'PolyPro/3.0', 'Accept': 'application/json' },
+        signal: controller.signal
+      });
+      clearTimeout(timeout);
+      
+      if (response.ok) {
         const data = await response.json();
-        if (!data || data.length === 0) break;
-        
-        // Filter matching events as we go
-        const matching = data.filter(event => {
-          const title = (event.title || '').toLowerCase();
-          const slug = (event.slug || '').toLowerCase();
-          const desc = (event.description || '').toLowerCase();
-          
-          // Also check market questions
-          let marketMatch = false;
-          if (event.markets && Array.isArray(event.markets)) {
-            marketMatch = event.markets.some(m => {
-              const q = (m.question || '').toLowerCase();
-              const g = (m.groupItemTitle || '').toLowerCase();
-              return q.includes(query) || g.includes(query);
-            });
-          }
-          
-          return title.includes(query) || slug.includes(query) || desc.includes(query) || marketMatch;
-        });
-        
-        allEvents = allEvents.concat(matching);
-        
-        // Stop if we have enough results
-        if (allEvents.length >= limit * 2) break;
-        
-        // Stop if this batch was small (end of data)
-        if (data.length < fetchLimit) break;
-        
-        offset += fetchLimit;
-      } catch (e) {
-        clearTimeout(timeout);
-        break;
+        if (data && data.length > 0) {
+          // Filter matching events
+          allEvents = data.filter(event => {
+            const title = (event.title || '').toLowerCase();
+            const slug = (event.slug || '').toLowerCase();
+            const desc = (event.description || '').toLowerCase();
+            
+            // Also check market questions
+            let marketMatch = false;
+            if (event.markets && Array.isArray(event.markets)) {
+              marketMatch = event.markets.some(m => {
+                const q = (m.question || '').toLowerCase();
+                const g = (m.groupItemTitle || '').toLowerCase();
+                return q.includes(query) || g.includes(query);
+              });
+            }
+            
+            return title.includes(query) || slug.includes(query) || desc.includes(query) || marketMatch;
+          });
+        }
       }
+    } catch (e) {
+      clearTimeout(timeout);
     }
 
     // Transform results
@@ -151,12 +136,11 @@ module.exports = async (req, res) => {
     // Limit results
     const finalResults = filtered.slice(0, limit);
 
-    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
+    res.setHeader('Cache-Control', 's-maxage=120, stale-while-revalidate');
     return res.status(200).json({
       success: true,
       query,
       count: finalResults.length,
-      totalSearched: offset + fetchLimit,
       data: finalResults
     });
 
