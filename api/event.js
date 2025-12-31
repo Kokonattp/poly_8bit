@@ -103,7 +103,25 @@ module.exports = async (req, res) => {
     }
 
     // Sort by yesPrice descending (highest chance first) - like Polymarket
-    outcomes.sort((a, b) => b.yesPrice - a.yesPrice || b.volume - a.volume);
+    // But first, filter out dummy/placeholder markets (no volume, 100% or 0% price)
+    const validOutcomes = outcomes.filter(o => {
+      // Keep if has volume
+      if (o.volume > 0) return true;
+      // Keep if has liquidity
+      if (o.liquidity > 0) return true;
+      // Filter out 100% or 0% with no activity (placeholder markets)
+      if ((o.yesPrice === 100 || o.yesPrice === 0) && o.volume === 0) return false;
+      return true;
+    });
+    
+    // Sort: first by volume (active markets first), then by price
+    validOutcomes.sort((a, b) => {
+      // Markets with volume come first
+      if (a.volume > 0 && b.volume === 0) return -1;
+      if (b.volume > 0 && a.volume === 0) return 1;
+      // Then sort by price descending
+      return b.yesPrice - a.yesPrice;
+    });
 
     // Get category
     let category = 'general';
@@ -125,8 +143,9 @@ module.exports = async (req, res) => {
       startDate: event.startDate || '',
       active: !event.closed,
       commentCount: event.commentCount || 0,
-      outcomesCount: outcomes.length,
-      outcomes,
+      outcomesCount: validOutcomes.length,
+      totalOutcomes: outcomes.length,
+      outcomes: validOutcomes,
     };
 
     res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
