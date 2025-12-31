@@ -37,15 +37,35 @@ module.exports = async (req, res) => {
     }
 
     const marketData = gammaData[0];
-    const clobTokenIds = marketData.clobTokenIds || [];
+    
+    // Parse clobTokenIds - could be string or array
+    let clobTokenIds = [];
+    if (marketData.clobTokenIds) {
+      if (typeof marketData.clobTokenIds === 'string') {
+        try {
+          clobTokenIds = JSON.parse(marketData.clobTokenIds);
+        } catch {
+          clobTokenIds = [marketData.clobTokenIds];
+        }
+      } else if (Array.isArray(marketData.clobTokenIds)) {
+        clobTokenIds = marketData.clobTokenIds;
+      }
+    }
     
     // Get current price from market data
     let currentPrice = 50;
     if (marketData.outcomePrices) {
       try {
-        const prices = JSON.parse(marketData.outcomePrices);
-        currentPrice = parseFloat(prices[0]) * 100;
-      } catch {}
+        let prices = marketData.outcomePrices;
+        if (typeof prices === 'string') {
+          prices = JSON.parse(prices);
+        }
+        if (Array.isArray(prices) && prices.length > 0) {
+          currentPrice = parseFloat(prices[0]) * 100;
+        }
+      } catch (e) {
+        console.log('Price parse error:', e.message);
+      }
     }
 
     let priceHistory = [];
@@ -161,6 +181,11 @@ module.exports = async (req, res) => {
       currentPrice: Math.round(currentPrice * 10) / 10,
       interval,
       apiUsed,
+      debug: {
+        rawTokenIds: marketData.clobTokenIds,
+        parsedTokenIds: clobTokenIds,
+        rawPrices: marketData.outcomePrices,
+      },
       stats: {
         change: Math.round(change * 10) / 10,
         changePercent: Math.round(changePercent * 10) / 10,
