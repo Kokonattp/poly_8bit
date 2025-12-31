@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Polymarket Top Markets - By Category</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+    body { background: #0d0d0d; color: #fff; min-height: 100vh; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #141414; }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
+    .header { border-bottom: 1px solid #222; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: #0d0d0d; z-index: 40; }
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .logo-icon { width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #8b5cf6, #6366f1); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
+    .logo-text h1 { font-size: 18px; font-weight: 600; }
+    .logo-text p { font-size: 12px; color: #666; }
+    .header-btns { display: flex; gap: 12px; align-items: center; }
+    .btn { padding: 10px 20px; border-radius: 8px; font-weight: 500; font-size: 14px; cursor: pointer; transition: all 0.2s; border: none; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-secondary { background: #1a1a1a; border: 1px solid #333; color: #fff; }
+    .btn-secondary:hover { background: #252525; }
+    .btn-primary { background: #8b5cf6; color: #fff; }
+    .btn-primary:hover { background: #7c3aed; }
+    .status-badge { padding: 8px 12px; border-radius: 8px; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+    .status-live { background: rgba(0, 210, 106, 0.15); color: #00d26a; }
+    .status-error { background: rgba(255, 71, 87, 0.15); color: #ff4757; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+    .main { max-width: 1400px; margin: 0 auto; padding: 24px; }
+
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    @media (max-width: 768px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+    .stat-card { background: #141414; border: 1px solid #222; border-radius: 12px; padding: 20px; }
+    .stat-card p { color: #666; font-size: 13px; margin-bottom: 4px; }
+    .stat-card h2 { font-size: 28px; font-weight: 600; }
+    .text-purple { color: #8b5cf6; }
+    .text-green { color: #00d26a; }
+
+    .categories { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; padding: 16px; background: #141414; border: 1px solid #222; border-radius: 12px; }
+    .cat-btn { padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; background: #1a1a1a; border: 1px solid #333; color: #888; cursor: pointer; transition: all 0.2s; }
+    .cat-btn:hover { border-color: #8b5cf6; color: #fff; }
+    .cat-btn.active { background: #8b5cf6; border-color: #8b5cf6; color: #fff; }
+    .cat-btn .count { font-size: 12px; opacity: 0.7; margin-left: 4px; }
+
+    .filters { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; align-items: center; }
+    .search-box { flex: 1; min-width: 200px; position: relative; }
+    .search-box input { width: 100%; padding: 12px 16px 12px 44px; background: #141414; border: 1px solid #222; border-radius: 8px; color: #fff; font-size: 14px; outline: none; }
+    .search-box input:focus { border-color: #8b5cf6; }
+    .search-box::before { content: '🔍'; position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 14px; }
+    .filter-select { padding: 12px 16px; background: #141414; border: 1px solid #222; border-radius: 8px; color: #fff; font-size: 14px; outline: none; cursor: pointer; }
+    .filter-select:focus { border-color: #8b5cf6; }
+
+    .markets-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+    
+    .market-card { background: #141414; border: 1px solid #222; border-radius: 12px; overflow: hidden; transition: all 0.2s; cursor: pointer; text-decoration: none; color: inherit; display: block; }
+    .market-card:hover { border-color: #333; transform: translateY(-2px); }
+    .market-header { display: flex; gap: 12px; padding: 16px; }
+    .market-img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; background: #222; flex-shrink: 0; }
+    .market-info { flex: 1; min-width: 0; }
+    .market-info h3 { font-size: 14px; font-weight: 500; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .market-meta { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+    .market-tag { font-size: 11px; padding: 3px 8px; background: #222; border-radius: 4px; color: #888; text-transform: capitalize; }
+    .market-body { padding: 0 16px 16px; }
+    .price-bar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 12px; }
+    .price-yes { background: #00d26a; }
+    .price-no { background: #ff4757; }
+    .price-labels { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 12px; }
+    .price-yes-label { color: #00d26a; font-weight: 600; }
+    .price-no-label { color: #ff4757; font-weight: 600; }
+    .market-stats { display: flex; justify-content: space-between; font-size: 12px; color: #666; padding-top: 12px; border-top: 1px solid #222; }
+    .market-stats span { display: flex; align-items: center; gap: 4px; }
+
+    .loading { text-align: center; padding: 60px 20px; color: #666; }
+    .loading-spinner { width: 32px; height: 32px; border: 3px solid #222; border-top-color: #8b5cf6; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .empty { text-align: center; padding: 60px 20px; color: #666; }
+    .empty h3 { font-size: 18px; margin-bottom: 8px; color: #888; }
+
+    .footer { margin-top: 32px; padding: 24px 0; border-top: 1px solid #222; text-align: center; color: #666; font-size: 13px; }
+    .footer a { color: #8b5cf6; text-decoration: none; }
+
+    .rank-badge { position: absolute; top: 8px; left: 8px; width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+    .rank-1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #000; }
+    .rank-2 { background: linear-gradient(135deg, #94a3b8, #64748b); color: #000; }
+    .rank-3 { background: linear-gradient(135deg, #d97706, #b45309); color: #fff; }
+    .rank-default { background: #222; color: #666; }
+
+    .market-card-wrapper { position: relative; }
+
+    @media (max-width: 640px) {
+      .markets-grid { grid-template-columns: 1fr; }
+      .categories { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="logo">
+      <div class="logo-icon">P</div>
+      <div class="logo-text">
+        <h1>Polymarket Top Markets</h1>
+        <p>Top 200 by Category</p>
+      </div>
+    </div>
+    <div class="header-btns">
+      <a href="https://polymarket.com" target="_blank" class="btn btn-secondary">Open Polymarket ↗</a>
+      <div id="statusBadge" class="status-badge status-error">
+        <div class="status-dot"></div>
+        <span>Loading...</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="stats">
+      <div class="stat-card">
+        <p>Total Markets</p>
+        <h2 id="statTotal">-</h2>
+      </div>
+      <div class="stat-card">
+        <p>Total Volume</p>
+        <h2 id="statVolume" class="text-purple">-</h2>
+      </div>
+      <div class="stat-card">
+        <p>Total Liquidity</p>
+        <h2 id="statLiquidity" class="text-green">-</h2>
+      </div>
+      <div class="stat-card">
+        <p>Current Category</p>
+        <h2 id="statCategory">All</h2>
+      </div>
+    </div>
+
+    <div id="categories" class="categories">
+      <button class="cat-btn active" data-tag="all">🌐 All</button>
+      <button class="cat-btn" data-tag="sports">⚽ Sports</button>
+      <button class="cat-btn" data-tag="politics">🏛️ Politics</button>
+      <button class="cat-btn" data-tag="crypto">₿ Crypto</button>
+      <button class="cat-btn" data-tag="pop-culture">🎬 Pop Culture</button>
+      <button class="cat-btn" data-tag="business">💼 Business</button>
+      <button class="cat-btn" data-tag="science">🔬 Science</button>
+    </div>
+
+    <div class="filters">
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search markets...">
+      </div>
+      <select id="sortSelect" class="filter-select">
+        <option value="volume">Sort by Volume</option>
+        <option value="liquidity">Sort by Liquidity</option>
+        <option value="yes">Sort by Yes Price</option>
+        <option value="no">Sort by No Price</option>
+      </select>
+      <button id="refreshBtn" class="btn btn-primary">↻ Refresh</button>
+    </div>
+
+    <div id="marketsGrid" class="markets-grid">
+      <div class="loading">
+        <div class="loading-spinner"></div>
+        <p>Loading markets...</p>
+      </div>
+    </div>
+
+    <div class="footer">
+      Data from <a href="https://polymarket.com" target="_blank">Polymarket</a> · Trading involves risk · Not financial advice
+    </div>
+  </main>
+
+  <script>
+    let markets = [];
+    let filteredMarkets = [];
+    let currentTag = 'all';
+    let isLive = false;
+
+    const formatMoney = (v) => {
+      if (v >= 1e9) return '$' + (v / 1e9).toFixed(2) + 'B';
+      if (v >= 1e6) return '$' + (v / 1e6).toFixed(2) + 'M';
+      if (v >= 1e3) return '$' + (v / 1e3).toFixed(1) + 'K';
+      return '$' + v.toFixed(0);
+    };
+
+    const updateStatus = (live) => {
+      isLive = live;
+      const badge = document.getElementById('statusBadge');
+      badge.className = 'status-badge ' + (live ? 'status-live' : 'status-error');
+      badge.querySelector('span').textContent = live ? 'Live' : 'Error';
+    };
+
+    const updateStats = () => {
+      document.getElementById('statTotal').textContent = filteredMarkets.length;
+      document.getElementById('statVolume').textContent = formatMoney(filteredMarkets.reduce((s, m) => s + m.volume, 0));
+      document.getElementById('statLiquidity').textContent = formatMoney(filteredMarkets.reduce((s, m) => s + m.liquidity, 0));
+      document.getElementById('statCategory').textContent = currentTag === 'all' ? 'All' : currentTag.charAt(0).toUpperCase() + currentTag.slice(1).replace('-', ' ');
+    };
+
+    const renderMarkets = () => {
+      const grid = document.getElementById('marketsGrid');
+      
+      if (filteredMarkets.length === 0) {
+        grid.innerHTML = `
+          <div class="empty" style="grid-column: 1/-1;">
+            <h3>No markets found</h3>
+            <p>Try a different category or search term</p>
+          </div>
+        `;
+        updateStats();
+        return;
+      }
+
+      grid.innerHTML = filteredMarkets.map((m, i) => {
+        const rank = i + 1;
+        const rankClass = rank <= 3 ? `rank-${rank}` : 'rank-default';
+        const yesWidth = m.yesPrice || 50;
+        const noWidth = 100 - yesWidth;
+        
+        return `
+          <div class="market-card-wrapper">
+            <div class="rank-badge ${rankClass}">${rank}</div>
+            <a href="https://polymarket.com/event/${m.slug}" target="_blank" class="market-card">
+              <div class="market-header">
+                <img src="${m.image || 'https://via.placeholder.com/60?text=P'}" alt="" class="market-img" onerror="this.src='https://via.placeholder.com/60?text=P'">
+                <div class="market-info">
+                  <h3>${m.title}</h3>
+                  <div class="market-meta">
+                    <span class="market-tag">${m.category}</span>
+                    ${m.marketsCount > 1 ? `<span class="market-tag">${m.marketsCount} outcomes</span>` : ''}
+                  </div>
+                </div>
+              </div>
+              <div class="market-body">
+                <div class="price-bar">
+                  <div class="price-yes" style="width: ${yesWidth}%"></div>
+                  <div class="price-no" style="width: ${noWidth}%"></div>
+                </div>
+                <div class="price-labels">
+                  <span class="price-yes-label">Yes ${m.yesPrice}¢</span>
+                  <span class="price-no-label">No ${m.noPrice}¢</span>
+                </div>
+                <div class="market-stats">
+                  <span>📊 ${formatMoney(m.volume)}</span>
+                  <span>💧 ${formatMoney(m.liquidity)}</span>
+                  ${m.endDate ? `<span>📅 ${new Date(m.endDate).toLocaleDateString()}</span>` : ''}
+                </div>
+              </div>
+            </a>
+          </div>
+        `;
+      }).join('');
+
+      updateStats();
+    };
+
+    const applyFilters = () => {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const sort = document.getElementById('sortSelect').value;
+
+      filteredMarkets = markets.filter(m => {
+        if (search && !m.title.toLowerCase().includes(search)) return false;
+        return true;
+      });
+
+      // Sort
+      filteredMarkets.sort((a, b) => {
+        switch (sort) {
+          case 'liquidity': return b.liquidity - a.liquidity;
+          case 'yes': return b.yesPrice - a.yesPrice;
+          case 'no': return b.noPrice - a.noPrice;
+          default: return b.volume - a.volume;
+        }
+      });
+
+      renderMarkets();
+    };
+
+    const fetchMarkets = async (tag = 'all') => {
+      currentTag = tag;
+      const grid = document.getElementById('marketsGrid');
+      grid.innerHTML = `
+        <div class="loading" style="grid-column: 1/-1;">
+          <div class="loading-spinner"></div>
+          <p>Loading ${tag === 'all' ? 'all' : tag} markets...</p>
+        </div>
+      `;
+
+      // Update active button
+      document.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tag === tag);
+      });
+
+      try {
+        const url = tag === 'all' 
+          ? '/api/markets?limit=200'
+          : `/api/markets?tag=${encodeURIComponent(tag)}&limit=200`;
+        
+        const res = await fetch(url);
+        const json = await res.json();
+
+        if (json.success && json.data && json.data.length > 0) {
+          markets = json.data;
+          updateStatus(true);
+        } else {
+          throw new Error(json.error || 'No data');
+        }
+      } catch (err) {
+        console.error('Fetch error:', err);
+        grid.innerHTML = `
+          <div class="empty" style="grid-column: 1/-1;">
+            <h3>❌ Failed to load</h3>
+            <p>${err.message}</p>
+            <button class="btn btn-primary" onclick="fetchMarkets('${tag}')" style="margin-top: 16px;">Retry</button>
+          </div>
+        `;
+        updateStatus(false);
+        return;
+      }
+
+      applyFilters();
+    };
+
+    // Load dynamic tags
+    const loadTags = async () => {
+      try {
+        const res = await fetch('/api/tags');
+        const json = await res.json();
+        
+        if (json.success && json.data && json.data.length > 0) {
+          const container = document.getElementById('categories');
+          const icons = {
+            'sports': '⚽',
+            'politics': '🏛️',
+            'crypto': '₿',
+            'pop-culture': '🎬',
+            'business': '💼',
+            'science': '🔬',
+            'ai': '🤖',
+            'tech': '💻',
+            'gaming': '🎮',
+            'entertainment': '🎭',
+            'finance': '💰',
+            'world': '🌍',
+            'elections': '🗳️',
+            'soccer': '⚽',
+            'nfl': '🏈',
+            'nba': '🏀',
+            'mlb': '⚾',
+            'nhl': '🏒',
+            'mma': '🥊',
+            'tennis': '🎾',
+            'golf': '⛳',
+            'f1': '🏎️',
+          };
+          
+          container.innerHTML = `<button class="cat-btn active" data-tag="all">🌐 All</button>`;
+          
+          json.data.slice(0, 15).forEach(tag => {
+            const icon = icons[tag.slug] || icons[tag.id] || '📁';
+            container.innerHTML += `<button class="cat-btn" data-tag="${tag.slug}">${icon} ${tag.label}</button>`;
+          });
+
+          // Re-attach listeners
+          document.querySelectorAll('.cat-btn').forEach(btn => {
+            btn.addEventListener('click', () => fetchMarkets(btn.dataset.tag));
+          });
+        }
+      } catch (e) {
+        console.log('Using default tags');
+      }
+    };
+
+    // Event listeners
+    document.querySelectorAll('.cat-btn').forEach(btn => {
+      btn.addEventListener('click', () => fetchMarkets(btn.dataset.tag));
+    });
+    document.getElementById('searchInput').addEventListener('input', applyFilters);
+    document.getElementById('sortSelect').addEventListener('change', applyFilters);
+    document.getElementById('refreshBtn').addEventListener('click', () => fetchMarkets(currentTag));
+
+    // Init
+    loadTags();
+    fetchMarkets('all');
+  </script>
+</body>
+</html>

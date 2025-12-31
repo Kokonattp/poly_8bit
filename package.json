@@ -1,7 +1,7 @@
 {
-  "name": "polymarket-leaderboard",
-  "version": "3.0.0",
-  "description": "Polymarket Leaderboard - Top 200 Traders",
+  "name": "polymarket-top-markets",
+  "version": "1.0.0",
+  "description": "Polymarket Top 200 Markets by Category",
   "scripts": {
     "start": "npx serve public"
   }
