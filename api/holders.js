@@ -11,16 +11,48 @@ module.exports = async (req, res) => {
   if (!market) return res.status(400).json({ success: false, error: 'market required' });
 
   try {
-    // Fetch more data from API to get accurate stats
-    const url = `https://data-api.polymarket.com/holders?market=${encodeURIComponent(market)}&limit=1000`;
-    const response = await fetch(url, {
-      headers: { 'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json' }
-    });
-
-    if (!response.ok) throw new Error(`API error: ${response.status}`);
-    const data = await response.json();
-
-    // Use Map to track unique wallets with their LARGEST position
+    // Fetch holders data - try multiple pages to get more data
+    let allData = [];
+    const pageSize = 500;
+    const maxPages = 4; // Max 2000 holders
+    
+    for (let page = 0; page < maxPages; page++) {
+      const offset = page * pageSize;
+      const url = `https://data-api.polymarket.com/holders?market=${encodeURIComponent(market)}&limit=${pageSize}&offset=${offset}`;
+      
+      try {
+        const response = await fetch(url, {
+          headers: { 'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json' }
+        });
+        
+        if (!response.ok) break;
+        const data = await response.json();
+        
+        if (!data || !Array.isArray(data) || data.length === 0) break;
+        
+        allData = allData.concat(data);
+        
+        // If we got less than pageSize, we've reached the end
+        let totalHoldersInPage = 0;
+        data.forEach(tokenData => {
+          if (tokenData.holders) totalHoldersInPage += tokenData.holders.length;
+        });
+        if (totalHoldersInPage < pageSize) break;
+        
+      } catch (e) {
+        break;
+      }
+    }
+    
+    if (allData.length === 0) {
+      return res.status(200).json({
+        success: true,
+        market,
+        stats: { totalHolders: 0, yesHolders: 0, noHolders: 0, totalYesShares: 0, totalNoShares: 0, yesPct: 50 },
+        data: []
+      });
+    }
+    // Process all holder data
     const walletMap = new Map();
     
     // Known bot/contract addresses to filter out
@@ -33,19 +65,15 @@ module.exports = async (req, res) => {
     const isBot = (wallet) => {
       if (!wallet) return true;
       const lower = wallet.toLowerCase();
-      // Exact matches
       if (knownBots.has(lower)) return true;
-      // Pattern: wallets starting with 0xa5ef and ending with 2966 (known market maker pattern)
       if (lower.startsWith('0xa5ef') && lower.endsWith('2966')) return true;
-      // Zero address
       if (lower === '0x0000000000000000000000000000000000000000') return true;
       return false;
     };
     
-    if (Array.isArray(data)) {
-      data.forEach(tokenData => {
-        if (tokenData.holders && Array.isArray(tokenData.holders)) {
-          tokenData.holders.forEach(holder => {
+    allData.forEach(tokenData => {
+      if (tokenData.holders && Array.isArray(tokenData.holders)) {
+        tokenData.holders.forEach(holder => {
             const wallet = (holder.proxyWallet || '').toLowerCase();
             if (!wallet) return;
             
@@ -117,7 +145,6 @@ module.exports = async (req, res) => {
           });
         }
       });
-    }
 
     // Convert to array
     let holders = Array.from(walletMap.values());

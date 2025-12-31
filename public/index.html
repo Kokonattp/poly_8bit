@@ -1120,11 +1120,12 @@
       // Auto-select first outcome
       if (sorted[0]?.conditionId) { 
         currentConditionId = sorted[0].conditionId;
+        currentOutcomePrice = sorted[0].yesPrice || 50;
         document.getElementById('selectedOutcomeName').textContent = sorted[0].name || 'Selected'; 
         document.getElementById('selectedOutcomePrice').textContent = `${sorted[0].yesPrice}%`; 
         document.getElementById('selectedOutcomePrice').className = sorted[0].yesPrice >= 50 ? 'text-success' : 'text-danger'; 
         loadHolders(sorted[0].conditionId);
-        loadOutcomeChart(sorted[0].conditionId, currentOutcomeInterval);
+        loadOutcomeChart(sorted[0].conditionId, currentOutcomeInterval, sorted[0].yesPrice);
       }
     };
 
@@ -1191,6 +1192,8 @@
       `;
     };
 
+    let currentOutcomePrice = 50; // Store current outcome price as fallback
+    
     const selectOutcome = (conditionId, el, name, price) => {
       document.querySelectorAll('.outcome-card').forEach(c => c.classList.remove('selected'));
       el.classList.add('selected');
@@ -1199,13 +1202,20 @@
       document.getElementById('selectedOutcomePrice').className = price >= 50 ? 'text-success' : 'text-danger';
       
       currentConditionId = conditionId;
+      currentOutcomePrice = price || 50; // Store price
       loadHolders(conditionId);
-      loadOutcomeChart(conditionId, currentOutcomeInterval);
+      loadOutcomeChart(conditionId, currentOutcomeInterval, price);
     };
 
-    const loadOutcomeChart = async (conditionId, interval = '1d') => {
+    const loadOutcomeChart = async (conditionId, interval = '1d', fallbackPrice = null) => {
       const loading = document.getElementById('outcomeChartLoading');
       loading.classList.remove('hidden');
+      
+      const displayPrice = fallbackPrice || currentOutcomePrice || 50;
+      
+      // Immediately show the current price from outcome data
+      document.getElementById('outcomeChartPrice').textContent = `${displayPrice}%`;
+      document.getElementById('outcomeChartPrice').className = 'chart-value ' + (displayPrice >= 50 ? 'text-success' : 'text-danger');
       
       // Update active button
       document.querySelectorAll('.outcome-chart-btn').forEach(b => {
@@ -1217,9 +1227,10 @@
         const json = await res.json();
         
         if (json.success) {
-          // Always show current price
-          document.getElementById('outcomeChartPrice').textContent = `${json.currentPrice}%`;
-          document.getElementById('outcomeChartPrice').className = 'chart-value ' + (json.currentPrice >= 50 ? 'text-success' : 'text-danger');
+          // Use API price if available, otherwise keep fallback
+          const chartPrice = json.currentPrice > 0 ? json.currentPrice : displayPrice;
+          document.getElementById('outcomeChartPrice').textContent = `${chartPrice}%`;
+          document.getElementById('outcomeChartPrice').className = 'chart-value ' + (chartPrice >= 50 ? 'text-success' : 'text-danger');
           
           if (json.history?.length > 0) {
             renderOutcomeChart(json);
@@ -1230,8 +1241,8 @@
             document.getElementById('outcomeChartChange').textContent = changeText;
             document.getElementById('outcomeChartChange').className = 'chart-change ' + (change >= 0 ? 'text-success' : 'text-danger');
             document.getElementById('outcomeChartChange').style.background = change >= 0 ? 'var(--success-light)' : 'var(--danger-light)';
-            document.getElementById('outcomeChartHigh').textContent = `${json.currentPrice}%`;
-            document.getElementById('outcomeChartLow').textContent = `${json.currentPrice}%`;
+            document.getElementById('outcomeChartHigh').textContent = `${chartPrice}%`;
+            document.getElementById('outcomeChartLow').textContent = `${chartPrice}%`;
             document.getElementById('outcomeChartPoints').textContent = '0';
             
             // Clear chart and show message
@@ -1247,14 +1258,17 @@
             ctx.fillText('No price history available for this period', ctx.canvas.width / 2, ctx.canvas.height / 2);
           }
         } else {
-          document.getElementById('outcomeChartPrice').textContent = '-';
-          document.getElementById('outcomeChartChange').textContent = 'Error';
-          document.getElementById('outcomeChartChange').className = 'chart-change text-danger';
+          // API failed - show fallback price
+          document.getElementById('outcomeChartChange').textContent = '-';
+          document.getElementById('outcomeChartChange').className = 'chart-change';
+          document.getElementById('outcomeChartHigh').textContent = `${displayPrice}%`;
+          document.getElementById('outcomeChartLow').textContent = `${displayPrice}%`;
+          document.getElementById('outcomeChartPoints').textContent = '0';
         }
       } catch (e) {
         console.error('Chart load error:', e);
-        document.getElementById('outcomeChartPrice').textContent = '-';
-        document.getElementById('outcomeChartChange').textContent = 'Error';
+        // Keep the displayed price from outcome
+        document.getElementById('outcomeChartChange').textContent = '-';
       } finally {
         loading.classList.add('hidden');
       }
@@ -1489,7 +1503,7 @@
       btn.addEventListener('click', () => {
         if (!currentConditionId) return;
         currentOutcomeInterval = btn.dataset.interval;
-        loadOutcomeChart(currentConditionId, currentOutcomeInterval);
+        loadOutcomeChart(currentConditionId, currentOutcomeInterval, currentOutcomePrice);
       });
     });
 
