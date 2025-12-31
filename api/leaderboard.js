@@ -1,8 +1,8 @@
 // api/leaderboard.js
 // Vercel Serverless Function - Polymarket Leaderboard Proxy
 
-module.exports = async (req, res) => {
-  // CORS headers
+export default async function handler(req, res) {
+  // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -25,21 +25,13 @@ module.exports = async (req, res) => {
     });
 
     if (!response.ok) {
-      const text = await response.text();
-      console.error('Polymarket API error:', response.status, text);
-      return res.status(response.status).json({ 
-        success: false, 
-        error: `API Error: ${response.status}` 
-      });
+      throw new Error(`Polymarket API error: ${response.status}`);
     }
 
     const data = await response.json();
     
     if (!Array.isArray(data) || data.length === 0) {
-      return res.status(500).json({ 
-        success: false, 
-        error: 'No data received' 
-      });
+      throw new Error('No data received');
     }
 
     // Transform data
@@ -63,10 +55,10 @@ module.exports = async (req, res) => {
     return res.status(200).json({ success: true, data: traders });
     
   } catch (error) {
-    console.error('Fetch error:', error);
+    console.error('API Error:', error);
     return res.status(500).json({ 
       success: false, 
       error: error.message 
     });
   }
-};
+}

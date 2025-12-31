@@ -1,8 +1,8 @@
 // api/positions.js
 // Vercel Serverless Function - Polymarket Positions Proxy
 
-module.exports = async (req, res) => {
-  // CORS headers
+export default async function handler(req, res) {
+  // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -31,10 +31,7 @@ module.exports = async (req, res) => {
     });
 
     if (!response.ok) {
-      return res.status(response.status).json({ 
-        success: false, 
-        error: `API Error: ${response.status}` 
-      });
+      throw new Error(`Polymarket API error: ${response.status}`);
     }
 
     const data = await response.json();
@@ -54,10 +51,10 @@ module.exports = async (req, res) => {
     return res.status(200).json({ success: true, data: positions });
     
   } catch (error) {
-    console.error('Fetch error:', error);
+    console.error('API Error:', error);
     return res.status(500).json({ 
       success: false, 
       error: error.message 
     });
   }
-};
+}
