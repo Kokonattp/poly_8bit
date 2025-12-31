@@ -45,33 +45,65 @@ module.exports = async (req, res) => {
         let yesPrice = 50;
         let noPrice = 50;
         
+        // Parse outcomePrices - handle multiple formats
         if (m.outcomePrices) {
           try {
             const prices = typeof m.outcomePrices === 'string' ? JSON.parse(m.outcomePrices) : m.outcomePrices;
-            if (Array.isArray(prices)) {
-              yesPrice = Math.round(parseFloat(prices[0] || 0.5) * 100);
-              noPrice = Math.round(parseFloat(prices[1] || 0.5) * 100);
+            if (Array.isArray(prices) && prices.length >= 1) {
+              const p1 = parseFloat(prices[0]);
+              yesPrice = Math.round((isNaN(p1) ? 0.5 : p1) * 100);
+              if (prices.length >= 2) {
+                const p2 = parseFloat(prices[1]);
+                noPrice = Math.round((isNaN(p2) ? (1 - p1) : p2) * 100);
+              } else {
+                noPrice = 100 - yesPrice;
+              }
             }
-          } catch {}
+          } catch (e) {
+            console.error('Parse price error:', e);
+          }
+        }
+        
+        // Also try bestAsk/bestBid as fallback
+        if (yesPrice === 50 && m.bestAsk) {
+          yesPrice = Math.round(parseFloat(m.bestAsk) * 100);
+          noPrice = 100 - yesPrice;
+        }
+
+        // Get the best name for the outcome
+        // Priority: groupItemTitle > question (cleaned) > outcome
+        let outcomeName = m.groupItemTitle || '';
+        if (!outcomeName && m.question) {
+          // Try to extract name from question like "Will X win the 2026..."
+          const match = m.question.match(/^Will (.+?) win/i);
+          if (match) {
+            outcomeName = match[1];
+          } else {
+            outcomeName = m.question;
+          }
+        }
+        if (!outcomeName) {
+          outcomeName = m.outcome || `Outcome ${idx + 1}`;
         }
 
         outcomes.push({
           id: m.id || `outcome-${idx}`,
           conditionId: m.conditionId || '',
           tokenId: m.clobTokenIds?.[0] || '',
-          question: m.question || m.groupItemTitle || `Outcome ${idx + 1}`,
+          question: outcomeName,
+          fullQuestion: m.question || '',
           yesPrice,
           noPrice,
           volume: parseFloat(m.volume) || 0,
           liquidity: parseFloat(m.liquidity) || 0,
           active: !m.closed,
-          image: m.image || event.image || '',
+          image: m.image || '',
         });
       });
     }
 
-    // Sort by volume or price
-    outcomes.sort((a, b) => b.volume - a.volume || b.yesPrice - a.yesPrice);
+    // Sort by yesPrice descending (highest chance first) - like Polymarket
+    outcomes.sort((a, b) => b.yesPrice - a.yesPrice || b.volume - a.volume);
 
     // Get category
     let category = 'general';

@@ -17,6 +17,7 @@
     .logo-icon { width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #8b5cf6, #3b82f6); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; }
     .logo h1 { font-size: 17px; font-weight: 600; }
     .logo p { font-size: 11px; color: #666; }
+    .logo p span { color: #8b5cf6; font-weight: 600; }
     .header-right { display: flex; gap: 12px; align-items: center; }
     .btn { padding: 9px 18px; border-radius: 8px; font-weight: 500; font-size: 13px; cursor: pointer; transition: all 0.2s; border: none; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
     .btn-ghost { background: transparent; border: 1px solid #2a2a2a; color: #999; }
@@ -37,6 +38,7 @@
     .text-purple { color: #8b5cf6; }
     .text-green { color: #00d26a; }
     .text-red { color: #ff4757; }
+    .text-yellow { color: #fbbf24; }
 
     .categories { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
     .cat-btn { padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; background: #151515; border: 1px solid #222; color: #777; cursor: pointer; transition: all 0.15s; }
@@ -95,7 +97,7 @@
     .modal-section:last-child { border-bottom: none; }
     .modal-section h3 { font-size: 13px; font-weight: 600; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
     
-    .outcomes-list { display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto; }
+    .outcomes-list { display: flex; flex-direction: column; gap: 8px; max-height: 400px; overflow-y: auto; }
     .outcome-card { display: flex; align-items: center; gap: 12px; padding: 12px; background: #151515; border: 1px solid #1a1a1a; border-radius: 8px; }
     .outcome-card:hover { border-color: #333; }
     .outcome-rank { width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; background: #1a1a1a; color: #666; }
@@ -177,7 +179,7 @@
       <div class="logo-icon">P</div>
       <div>
         <h1>PolyMarket Pro</h1>
-        <p>Top 200 Markets by Category</p>
+        <p>Top <span>500</span> Markets by Category</p>
       </div>
     </div>
     <div class="header-right">
@@ -243,10 +245,11 @@
         <div class="event-stat"><h4 id="eventVolume">$0</h4><p>Volume</p></div>
         <div class="event-stat"><h4 id="eventLiquidity">$0</h4><p>Liquidity</p></div>
         <div class="event-stat"><h4 id="eventOutcomes">0</h4><p>Outcomes</p></div>
-        <div class="event-stat"><h4 id="eventEnd">-</h4><p>End Date</p></div>
+        <div class="event-stat"><h4 id="eventComments">0</h4><p>Comments</p></div>
       </div>
+      <div id="eventDescription" class="modal-section" style="display:none; background:#0a0a0a; font-size:13px; color:#999; line-height:1.6;"></div>
       <div class="modal-section">
-        <h3>📊 All Outcomes / Teams</h3>
+        <h3>🏆 All Outcomes / Teams <span style="font-weight:400;color:#666;font-size:12px">(sorted by % chance)</span></h3>
         <div id="outcomesList" class="outcomes-list"></div>
       </div>
       <div class="modal-section">
@@ -319,6 +322,7 @@
         const rank = i + 1;
         const rc = rank === 1 ? 'r1' : rank === 2 ? 'r2' : rank === 3 ? 'r3' : '';
         const outcomes = m.outcomes || [];
+        const tags = m.tags || [m.category];
         
         return `
           <div class="card" onclick="openEvent('${m.slug}')">
@@ -328,7 +332,7 @@
               <div class="card-info">
                 <h3>${m.title}</h3>
                 <div class="card-meta">
-                  <span class="tag">${m.category}</span>
+                  ${tags.slice(0,3).map(t => `<span class="tag">${t}</span>`).join('')}
                   ${m.outcomesCount > 1 ? `<span class="tag">${m.outcomesCount} outcomes</span>` : ''}
                 </div>
               </div>
@@ -347,6 +351,7 @@
               <div class="card-stats">
                 <span>📊 ${fmt(m.volume)}</span>
                 <span>💧 ${fmt(m.liquidity)}</span>
+                ${m.commentCount ? `<span>💬 ${m.commentCount}</span>` : ''}
                 ${m.endDate ? `<span>📅 ${new Date(m.endDate).toLocaleDateString()}</span>` : ''}
               </div>
             </div>
@@ -370,7 +375,7 @@
       document.getElementById('grid').innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading...</p></div>';
       
       try {
-        const res = await fetch(`/api/markets?tag=${tag}&limit=200`);
+        const res = await fetch(`/api/markets?tag=${tag}&limit=500`);
         const json = await res.json();
         if (json.success && json.data?.length) { markets = json.data; setStatus(true); }
         else throw new Error(json.error || 'No data');
@@ -395,31 +400,42 @@
         
         currentEvent = json.data;
         document.getElementById('eventTitle').textContent = currentEvent.title;
-        document.getElementById('eventCategory').textContent = `${currentEvent.category} · ${currentEvent.endDate ? new Date(currentEvent.endDate).toLocaleDateString() : 'No end date'}`;
+        document.getElementById('eventCategory').textContent = `${currentEvent.category} · ${currentEvent.endDate ? 'Ends: ' + new Date(currentEvent.endDate).toLocaleDateString() : 'No end date'}${currentEvent.startDate ? ' · Started: ' + new Date(currentEvent.startDate).toLocaleDateString() : ''}`;
         document.getElementById('eventVolume').textContent = fmt(currentEvent.volume);
         document.getElementById('eventLiquidity').textContent = fmt(currentEvent.liquidity);
         document.getElementById('eventOutcomes').textContent = currentEvent.outcomesCount;
-        document.getElementById('eventEnd').textContent = currentEvent.endDate ? new Date(currentEvent.endDate).toLocaleDateString() : '-';
+        document.getElementById('eventComments').textContent = currentEvent.commentCount || 0;
         document.getElementById('eventLink').href = `https://polymarket.com/event/${slug}`;
         
-        // Render outcomes
+        // Show description if available
+        const descEl = document.getElementById('eventDescription');
+        if (currentEvent.description && currentEvent.description.length > 10) {
+          descEl.innerHTML = `<p>${currentEvent.description.slice(0, 500)}${currentEvent.description.length > 500 ? '...' : ''}</p>`;
+          descEl.style.display = 'block';
+        } else {
+          descEl.style.display = 'none';
+        }
+        
+        // Render outcomes - sorted by price descending
         if (currentEvent.outcomes?.length) {
-          document.getElementById('outcomesList').innerHTML = currentEvent.outcomes.map((o, i) => `
-            <div class="outcome-card">
+          document.getElementById('outcomesList').innerHTML = currentEvent.outcomes.map((o, i) => {
+            const pctColor = o.yesPrice >= 50 ? 'text-green' : o.yesPrice >= 20 ? 'text-yellow' : 'text-red';
+            return `
+            <div class="outcome-card" onclick="selectOutcome('${o.conditionId}')" style="cursor:pointer">
               <div class="outcome-rank ${i === 0 ? 'top' : ''}">${i + 1}</div>
               <div class="outcome-details">
                 <h4>${o.question}</h4>
-                <p>Vol: ${fmt(o.volume)}</p>
+                <p>Vol: ${fmt(o.volume)} · Liq: ${fmt(o.liquidity || 0)}</p>
               </div>
               <div class="outcome-price">
-                <h4 class="text-green">${o.yesPrice}%</h4>
+                <h4 class="${pctColor}" style="font-size:20px">${o.yesPrice}%</h4>
                 <div style="display:flex;gap:4px;margin-top:4px">
                   <span class="btn btn-yes" style="padding:4px 8px;font-size:10px;border-radius:4px">Yes ${o.yesPrice}¢</span>
                   <span class="btn btn-no" style="padding:4px 8px;font-size:10px;border-radius:4px">No ${o.noPrice}¢</span>
                 </div>
               </div>
             </div>
-          `).join('');
+          `}).join('');
         } else {
           document.getElementById('outcomesList').innerHTML = '<p style="color:#666;text-align:center">No outcomes data</p>';
         }
@@ -469,6 +485,16 @@
     const closeEventModal = () => {
       document.getElementById('eventModal').classList.remove('active');
       currentEvent = null;
+    };
+    
+    // Select outcome to show its holders
+    const selectOutcome = (conditionId) => {
+      if (!conditionId) return;
+      // Highlight selected outcome
+      document.querySelectorAll('.outcome-card').forEach(c => c.style.borderColor = '#1a1a1a');
+      event.currentTarget.style.borderColor = '#8b5cf6';
+      // Fetch holders
+      fetchHolders(conditionId);
     };
 
     // Profile Modal
