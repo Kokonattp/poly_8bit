@@ -1,8 +1,0 @@
-{
-  "name": "polytrader-pro",
-  "version": "3.0.0",
-  "description": "PolyTrader Pro - Smart Prediction Market Trading",
-  "scripts": {
-    "start": "npx serve public"
-  }
-}
