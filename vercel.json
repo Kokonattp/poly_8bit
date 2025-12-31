@@ -5,7 +5,9 @@
     { "source": "/api/event", "destination": "/api/event.js" },
     { "source": "/api/holders", "destination": "/api/holders.js" },
     { "source": "/api/profile", "destination": "/api/profile.js" },
-    { "source": "/api/comments", "destination": "/api/comments.js" }
+    { "source": "/api/comments", "destination": "/api/comments.js" },
+    { "source": "/api/prices", "destination": "/api/prices.js" },
+    { "source": "/api/search", "destination": "/api/search.js" }
   ],
   "headers": [
     {

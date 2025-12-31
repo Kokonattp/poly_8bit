@@ -454,6 +454,88 @@
     .holders-stat p { font-size: 10px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
     .holders-stat h4 { font-size: 18px; font-weight: 700; margin-top: 4px; font-family: 'JetBrains Mono', monospace; }
 
+    /* Outcome Price Chart */
+    .outcome-chart-container {
+      background: var(--bg-card);
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-card);
+    }
+    .outcome-chart-container .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .outcome-chart-container .chart-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .outcome-chart-container .chart-stats {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .outcome-chart-container .chart-value {
+      font-size: 22px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .outcome-chart-container .chart-change {
+      font-size: 13px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+    .chart-info-bar {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 12px;
+      padding: 10px 14px;
+      background: var(--bg-primary);
+      border-radius: 8px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .chart-info-bar strong {
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .outcome-chart-btn {
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--bg-hover);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .outcome-chart-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .outcome-chart-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .outcome-chart-wrapper {
+      height: 200px;
+      position: relative;
+    }
+    .chart-loading {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-card);
+      border-radius: 8px;
+    }
+    .chart-loading.hidden { display: none; }
+
     .profile-header { 
       background: var(--accent-gradient); 
       padding: 32px 24px; 
@@ -679,6 +761,36 @@
             <span id="selectedOutcomeName">-</span>
             <span id="selectedOutcomePrice">-</span>
           </div>
+          
+          <!-- Price Chart -->
+          <div class="outcome-chart-container">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title">📈 Price History</div>
+                <div class="chart-stats">
+                  <span id="outcomeChartPrice" class="chart-value">-</span>
+                  <span id="outcomeChartChange" class="chart-change">-</span>
+                </div>
+              </div>
+              <div class="chart-filters">
+                <button class="outcome-chart-btn active" data-interval="1h">1H</button>
+                <button class="outcome-chart-btn" data-interval="6h">6H</button>
+                <button class="outcome-chart-btn" data-interval="1d">1D</button>
+                <button class="outcome-chart-btn" data-interval="1w">1W</button>
+                <button class="outcome-chart-btn" data-interval="max">ALL</button>
+              </div>
+            </div>
+            <div class="chart-info-bar">
+              <span>High: <strong id="outcomeChartHigh">-</strong></span>
+              <span>Low: <strong id="outcomeChartLow">-</strong></span>
+              <span>Points: <strong id="outcomeChartPoints">-</strong></span>
+            </div>
+            <div class="outcome-chart-wrapper">
+              <canvas id="outcomeChart"></canvas>
+              <div id="outcomeChartLoading" class="chart-loading"><div class="spinner"></div></div>
+            </div>
+          </div>
+          
           <div id="holdersStats" class="holders-stats"></div>
           <div id="holdersContainer" class="holders-container">
             <div class="holders-column">
@@ -753,6 +865,7 @@
 
     let markets = [], filtered = [], currentTag = 'all', currentPage = 1, totalPages = 1;
     let currentEvent = null, portfolioChart = null, currentProfileData = null;
+    let outcomeChart = null, currentConditionId = null, currentOutcomeInterval = '1d';
 
     const fmt = v => v >= 1e9 ? '$'+(v/1e9).toFixed(2)+'B' : v >= 1e6 ? '$'+(v/1e6).toFixed(2)+'M' : v >= 1e3 ? '$'+(v/1e3).toFixed(1)+'K' : '$'+v.toFixed(0);
     const fmtPnl = v => (v >= 0 ? '+' : '') + fmt(v);
@@ -846,14 +959,72 @@
       } catch (e) { document.getElementById('grid').innerHTML = `<div class="loading">❌ ${e.message}</div>`; }
     };
 
+    let searchTimeout = null;
+    let isSearching = false;
+
     const applyFilters = () => {
-      const search = document.getElementById('search').value.toLowerCase();
+      const search = document.getElementById('search').value.trim();
       const sort = document.getElementById('sort').value;
-      filtered = markets.filter(m => !search || m.title.toLowerCase().includes(search) || m.slug.toLowerCase().includes(search));
+      
+      // If search is empty, use local data
+      if (!search) {
+        isSearching = false;
+        filtered = [...markets];
+        if (sort === 'liquidity') filtered.sort((a,b) => b.liquidity - a.liquidity);
+        else if (sort === 'change') filtered.sort((a,b) => Math.abs(b.outcomes?.[0]?.change || 0) - Math.abs(a.outcomes?.[0]?.change || 0));
+        else filtered.sort((a,b) => b.volume - a.volume);
+        renderMarkets();
+        return;
+      }
+      
+      // First, filter locally for instant feedback
+      const searchLower = search.toLowerCase();
+      filtered = markets.filter(m => m.title.toLowerCase().includes(searchLower) || m.slug.toLowerCase().includes(searchLower));
       if (sort === 'liquidity') filtered.sort((a,b) => b.liquidity - a.liquidity);
       else if (sort === 'change') filtered.sort((a,b) => Math.abs(b.outcomes?.[0]?.change || 0) - Math.abs(a.outcomes?.[0]?.change || 0));
       else filtered.sort((a,b) => b.volume - a.volume);
       renderMarkets();
+      
+      // Then, search API with debounce for more results
+      if (search.length >= 2) {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => searchAPI(search, sort), 500);
+      }
+    };
+
+    const searchAPI = async (query, sort) => {
+      if (isSearching) return;
+      isSearching = true;
+      
+      try {
+        const res = await fetch(`/api/search?q=${encodeURIComponent(query)}&limit=50`);
+        const json = await res.json();
+        
+        // Only update if search query hasn't changed
+        const currentSearch = document.getElementById('search').value.trim();
+        if (currentSearch !== query) return;
+        
+        if (json.success && json.data?.length) {
+          // Merge with existing results (remove duplicates)
+          const existingIds = new Set(filtered.map(m => m.id));
+          const newResults = json.data.filter(m => !existingIds.has(m.id));
+          
+          if (newResults.length > 0) {
+            filtered = [...filtered, ...newResults];
+            
+            // Re-sort
+            if (sort === 'liquidity') filtered.sort((a,b) => b.liquidity - a.liquidity);
+            else if (sort === 'change') filtered.sort((a,b) => Math.abs(b.outcomes?.[0]?.change || 0) - Math.abs(a.outcomes?.[0]?.change || 0));
+            else filtered.sort((a,b) => b.volume - a.volume);
+            
+            renderMarkets();
+          }
+        }
+      } catch (e) {
+        console.error('Search API error:', e);
+      } finally {
+        isSearching = false;
+      }
     };
 
     let currentOutcomeSort = 'chance'; // Default to % Chance (like Polymarket)
@@ -864,7 +1035,19 @@
       document.getElementById('selectedOutcomeHolders').style.display = 'none';
       document.getElementById('marketInsights').innerHTML = '';
       currentOutcomeSort = 'chance'; // Reset to default
+      currentOutcomeInterval = '1d'; // Reset chart interval
+      currentConditionId = null;
+      
+      // Reset sort buttons
       document.querySelectorAll('.sort-btn').forEach(b => b.classList.toggle('active', b.dataset.sort === 'chance'));
+      // Reset chart interval buttons
+      document.querySelectorAll('.outcome-chart-btn').forEach(b => b.classList.toggle('active', b.dataset.interval === '1d'));
+      
+      // Destroy existing chart
+      if (outcomeChart) {
+        outcomeChart.destroy();
+        outcomeChart = null;
+      }
       
       try {
         const res = await fetch(`/api/event?slug=${encodeURIComponent(slug)}`);
@@ -918,10 +1101,12 @@
       
       // Auto-select first outcome
       if (sorted[0]?.conditionId) { 
+        currentConditionId = sorted[0].conditionId;
         document.getElementById('selectedOutcomeName').textContent = sorted[0].name || 'Selected'; 
         document.getElementById('selectedOutcomePrice').textContent = `${sorted[0].yesPrice}%`; 
         document.getElementById('selectedOutcomePrice').className = sorted[0].yesPrice >= 50 ? 'text-success' : 'text-danger'; 
-        loadHolders(sorted[0].conditionId); 
+        loadHolders(sorted[0].conditionId);
+        loadOutcomeChart(sorted[0].conditionId, currentOutcomeInterval);
       }
     };
 
@@ -994,7 +1179,141 @@
       document.getElementById('selectedOutcomeName').textContent = name || 'Selected';
       document.getElementById('selectedOutcomePrice').textContent = price ? `${price}%` : '-';
       document.getElementById('selectedOutcomePrice').className = price >= 50 ? 'text-success' : 'text-danger';
+      
+      currentConditionId = conditionId;
       loadHolders(conditionId);
+      loadOutcomeChart(conditionId, currentOutcomeInterval);
+    };
+
+    const loadOutcomeChart = async (conditionId, interval = '1d') => {
+      const loading = document.getElementById('outcomeChartLoading');
+      loading.classList.remove('hidden');
+      
+      // Update active button
+      document.querySelectorAll('.outcome-chart-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.interval === interval);
+      });
+      
+      try {
+        const res = await fetch(`/api/prices?market=${conditionId}&interval=${interval}`);
+        const json = await res.json();
+        
+        if (json.success && json.history?.length) {
+          renderOutcomeChart(json);
+        } else {
+          // Show no data message
+          document.getElementById('outcomeChartPrice').textContent = '-';
+          document.getElementById('outcomeChartChange').textContent = 'No data';
+          document.getElementById('outcomeChartChange').className = 'chart-change';
+          document.getElementById('outcomeChartHigh').textContent = '-';
+          document.getElementById('outcomeChartLow').textContent = '-';
+          document.getElementById('outcomeChartPoints').textContent = '0';
+          if (outcomeChart) {
+            outcomeChart.destroy();
+            outcomeChart = null;
+          }
+        }
+      } catch (e) {
+        console.error('Chart load error:', e);
+      } finally {
+        loading.classList.add('hidden');
+      }
+    };
+
+    const renderOutcomeChart = (data) => {
+      const ctx = document.getElementById('outcomeChart').getContext('2d');
+      const colors = getChartColors();
+      
+      // Update stats
+      document.getElementById('outcomeChartPrice').textContent = `${data.currentPrice}%`;
+      document.getElementById('outcomeChartPrice').className = 'chart-value ' + (data.currentPrice >= 50 ? 'text-success' : 'text-danger');
+      
+      const change = data.stats.change;
+      const changeText = (change >= 0 ? '+' : '') + change.toFixed(1) + '%';
+      document.getElementById('outcomeChartChange').textContent = changeText;
+      document.getElementById('outcomeChartChange').className = 'chart-change ' + (change >= 0 ? 'text-success' : 'text-danger');
+      document.getElementById('outcomeChartChange').style.background = change >= 0 ? 'var(--success-light)' : 'var(--danger-light)';
+      
+      document.getElementById('outcomeChartHigh').textContent = `${data.stats.high}%`;
+      document.getElementById('outcomeChartLow').textContent = `${data.stats.low}%`;
+      document.getElementById('outcomeChartPoints').textContent = data.stats.dataPoints;
+      
+      // Prepare chart data
+      const history = data.history;
+      const labels = history.map(p => {
+        const d = new Date(p.timestamp);
+        return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+      });
+      const values = history.map(p => p.price);
+      
+      // Determine line color based on trend
+      const lineColor = change >= 0 ? '#10b981' : '#ef4444';
+      const fillColor = change >= 0 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)';
+      
+      if (outcomeChart) outcomeChart.destroy();
+      
+      outcomeChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Price',
+            data: values,
+            borderColor: lineColor,
+            backgroundColor: fillColor,
+            fill: true,
+            tension: 0.3,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            borderWidth: 2,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#1a1a25',
+              titleColor: '#fff',
+              bodyColor: '#9999b0',
+              padding: 10,
+              displayColors: false,
+              callbacks: {
+                title: (ctx) => {
+                  const idx = ctx[0].dataIndex;
+                  const d = new Date(history[idx].timestamp);
+                  return d.toLocaleString();
+                },
+                label: (ctx) => `Price: ${ctx.raw.toFixed(1)}%`
+              }
+            }
+          },
+          scales: {
+            x: {
+              display: true,
+              grid: { color: colors.grid, drawBorder: false },
+              ticks: { 
+                color: colors.text, 
+                maxTicksLimit: 6, 
+                font: { family: 'JetBrains Mono', size: 9 }
+              }
+            },
+            y: {
+              display: true,
+              grid: { color: colors.grid, drawBorder: false },
+              ticks: { 
+                color: colors.text, 
+                font: { family: 'JetBrains Mono', size: 9 },
+                callback: (v) => v.toFixed(0) + '%'
+              },
+              suggestedMin: Math.max(0, Math.min(...values) - 5),
+              suggestedMax: Math.min(100, Math.max(...values) + 5),
+            }
+          },
+          interaction: { intersect: false, mode: 'index' }
+        }
+      });
     };
 
     const loadHolders = async (conditionId) => {
@@ -1122,6 +1441,15 @@
         btn.classList.add('active');
         currentOutcomeSort = btn.dataset.sort;
         renderOutcomes(currentOutcomeSort);
+      });
+    });
+
+    // Outcome chart interval buttons
+    document.querySelectorAll('.outcome-chart-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (!currentConditionId) return;
+        currentOutcomeInterval = btn.dataset.interval;
+        loadOutcomeChart(currentConditionId, currentOutcomeInterval);
       });
     });
 
