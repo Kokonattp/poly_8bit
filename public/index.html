@@ -575,6 +575,82 @@
     .activity-info p { font-size: 10px; color: var(--text-muted); }
     .activity-amount { font-weight: 700; font-size: 13px; font-family: 'JetBrains Mono', monospace; }
 
+    /* Price Chart Styles */
+    .price-chart-section {
+      margin: 16px 0;
+      padding: 16px;
+      background: var(--bg-primary);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    .price-chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .price-chart-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .price-chart-change {
+      font-size: 14px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .price-chart-range {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .price-interval-btns {
+      display: flex;
+      gap: 4px;
+    }
+    .interval-btn {
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: var(--bg-secondary);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-secondary);
+      transition: all 0.2s;
+    }
+    .interval-btn:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+    .interval-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .price-chart-wrapper {
+      position: relative;
+      height: 180px;
+    }
+    .price-chart-wrapper canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+    .price-chart-loading, .price-chart-nodata {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-primary);
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
     .footer { text-align: center; padding: 32px 24px; color: var(--text-muted); font-size: 12px; }
     .footer a { color: var(--accent); text-decoration: none; }
 
@@ -672,6 +748,28 @@
             <span id="selectedOutcomePrice">-</span>
           </div>
           
+          <!-- Price Chart Section -->
+          <div id="priceChartSection" class="price-chart-section">
+            <div class="price-chart-header">
+              <div class="price-chart-info">
+                <span id="priceChartChange" class="price-chart-change">-</span>
+                <span id="priceChartRange" class="price-chart-range">High: - / Low: -</span>
+              </div>
+              <div class="price-interval-btns">
+                <button class="interval-btn" data-interval="1h">1H</button>
+                <button class="interval-btn" data-interval="6h">6H</button>
+                <button class="interval-btn active" data-interval="1d">1D</button>
+                <button class="interval-btn" data-interval="1w">1W</button>
+                <button class="interval-btn" data-interval="max">ALL</button>
+              </div>
+            </div>
+            <div class="price-chart-wrapper">
+              <canvas id="priceChart"></canvas>
+              <div id="priceChartLoading" class="price-chart-loading"><div class="spinner"></div></div>
+              <div id="priceChartNoData" class="price-chart-nodata" style="display:none;">No price history available</div>
+            </div>
+          </div>
+          
           <div id="holdersContainer" class="holders-container">
             <div class="holders-column">
               <div class="holders-column-title yes">✅ YES Top 10</div>
@@ -737,6 +835,10 @@
       localStorage.setItem('theme', next);
       document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
       if (portfolioChart) updateChartColors();
+      if (priceChart && currentConditionId) {
+        // Re-render price chart with new theme colors
+        loadPriceChart(currentConditionId, currentInterval);
+      }
     };
     
     const savedTheme = localStorage.getItem('theme') || 'light';
@@ -746,6 +848,7 @@
     let markets = [], filtered = [], currentTag = 'all', currentPage = 1, totalPages = 1;
     let currentEvent = null, portfolioChart = null, currentProfileData = null;
     let currentConditionId = null;
+    let priceChart = null, currentInterval = '1d';
 
     const fmt = v => v >= 1e9 ? '$'+(v/1e9).toFixed(2)+'B' : v >= 1e6 ? '$'+(v/1e6).toFixed(2)+'M' : v >= 1e3 ? '$'+(v/1e3).toFixed(1)+'K' : '$'+v.toFixed(0);
     const fmtPnl = v => (v >= 0 ? '+' : '') + fmt(v);
@@ -992,6 +1095,7 @@
         document.getElementById('selectedOutcomePrice').textContent = `${sorted[0].yesPrice}%`; 
         document.getElementById('selectedOutcomePrice').className = sorted[0].yesPrice >= 50 ? 'text-success' : 'text-danger'; 
         loadHolders(sorted[0].conditionId);
+        loadPriceChart(sorted[0].conditionId, '1d'); // Load price chart
       }
     };
 
@@ -1067,7 +1171,148 @@
       
       currentConditionId = conditionId;
       loadHolders(conditionId);
+      loadPriceChart(conditionId, '1d'); // Load price chart with default 1d interval
     };
+
+    // Price Chart functions
+
+    const loadPriceChart = async (conditionId, interval = '1d') => {
+      currentInterval = interval;
+      
+      // Update active button
+      document.querySelectorAll('.interval-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.interval === interval);
+      });
+      
+      // Show loading
+      document.getElementById('priceChartLoading').style.display = 'flex';
+      document.getElementById('priceChartNoData').style.display = 'none';
+      
+      try {
+        const res = await fetch(`/api/prices?market=${conditionId}&interval=${interval}`);
+        const json = await res.json();
+        
+        document.getElementById('priceChartLoading').style.display = 'none';
+        
+        if (json.success && json.history && json.history.length > 0) {
+          // Update stats
+          const stats = json.stats || {};
+          const change = stats.change || 0;
+          const changeClass = change >= 0 ? 'text-success' : 'text-danger';
+          const changeSign = change >= 0 ? '+' : '';
+          document.getElementById('priceChartChange').textContent = `${changeSign}${change.toFixed(1)}% (${interval})`;
+          document.getElementById('priceChartChange').className = `price-chart-change ${changeClass}`;
+          document.getElementById('priceChartRange').textContent = `High: ${stats.high?.toFixed(1) || '-'}% / Low: ${stats.low?.toFixed(1) || '-'}%`;
+          
+          // Render chart
+          renderPriceChart(json.history);
+        } else {
+          document.getElementById('priceChartNoData').style.display = 'flex';
+          document.getElementById('priceChartChange').textContent = '-';
+          document.getElementById('priceChartRange').textContent = 'High: - / Low: -';
+          if (priceChart) { priceChart.destroy(); priceChart = null; }
+        }
+      } catch (e) {
+        document.getElementById('priceChartLoading').style.display = 'none';
+        document.getElementById('priceChartNoData').style.display = 'flex';
+        document.getElementById('priceChartNoData').textContent = 'Failed to load price data';
+        console.error('Price chart error:', e);
+      }
+    };
+
+    const renderPriceChart = (history) => {
+      const ctx = document.getElementById('priceChart').getContext('2d');
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      
+      const colors = {
+        line: '#7c5cff',
+        fill: isDark ? 'rgba(124, 92, 255, 0.15)' : 'rgba(124, 92, 255, 0.1)',
+        grid: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
+        text: isDark ? '#9999b0' : '#6b7280'
+      };
+      
+      // Format labels based on interval
+      const formatLabel = (timestamp) => {
+        const date = new Date(timestamp);
+        if (currentInterval === '1h' || currentInterval === '6h') {
+          return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        } else if (currentInterval === '1d') {
+          return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        } else {
+          return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+        }
+      };
+      
+      const labels = history.map(h => formatLabel(h.timestamp));
+      const data = history.map(h => h.price);
+      
+      if (priceChart) priceChart.destroy();
+      
+      priceChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Price',
+            data,
+            borderColor: colors.line,
+            backgroundColor: colors.fill,
+            fill: true,
+            tension: 0.3,
+            pointRadius: 0,
+            pointHoverRadius: 5,
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#1a1a25',
+              titleColor: '#fff',
+              bodyColor: '#9999b0',
+              padding: 10,
+              displayColors: false,
+              callbacks: {
+                label: (ctx) => ctx.raw.toFixed(1) + '%'
+              }
+            }
+          },
+          scales: {
+            x: {
+              display: true,
+              grid: { color: colors.grid, drawBorder: false },
+              ticks: {
+                color: colors.text,
+                maxTicksLimit: 6,
+                font: { family: 'JetBrains Mono', size: 9 }
+              }
+            },
+            y: {
+              display: true,
+              grid: { color: colors.grid, drawBorder: false },
+              ticks: {
+                color: colors.text,
+                font: { family: 'JetBrains Mono', size: 9 },
+                callback: (v) => v.toFixed(0) + '%'
+              }
+            }
+          },
+          interaction: { intersect: false, mode: 'index' }
+        }
+      });
+    };
+
+    // Interval button click handlers
+    document.querySelectorAll('.interval-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (currentConditionId) {
+          loadPriceChart(currentConditionId, btn.dataset.interval);
+        }
+      });
+    });
 
     const loadHolders = async (conditionId) => {
       document.getElementById('selectedOutcomeHolders').style.display = 'block';
@@ -1108,7 +1353,11 @@
       } catch (e) { document.getElementById('yesHoldersList').innerHTML = `<p style="color:var(--text-muted);padding:16px">${e.message}</p>`; }
     };
 
-    const closeEvent = () => { document.getElementById('eventModal').classList.remove('active'); currentEvent = null; };
+    const closeEvent = () => { 
+      document.getElementById('eventModal').classList.remove('active'); 
+      currentEvent = null; 
+      if (priceChart) { priceChart.destroy(); priceChart = null; }
+    };
 
     const openProfile = async (wallet, name) => {
       document.getElementById('profileModal').classList.add('active');

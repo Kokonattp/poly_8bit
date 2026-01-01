@@ -12,6 +12,75 @@ module.exports = async (req, res) => {
     return res.status(400).json({ success: false, error: 'Query must be at least 2 characters' });
   }
 
+  // Helper to transform event to standard format
+  const transformEvent = (event, idx) => {
+    const volume = parseFloat(event.volume) || 0;
+    const liquidity = parseFloat(event.liquidity) || 0;
+
+    let tags = [];
+    if (event.tags && Array.isArray(event.tags)) {
+      tags = event.tags.map(t => {
+        const tagStr = typeof t === 'string' ? t : (t?.slug || t?.label || '');
+        return tagStr.toLowerCase().trim();
+      }).filter(Boolean);
+    }
+
+    const outcomes = [];
+    if (event.markets && event.markets.length > 0) {
+      event.markets.forEach(m => {
+        const mVolume = parseFloat(m.volume) || 0;
+        const mLiquidity = parseFloat(m.liquidity) || 0;
+        
+        if (mVolume === 0 && mLiquidity === 0) return;
+        
+        let price = 0;
+        if (m.outcomePrices) {
+          try {
+            const prices = typeof m.outcomePrices === 'string' ? JSON.parse(m.outcomePrices) : m.outcomePrices;
+            if (Array.isArray(prices) && prices.length > 0) {
+              price = Math.round(parseFloat(prices[0]) * 100);
+            }
+          } catch {}
+        }
+        
+        if (price === 100 || price === 0) return;
+        
+        let name = m.groupItemTitle || '';
+        if (!name && m.question) {
+          const match = m.question.match(/^Will (.+?) win/i);
+          name = match ? match[1] : m.question;
+        }
+        if (!name) name = m.outcome || `Option ${outcomes.length + 1}`;
+
+        outcomes.push({
+          id: m.id,
+          conditionId: m.conditionId || '',
+          name: name,
+          price,
+          change: parseFloat(((Math.random() - 0.5) * 10).toFixed(1)),
+          volume: mVolume,
+          liquidity: mLiquidity,
+        });
+      });
+    }
+
+    outcomes.sort((a, b) => b.price - a.price);
+
+    return {
+      id: event.id || `event-${idx}`,
+      slug: event.slug || '',
+      title: event.title || 'Unknown',
+      image: event.image || '',
+      category: tags[0] || 'general',
+      tags: tags.slice(0, 5),
+      volume,
+      liquidity,
+      endDate: event.endDate || '',
+      commentCount: event.commentCount || 0,
+      outcomes: outcomes.slice(0, 5),
+    };
+  };
+
   try {
     // Fetch 3000 events in parallel (6 batches x 500)
     const batchSize = 500;
@@ -38,7 +107,42 @@ module.exports = async (req, res) => {
     
     // Fetch all batches in parallel
     const batches = await Promise.all(offsets.map(fetchBatch));
-    const allData = batches.flat();
+    let allData = batches.flat();
+    
+    // ============================================
+    // FALLBACK: Direct search from Polymarket API
+    // ============================================
+    // If query looks like it could match events not in top 3000,
+    // also search directly via Polymarket's search/text endpoint
+    const directSearchUrls = [
+      `https://gamma-api.polymarket.com/events?closed=false&limit=100&title_contains=${encodeURIComponent(query)}`,
+      `https://gamma-api.polymarket.com/events?closed=false&limit=100&slug_contains=${encodeURIComponent(query)}`,
+    ];
+    
+    const directResults = await Promise.all(directSearchUrls.map(async (url) => {
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 5000);
+        const response = await fetch(url, {
+          headers: { 'User-Agent': 'PolyPro/3.0', 'Accept': 'application/json' },
+          signal: controller.signal
+        });
+        clearTimeout(timeout);
+        if (response.ok) {
+          return await response.json();
+        }
+      } catch (e) {}
+      return [];
+    }));
+    
+    // Merge direct results (avoid duplicates by id)
+    const existingIds = new Set(allData.map(e => e.id));
+    directResults.flat().forEach(event => {
+      if (event && event.id && !existingIds.has(event.id)) {
+        allData.push(event);
+        existingIds.add(event.id);
+      }
+    });
     
     // Filter matching events
     const allEvents = allData.filter(event => {
@@ -59,76 +163,8 @@ module.exports = async (req, res) => {
       return title.includes(query) || slug.includes(query) || desc.includes(query) || marketMatch;
     });
 
-    // Transform results
-    const results = allEvents.map((event, idx) => {
-      const volume = parseFloat(event.volume) || 0;
-      const liquidity = parseFloat(event.liquidity) || 0;
-
-      // Get tags
-      let tags = [];
-      if (event.tags && Array.isArray(event.tags)) {
-        tags = event.tags.map(t => {
-          const tagStr = typeof t === 'string' ? t : (t?.slug || t?.label || '');
-          return tagStr.toLowerCase().trim();
-        }).filter(Boolean);
-      }
-
-      // Parse outcomes
-      const outcomes = [];
-      if (event.markets && event.markets.length > 0) {
-        event.markets.forEach(m => {
-          const mVolume = parseFloat(m.volume) || 0;
-          const mLiquidity = parseFloat(m.liquidity) || 0;
-          
-          if (mVolume === 0 && mLiquidity === 0) return;
-          
-          let price = 0;
-          if (m.outcomePrices) {
-            try {
-              const prices = typeof m.outcomePrices === 'string' ? JSON.parse(m.outcomePrices) : m.outcomePrices;
-              if (Array.isArray(prices) && prices.length > 0) {
-                price = Math.round(parseFloat(prices[0]) * 100);
-              }
-            } catch {}
-          }
-          
-          if (price === 100 || price === 0) return;
-          
-          let name = m.groupItemTitle || '';
-          if (!name && m.question) {
-            const match = m.question.match(/^Will (.+?) win/i);
-            name = match ? match[1] : m.question;
-          }
-          if (!name) name = m.outcome || `Option ${outcomes.length + 1}`;
-
-          outcomes.push({
-            id: m.id,
-            conditionId: m.conditionId || '',
-            name: name,
-            price,
-            change: parseFloat(((Math.random() - 0.5) * 10).toFixed(1)),
-            volume: mVolume,
-            liquidity: mLiquidity,
-          });
-        });
-      }
-
-      outcomes.sort((a, b) => b.price - a.price);
-
-      return {
-        id: event.id || `event-${idx}`,
-        slug: event.slug || '',
-        title: event.title || 'Unknown',
-        image: event.image || '',
-        category: tags[0] || 'general',
-        tags: tags.slice(0, 5),
-        volume,
-        liquidity,
-        endDate: event.endDate || '',
-        commentCount: event.commentCount || 0,
-        outcomes: outcomes.slice(0, 5),
-      };
-    });
+    // Transform results using helper function
+    const results = allEvents.map((event, idx) => transformEvent(event, idx));
 
     // Filter out markets with no outcomes
     const filtered = results.filter(m => m.outcomes.length > 0);
