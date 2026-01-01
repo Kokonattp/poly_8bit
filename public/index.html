@@ -754,6 +754,50 @@
     }
     .calc-roi-label { font-size: 11px; color: var(--text-muted); }
     .calc-roi-value { font-size: 16px; font-weight: 700; color: var(--accent); font-family: 'JetBrains Mono', monospace; }
+
+    /* YES/NO Toggle */
+    .calc-side-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .calc-side-btn {
+      padding: 12px;
+      border-radius: 10px;
+      border: 2px solid var(--border);
+      background: var(--bg-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .calc-side-btn:hover {
+      border-color: var(--text-muted);
+    }
+    .calc-side-btn.active[data-side="yes"] {
+      border-color: var(--success);
+      background: var(--success-light);
+    }
+    .calc-side-btn.active[data-side="no"] {
+      border-color: var(--danger);
+      background: var(--danger-light);
+    }
+    .calc-side-btn .side-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+    .calc-side-btn.active[data-side="yes"] .side-label { color: var(--success); }
+    .calc-side-btn.active[data-side="no"] .side-label { color: var(--danger); }
+    .calc-side-btn .side-price {
+      font-size: 18px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-primary);
+    }
   </style>
 </head>
 <body>
@@ -867,6 +911,16 @@
         <!-- Profit Calculator -->
         <div id="profitCalc" class="calc-section" style="display:none;">
           <div class="calc-title">🧮 Profit Calculator</div>
+          <div class="calc-side-toggle">
+            <button class="calc-side-btn active" data-side="yes" onclick="setCalcSide('yes')">
+              <span class="side-label">YES</span>
+              <span class="side-price" id="calcYesPrice">50¢</span>
+            </button>
+            <button class="calc-side-btn" data-side="no" onclick="setCalcSide('no')">
+              <span class="side-label">NO</span>
+              <span class="side-price" id="calcNoPrice">50¢</span>
+            </button>
+          </div>
           <div class="calc-inputs">
             <div class="calc-input-group">
               <label>Investment ($)</label>
@@ -879,11 +933,11 @@
           </div>
           <div class="calc-results">
             <div class="calc-result win">
-              <div class="calc-result-label">If YES wins</div>
+              <div class="calc-result-label" id="calcWinLabel">If YES wins</div>
               <div class="calc-result-value" id="calcWinProfit">+$0</div>
             </div>
             <div class="calc-result lose">
-              <div class="calc-result-label">If NO wins</div>
+              <div class="calc-result-label" id="calcLoseLabel">If NO wins</div>
               <div class="calc-result-value" id="calcLoseProfit">-$0</div>
             </div>
           </div>
@@ -1039,6 +1093,29 @@
     };
 
     // Profit Calculator
+    let calcSide = 'yes';
+    let calcYesPrice = 50;
+    let calcNoPrice = 50;
+    
+    const setCalcSide = (side) => {
+      calcSide = side;
+      document.querySelectorAll('.calc-side-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.side === side);
+      });
+      // Update price input to selected side's price
+      document.getElementById('calcPrice').value = side === 'yes' ? calcYesPrice : calcNoPrice;
+      calculateProfit();
+    };
+    
+    const updateCalcPrices = (yesPrice, noPrice) => {
+      calcYesPrice = yesPrice;
+      calcNoPrice = noPrice;
+      document.getElementById('calcYesPrice').textContent = yesPrice + '¢';
+      document.getElementById('calcNoPrice').textContent = noPrice + '¢';
+      // Update current price input
+      document.getElementById('calcPrice').value = calcSide === 'yes' ? yesPrice : noPrice;
+    };
+
     const calculateProfit = () => {
       const amount = parseFloat(document.getElementById('calcAmount').value) || 0;
       const price = parseFloat(document.getElementById('calcPrice').value) || 0;
@@ -1062,6 +1139,15 @@
       
       // ROI
       const roi = (winProfit / amount) * 100;
+      
+      // Update labels based on side
+      if (calcSide === 'yes') {
+        document.getElementById('calcWinLabel').textContent = 'If YES wins';
+        document.getElementById('calcLoseLabel').textContent = 'If NO wins';
+      } else {
+        document.getElementById('calcWinLabel').textContent = 'If NO wins';
+        document.getElementById('calcLoseLabel').textContent = 'If YES wins';
+      }
       
       document.getElementById('calcWinProfit').textContent = '+$' + winProfit.toFixed(2);
       document.getElementById('calcLoseProfit').textContent = '-$' + amount.toFixed(2);
@@ -1341,7 +1427,7 @@
         const changeClass = change > 0 ? 'text-success' : change < 0 ? 'text-danger' : '';
         const changeBg = change > 0 ? 'background:var(--success-light)' : change < 0 ? 'background:var(--danger-light)' : '';
         const escapedName = (o.name || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
-        return `<div class="outcome-card ${i === 0 ? 'selected' : ''}" onclick="selectOutcome('${o.conditionId}', this, '${escapedName}', ${o.yesPrice})">
+        return `<div class="outcome-card ${i === 0 ? 'selected' : ''}" onclick="selectOutcome('${o.conditionId}', this, '${escapedName}', ${o.yesPrice}, ${o.noPrice})">
           <div class="outcome-num ${i === 0 ? 'top' : ''}">${i + 1}</div>
           <div class="outcome-details"><h4>${o.name}</h4><p>Vol: ${fmt(o.volume)} · Liq: ${fmt(o.liquidity)}</p></div>
           <div class="outcome-price-box">
@@ -1359,6 +1445,13 @@
         document.getElementById('selectedOutcomePrice').textContent = `${sorted[0].yesPrice}%`; 
         document.getElementById('selectedOutcomePrice').className = sorted[0].yesPrice >= 50 ? 'text-success' : 'text-danger'; 
         loadHolders(sorted[0].conditionId);
+        
+        // Update profit calculator with first outcome prices
+        document.getElementById('profitCalc').style.display = 'block';
+        calcSide = 'yes'; // Reset to YES
+        document.querySelectorAll('.calc-side-btn').forEach(b => b.classList.toggle('active', b.dataset.side === 'yes'));
+        updateCalcPrices(sorted[0].yesPrice, sorted[0].noPrice);
+        calculateProfit();
       }
     };
 
@@ -1425,19 +1518,21 @@
       `;
     };
 
-    const selectOutcome = (conditionId, el, name, price) => {
+    const selectOutcome = (conditionId, el, name, yesPrice, noPrice) => {
       document.querySelectorAll('.outcome-card').forEach(c => c.classList.remove('selected'));
       el.classList.add('selected');
       document.getElementById('selectedOutcomeName').textContent = name || 'Selected';
-      document.getElementById('selectedOutcomePrice').textContent = price ? `${price}%` : '-';
-      document.getElementById('selectedOutcomePrice').className = price >= 50 ? 'text-success' : 'text-danger';
+      document.getElementById('selectedOutcomePrice').textContent = yesPrice ? `${yesPrice}%` : '-';
+      document.getElementById('selectedOutcomePrice').className = yesPrice >= 50 ? 'text-success' : 'text-danger';
       
       currentConditionId = conditionId;
       loadHolders(conditionId);
       
       // Show and update profit calculator
       document.getElementById('profitCalc').style.display = 'block';
-      document.getElementById('calcPrice').value = price || 50;
+      calcSide = 'yes'; // Reset to YES when selecting new outcome
+      document.querySelectorAll('.calc-side-btn').forEach(b => b.classList.toggle('active', b.dataset.side === 'yes'));
+      updateCalcPrices(yesPrice || 50, noPrice || 50);
       calculateProfit();
     };
 
