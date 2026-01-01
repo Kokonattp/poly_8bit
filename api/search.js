@@ -112,8 +112,6 @@ module.exports = async (req, res) => {
     // ============================================
     // FALLBACK: Direct search from Polymarket API
     // ============================================
-    // If query looks like it could match events not in top 3000,
-    // also search directly via Polymarket's search/text endpoint
     const directSearchUrls = [
       `https://gamma-api.polymarket.com/events?closed=false&limit=100&title_contains=${encodeURIComponent(query)}`,
       `https://gamma-api.polymarket.com/events?closed=false&limit=100&slug_contains=${encodeURIComponent(query)}`,
@@ -150,7 +148,6 @@ module.exports = async (req, res) => {
       const slug = (event.slug || '').toLowerCase();
       const desc = (event.description || '').toLowerCase();
       
-      // Also check market questions
       let marketMatch = false;
       if (event.markets && Array.isArray(event.markets)) {
         marketMatch = event.markets.some(m => {
@@ -163,7 +160,7 @@ module.exports = async (req, res) => {
       return title.includes(query) || slug.includes(query) || desc.includes(query) || marketMatch;
     });
 
-    // Transform results using helper function
+    // Transform results
     const results = allEvents.map((event, idx) => transformEvent(event, idx));
 
     // Filter out markets with no outcomes

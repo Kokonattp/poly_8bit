@@ -575,168 +575,6 @@
     .activity-info p { font-size: 10px; color: var(--text-muted); }
     .activity-amount { font-weight: 700; font-size: 13px; font-family: 'JetBrains Mono', monospace; }
 
-    /* Price Chart Styles */
-    .price-chart-section {
-      margin: 16px 0;
-      padding: 16px;
-      background: var(--bg-primary);
-      border-radius: 12px;
-      border: 1px solid var(--border);
-    }
-    .price-chart-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .price-chart-info {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .price-chart-change {
-      font-size: 14px;
-      font-weight: 700;
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .price-chart-range {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-    .price-interval-btns {
-      display: flex;
-      gap: 4px;
-    }
-    .interval-btn {
-      padding: 6px 12px;
-      border: 1px solid var(--border);
-      background: var(--bg-secondary);
-      border-radius: 6px;
-      font-size: 11px;
-      font-weight: 600;
-      cursor: pointer;
-      color: var(--text-secondary);
-      transition: all 0.2s;
-    }
-    .interval-btn:hover {
-      background: var(--bg-hover);
-      color: var(--text-primary);
-    }
-    .interval-btn.active {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-    }
-    .price-chart-wrapper {
-      position: relative;
-      height: 180px;
-    }
-    .price-chart-wrapper canvas {
-      width: 100% !important;
-      height: 100% !important;
-    }
-    .price-chart-loading, .price-chart-nodata {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--bg-primary);
-      color: var(--text-muted);
-      font-size: 12px;
-    }
-
-    /* Comments Section Styles */
-    .comments-section {
-      background: var(--bg-primary);
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      overflow: hidden;
-    }
-    .comments-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 14px 16px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 14px;
-      transition: background 0.2s;
-    }
-    .comments-header:hover {
-      background: var(--bg-hover);
-    }
-    .comments-toggle {
-      font-size: 12px;
-      color: var(--accent);
-    }
-    .comments-list {
-      max-height: 400px;
-      overflow-y: auto;
-      border-top: 1px solid var(--border);
-    }
-    .comment-item {
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--border-light);
-    }
-    .comment-item:last-child {
-      border-bottom: none;
-    }
-    .comment-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    .comment-user {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .comment-avatar {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: var(--accent-light);
-      color: var(--accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 600;
-    }
-    .comment-username {
-      font-weight: 600;
-      font-size: 13px;
-      color: var(--text-primary);
-    }
-    .comment-time {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-    .comment-text {
-      font-size: 13px;
-      color: var(--text-secondary);
-      line-height: 1.5;
-    }
-    .comment-stats {
-      display: flex;
-      gap: 12px;
-      margin-top: 8px;
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-    .comments-loading {
-      padding: 30px;
-      text-align: center;
-      color: var(--text-muted);
-    }
-
     .footer { text-align: center; padding: 32px 24px; color: var(--text-muted); font-size: 12px; }
     .footer a { color: var(--accent); text-decoration: none; }
 
@@ -744,6 +582,178 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+    /* Watchlist Button */
+    .watchlist-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      z-index: 10;
+      opacity: 0.7;
+    }
+    .watchlist-btn:hover { opacity: 1; transform: scale(1.1); }
+    .watchlist-btn.active { background: #ffd700; border-color: #ffc107; opacity: 1; }
+    .market-card { position: relative; }
+
+    /* Hot/Trending Badge */
+    .hot-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      z-index: 10;
+    }
+    .hot-badge.hot { background: linear-gradient(135deg, #ff6b6b, #ee5a24); color: #fff; }
+    .hot-badge.trending { background: linear-gradient(135deg, #10b981, #059669); color: #fff; }
+    .hot-badge.ending { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; }
+
+    /* Filter Bar */
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+      padding: 14px 18px;
+      background: var(--bg-card);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .filter-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .filter-select {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      font-size: 13px;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+    }
+    .filter-select:focus { outline: none; border-color: var(--accent); }
+    
+    .watchlist-tab {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .watchlist-tab:hover { border-color: var(--accent); }
+    .watchlist-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .watchlist-count {
+      background: var(--bg-hover);
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+    }
+    .watchlist-tab.active .watchlist-count { background: rgba(255,255,255,0.2); }
+
+    /* Profit Calculator */
+    .calc-section {
+      margin-top: 20px;
+      padding: 16px;
+      background: var(--bg-primary);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    .calc-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .calc-inputs {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .calc-input-group {
+      flex: 1;
+      min-width: 120px;
+    }
+    .calc-input-group label {
+      display: block;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .calc-input-group input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .calc-input-group input:focus { outline: none; border-color: var(--accent); }
+    .calc-results {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .calc-result {
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .calc-result.win { background: var(--success-light); }
+    .calc-result.lose { background: var(--danger-light); }
+    .calc-result-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .calc-result-value {
+      font-size: 18px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .calc-result.win .calc-result-value { color: var(--success); }
+    .calc-result.lose .calc-result-value { color: var(--danger); }
+    .calc-roi {
+      margin-top: 10px;
+      padding: 10px;
+      background: var(--accent-light);
+      border-radius: 8px;
+      text-align: center;
+    }
+    .calc-roi-label { font-size: 11px; color: var(--text-muted); }
+    .calc-roi-value { font-size: 16px; font-weight: 700; color: var(--accent); font-family: 'JetBrains Mono', monospace; }
   </style>
 </head>
 <body>
@@ -784,8 +794,34 @@
         <option value="volume">Sort by Volume</option>
         <option value="liquidity">Sort by Liquidity</option>
         <option value="change">Sort by % Change</option>
+        <option value="ending">Sort by End Date</option>
       </select>
       <button id="refresh" class="btn btn-primary">↻ Refresh</button>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <button id="watchlistTab" class="watchlist-tab" onclick="toggleWatchlist()">
+        ⭐ Watchlist <span class="watchlist-count" id="watchlistCount">0</span>
+      </button>
+      <div class="filter-group">
+        <span class="filter-label">📅 Ending:</span>
+        <select id="endDateFilter" class="filter-select" onchange="applyFilters()">
+          <option value="all">All Time</option>
+          <option value="today">Today</option>
+          <option value="week">This Week</option>
+          <option value="month">This Month</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">🔥 Show:</span>
+        <select id="hotFilter" class="filter-select" onchange="applyFilters()">
+          <option value="all">All Markets</option>
+          <option value="hot">🔥 Hot (High Volume)</option>
+          <option value="trending">📈 Trending (Big Change)</option>
+          <option value="ending">⏰ Ending Soon</option>
+        </select>
+      </div>
     </div>
 
     <div id="grid" class="markets-grid"><div class="loading"><div class="spinner"></div><p>Loading markets...</p></div></div>
@@ -828,32 +864,39 @@
         <!-- Market Insights -->
         <div id="marketInsights" class="insights-panel" style="margin-top:20px;"></div>
         
+        <!-- Profit Calculator -->
+        <div id="profitCalc" class="calc-section" style="display:none;">
+          <div class="calc-title">🧮 Profit Calculator</div>
+          <div class="calc-inputs">
+            <div class="calc-input-group">
+              <label>Investment ($)</label>
+              <input type="number" id="calcAmount" placeholder="100" value="100" oninput="calculateProfit()">
+            </div>
+            <div class="calc-input-group">
+              <label>Buy Price (¢)</label>
+              <input type="number" id="calcPrice" placeholder="50" oninput="calculateProfit()">
+            </div>
+          </div>
+          <div class="calc-results">
+            <div class="calc-result win">
+              <div class="calc-result-label">If YES wins</div>
+              <div class="calc-result-value" id="calcWinProfit">+$0</div>
+            </div>
+            <div class="calc-result lose">
+              <div class="calc-result-label">If NO wins</div>
+              <div class="calc-result-value" id="calcLoseProfit">-$0</div>
+            </div>
+          </div>
+          <div class="calc-roi">
+            <div class="calc-roi-label">Potential ROI</div>
+            <div class="calc-roi-value" id="calcROI">0%</div>
+          </div>
+        </div>
+
         <div id="selectedOutcomeHolders" style="margin-top:20px; display:none;">
           <div class="selected-outcome-header">
             <span id="selectedOutcomeName">-</span>
             <span id="selectedOutcomePrice">-</span>
-          </div>
-          
-          <!-- Price Chart Section -->
-          <div id="priceChartSection" class="price-chart-section">
-            <div class="price-chart-header">
-              <div class="price-chart-info">
-                <span id="priceChartChange" class="price-chart-change">-</span>
-                <span id="priceChartRange" class="price-chart-range">High: - / Low: -</span>
-              </div>
-              <div class="price-interval-btns">
-                <button class="interval-btn" data-interval="1h">1H</button>
-                <button class="interval-btn" data-interval="6h">6H</button>
-                <button class="interval-btn active" data-interval="1d">1D</button>
-                <button class="interval-btn" data-interval="1w">1W</button>
-                <button class="interval-btn" data-interval="max">ALL</button>
-              </div>
-            </div>
-            <div class="price-chart-wrapper">
-              <canvas id="priceChart"></canvas>
-              <div id="priceChartLoading" class="price-chart-loading"><div class="spinner"></div></div>
-              <div id="priceChartNoData" class="price-chart-nodata" style="display:none;">No price history available</div>
-            </div>
           </div>
           
           <div id="holdersContainer" class="holders-container">
@@ -865,15 +908,6 @@
               <div class="holders-column-title no">❌ NO Top 10</div>
               <div id="noHoldersList" class="holders-list"></div>
             </div>
-          </div>
-          
-          <!-- Comments Section -->
-          <div id="commentsSection" class="comments-section" style="margin-top:20px;">
-            <div class="comments-header" onclick="toggleComments()">
-              <span>💬 Comments (<span id="commentsCount">0</span>)</span>
-              <span id="commentsToggle" class="comments-toggle">▼ Show</span>
-            </div>
-            <div id="commentsList" class="comments-list" style="display:none;"></div>
           </div>
         </div>
       </div>
@@ -930,10 +964,6 @@
       localStorage.setItem('theme', next);
       document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
       if (portfolioChart) updateChartColors();
-      if (priceChart && currentConditionId) {
-        // Re-render price chart with new theme colors
-        loadPriceChart(currentConditionId, currentInterval);
-      }
     };
     
     const savedTheme = localStorage.getItem('theme') || 'light';
@@ -943,7 +973,100 @@
     let markets = [], filtered = [], currentTag = 'all', currentPage = 1, totalPages = 1;
     let currentEvent = null, portfolioChart = null, currentProfileData = null;
     let currentConditionId = null;
-    let priceChart = null, currentInterval = '1d';
+    let showingWatchlist = false;
+
+    // Watchlist management (localStorage)
+    const getWatchlist = () => {
+      try {
+        return JSON.parse(localStorage.getItem('polymarket_watchlist') || '[]');
+      } catch { return []; }
+    };
+    
+    const saveWatchlist = (list) => {
+      localStorage.setItem('polymarket_watchlist', JSON.stringify(list));
+      updateWatchlistCount();
+    };
+    
+    const isInWatchlist = (slug) => getWatchlist().includes(slug);
+    
+    const toggleWatchlistItem = (slug, e) => {
+      e.stopPropagation();
+      const list = getWatchlist();
+      const idx = list.indexOf(slug);
+      if (idx > -1) {
+        list.splice(idx, 1);
+      } else {
+        list.push(slug);
+      }
+      saveWatchlist(list);
+      renderMarkets();
+    };
+    
+    const updateWatchlistCount = () => {
+      document.getElementById('watchlistCount').textContent = getWatchlist().length;
+    };
+    
+    const toggleWatchlist = () => {
+      showingWatchlist = !showingWatchlist;
+      document.getElementById('watchlistTab').classList.toggle('active', showingWatchlist);
+      applyFilters();
+    };
+
+    // Check if market is "hot" (high volume relative to avg)
+    const isHotMarket = (m) => m.volume > 500000;
+    
+    // Check if market is "trending" (big price change)
+    const isTrendingMarket = (m) => {
+      const change = Math.abs(m.outcomes?.[0]?.change || 0);
+      return change > 3;
+    };
+    
+    // Check if market is ending soon
+    const isEndingSoon = (m, days = 7) => {
+      if (!m.endDate) return false;
+      const end = new Date(m.endDate);
+      const now = new Date();
+      const diff = (end - now) / (1000 * 60 * 60 * 24);
+      return diff >= 0 && diff <= days;
+    };
+    
+    // Get badge for market
+    const getMarketBadge = (m) => {
+      if (isEndingSoon(m, 1)) return '<div class="hot-badge ending">⏰ Ending Today</div>';
+      if (isHotMarket(m)) return '<div class="hot-badge hot">🔥 Hot</div>';
+      if (isTrendingMarket(m)) return '<div class="hot-badge trending">📈 Trending</div>';
+      return '';
+    };
+
+    // Profit Calculator
+    const calculateProfit = () => {
+      const amount = parseFloat(document.getElementById('calcAmount').value) || 0;
+      const price = parseFloat(document.getElementById('calcPrice').value) || 0;
+      
+      if (amount <= 0 || price <= 0 || price >= 100) {
+        document.getElementById('calcWinProfit').textContent = '+$0';
+        document.getElementById('calcLoseProfit').textContent = '-$0';
+        document.getElementById('calcROI').textContent = '0%';
+        return;
+      }
+      
+      // Calculate shares bought
+      const shares = amount / (price / 100);
+      
+      // If win: get $1 per share
+      const winPayout = shares * 1;
+      const winProfit = winPayout - amount;
+      
+      // If lose: get $0
+      const loseProfit = -amount;
+      
+      // ROI
+      const roi = (winProfit / amount) * 100;
+      
+      document.getElementById('calcWinProfit').textContent = '+$' + winProfit.toFixed(2);
+      document.getElementById('calcLoseProfit').textContent = '-$' + amount.toFixed(2);
+      document.getElementById('calcROI').textContent = '+' + roi.toFixed(0) + '%';
+    };
 
     const fmt = v => v >= 1e9 ? '$'+(v/1e9).toFixed(2)+'B' : v >= 1e6 ? '$'+(v/1e6).toFixed(2)+'M' : v >= 1e3 ? '$'+(v/1e3).toFixed(1)+'K' : '$'+v.toFixed(0);
     const fmtPnl = v => (v >= 0 ? '+' : '') + fmt(v);
@@ -986,14 +1109,26 @@
 
     const renderMarkets = () => {
       const grid = document.getElementById('grid');
-      if (!filtered.length) { grid.innerHTML = '<div class="loading">No markets found</div>'; document.getElementById('pagination').style.display = 'none'; return; }
+      if (!filtered.length) { 
+        grid.innerHTML = showingWatchlist 
+          ? '<div class="loading">No markets in watchlist<br><small style="color:var(--text-muted)">Click ⭐ on any market to add it</small></div>' 
+          : '<div class="loading">No markets found</div>'; 
+        document.getElementById('pagination').style.display = 'none'; 
+        return; 
+      }
 
       grid.innerHTML = filtered.map((m, i) => {
         const rank = ((currentPage - 1) * 100) + i + 1;
         const rc = rank === 1 ? 'r1' : rank === 2 ? 'r2' : rank === 3 ? 'r3' : '';
         const outcomes = m.outcomes || [];
+        const inWatchlist = isInWatchlist(m.slug);
+        const badge = getMarketBadge(m);
         return `
           <div class="market-card" onclick="openEvent('${m.slug}')">
+            ${badge}
+            <button class="watchlist-btn ${inWatchlist ? 'active' : ''}" onclick="toggleWatchlistItem('${m.slug}', event)" title="${inWatchlist ? 'Remove from watchlist' : 'Add to watchlist'}">
+              ${inWatchlist ? '⭐' : '☆'}
+            </button>
             <div class="market-header">
               <div class="market-rank ${rc}">${rank}</div>
               <img src="${m.image || ''}" class="market-img" onerror="this.style.background='var(--bg-hover)'">
@@ -1043,34 +1178,67 @@
     const applyFilters = () => {
       const search = document.getElementById('search').value.trim();
       const sort = document.getElementById('sort').value;
+      const endDateFilter = document.getElementById('endDateFilter').value;
+      const hotFilter = document.getElementById('hotFilter').value;
       
-      // If search is empty, use local data
-      if (!search) {
-        isSearching = false;
+      // Start with all markets or watchlist
+      if (showingWatchlist) {
+        const watchlist = getWatchlist();
+        filtered = markets.filter(m => watchlist.includes(m.slug));
+      } else if (!search) {
         filtered = [...markets];
-        if (sort === 'liquidity') filtered.sort((a,b) => b.liquidity - a.liquidity);
-        else if (sort === 'change') filtered.sort((a,b) => Math.abs(b.outcomes?.[0]?.change || 0) - Math.abs(a.outcomes?.[0]?.change || 0));
-        else filtered.sort((a,b) => b.volume - a.volume);
-        renderMarkets();
-        return;
+      } else {
+        // Filter by search locally
+        const searchLower = search.toLowerCase();
+        filtered = markets.filter(m => m.title.toLowerCase().includes(searchLower) || m.slug.toLowerCase().includes(searchLower));
       }
       
-      // First, filter locally for instant feedback
-      const searchLower = search.toLowerCase();
-      filtered = markets.filter(m => m.title.toLowerCase().includes(searchLower) || m.slug.toLowerCase().includes(searchLower));
+      // Apply end date filter
+      if (endDateFilter !== 'all') {
+        const now = new Date();
+        filtered = filtered.filter(m => {
+          if (!m.endDate) return false;
+          const end = new Date(m.endDate);
+          const diffDays = (end - now) / (1000 * 60 * 60 * 24);
+          if (diffDays < 0) return false;
+          if (endDateFilter === 'today') return diffDays <= 1;
+          if (endDateFilter === 'week') return diffDays <= 7;
+          if (endDateFilter === 'month') return diffDays <= 30;
+          return true;
+        });
+      }
+      
+      // Apply hot/trending filter
+      if (hotFilter !== 'all') {
+        filtered = filtered.filter(m => {
+          if (hotFilter === 'hot') return isHotMarket(m);
+          if (hotFilter === 'trending') return isTrendingMarket(m);
+          if (hotFilter === 'ending') return isEndingSoon(m, 7);
+          return true;
+        });
+      }
+      
+      // Sort
       if (sort === 'liquidity') filtered.sort((a,b) => b.liquidity - a.liquidity);
       else if (sort === 'change') filtered.sort((a,b) => Math.abs(b.outcomes?.[0]?.change || 0) - Math.abs(a.outcomes?.[0]?.change || 0));
+      else if (sort === 'ending') filtered.sort((a,b) => {
+        if (!a.endDate) return 1;
+        if (!b.endDate) return -1;
+        return new Date(a.endDate) - new Date(b.endDate);
+      });
       else filtered.sort((a,b) => b.volume - a.volume);
       
-      // Show local results or searching message
-      if (filtered.length > 0) {
+      // Show results
+      if (filtered.length > 0 || showingWatchlist) {
         renderMarkets();
-      } else {
+      } else if (search) {
         document.getElementById('grid').innerHTML = `<div class="loading"><div class="spinner"></div><p>Searching all markets for "${search}"...</p></div>`;
+      } else {
+        renderMarkets();
       }
       
-      // Then, search API with debounce for more results
-      if (search.length >= 2) {
+      // Search API with debounce for more results (only if not in watchlist mode)
+      if (search.length >= 2 && !showingWatchlist) {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => searchAPI(search, sort), 600);
       }
@@ -1127,16 +1295,9 @@
       document.getElementById('outcomesList').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
       document.getElementById('selectedOutcomeHolders').style.display = 'none';
       document.getElementById('marketInsights').innerHTML = '';
+      document.getElementById('profitCalc').style.display = 'none';
       currentOutcomeSort = 'chance'; // Reset to default
       currentConditionId = null;
-      
-      // Reset comments state
-      currentSlug = slug;
-      commentsLoaded = false;
-      commentsVisible = false;
-      document.getElementById('commentsList').style.display = 'none';
-      document.getElementById('commentsList').innerHTML = '';
-      document.getElementById('commentsToggle').textContent = '▼ Show';
       
       // Reset sort buttons
       document.querySelectorAll('.sort-btn').forEach(b => b.classList.toggle('active', b.dataset.sort === 'chance'));
@@ -1152,7 +1313,6 @@
         document.getElementById('eventLiquidity').textContent = fmt(currentEvent.liquidity);
         document.getElementById('eventOutcomes').textContent = currentEvent.outcomes.length;
         document.getElementById('eventComments').textContent = currentEvent.commentCount;
-        document.getElementById('commentsCount').textContent = currentEvent.commentCount || 0;
         document.getElementById('eventLink').href = `https://polymarket.com/event/${slug}`;
 
         if (currentEvent.outcomes?.length) {
@@ -1199,7 +1359,6 @@
         document.getElementById('selectedOutcomePrice').textContent = `${sorted[0].yesPrice}%`; 
         document.getElementById('selectedOutcomePrice').className = sorted[0].yesPrice >= 50 ? 'text-success' : 'text-danger'; 
         loadHolders(sorted[0].conditionId);
-        loadPriceChart(sorted[0].conditionId, '1d'); // Load price chart
       }
     };
 
@@ -1275,158 +1434,12 @@
       
       currentConditionId = conditionId;
       loadHolders(conditionId);
-      loadPriceChart(conditionId, '1d'); // Load price chart with default 1d interval
+      
+      // Show and update profit calculator
+      document.getElementById('profitCalc').style.display = 'block';
+      document.getElementById('calcPrice').value = price || 50;
+      calculateProfit();
     };
-
-    // Price Chart functions
-
-    const loadPriceChart = async (conditionId, interval = '1d') => {
-      currentInterval = interval;
-      
-      // Update active button
-      document.querySelectorAll('.interval-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.interval === interval);
-      });
-      
-      // Validate conditionId
-      if (!conditionId) {
-        console.log('No conditionId provided');
-        document.getElementById('priceChartNoData').style.display = 'flex';
-        document.getElementById('priceChartNoData').textContent = 'No market selected';
-        return;
-      }
-      
-      console.log('Loading price chart for:', conditionId, interval);
-      
-      // Show loading
-      document.getElementById('priceChartLoading').style.display = 'flex';
-      document.getElementById('priceChartNoData').style.display = 'none';
-      
-      try {
-        const res = await fetch(`/api/prices?market=${conditionId}&interval=${interval}`);
-        const json = await res.json();
-        
-        document.getElementById('priceChartLoading').style.display = 'none';
-        
-        if (json.success && json.history && json.history.length > 0) {
-          // Update stats
-          const stats = json.stats || {};
-          const change = stats.change || 0;
-          const changeClass = change >= 0 ? 'text-success' : 'text-danger';
-          const changeSign = change >= 0 ? '+' : '';
-          document.getElementById('priceChartChange').textContent = `${changeSign}${change.toFixed(1)}% (${interval})`;
-          document.getElementById('priceChartChange').className = `price-chart-change ${changeClass}`;
-          document.getElementById('priceChartRange').textContent = `High: ${stats.high?.toFixed(1) || '-'}% / Low: ${stats.low?.toFixed(1) || '-'}%`;
-          
-          // Render chart
-          renderPriceChart(json.history);
-        } else {
-          document.getElementById('priceChartNoData').style.display = 'flex';
-          document.getElementById('priceChartChange').textContent = '-';
-          document.getElementById('priceChartRange').textContent = 'High: - / Low: -';
-          if (priceChart) { priceChart.destroy(); priceChart = null; }
-        }
-      } catch (e) {
-        document.getElementById('priceChartLoading').style.display = 'none';
-        document.getElementById('priceChartNoData').style.display = 'flex';
-        document.getElementById('priceChartNoData').textContent = 'Failed to load price data';
-        console.error('Price chart error:', e);
-      }
-    };
-
-    const renderPriceChart = (history) => {
-      const ctx = document.getElementById('priceChart').getContext('2d');
-      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      
-      const colors = {
-        line: '#7c5cff',
-        fill: isDark ? 'rgba(124, 92, 255, 0.15)' : 'rgba(124, 92, 255, 0.1)',
-        grid: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
-        text: isDark ? '#9999b0' : '#6b7280'
-      };
-      
-      // Format labels based on interval
-      const formatLabel = (timestamp) => {
-        const date = new Date(timestamp);
-        if (currentInterval === '1h' || currentInterval === '6h') {
-          return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        } else if (currentInterval === '1d') {
-          return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        } else {
-          return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
-        }
-      };
-      
-      const labels = history.map(h => formatLabel(h.timestamp));
-      const data = history.map(h => h.price);
-      
-      if (priceChart) priceChart.destroy();
-      
-      priceChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [{
-            label: 'Price',
-            data,
-            borderColor: colors.line,
-            backgroundColor: colors.fill,
-            fill: true,
-            tension: 0.3,
-            pointRadius: 0,
-            pointHoverRadius: 5,
-            borderWidth: 2
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              backgroundColor: '#1a1a25',
-              titleColor: '#fff',
-              bodyColor: '#9999b0',
-              padding: 10,
-              displayColors: false,
-              callbacks: {
-                label: (ctx) => ctx.raw.toFixed(1) + '%'
-              }
-            }
-          },
-          scales: {
-            x: {
-              display: true,
-              grid: { color: colors.grid, drawBorder: false },
-              ticks: {
-                color: colors.text,
-                maxTicksLimit: 6,
-                font: { family: 'JetBrains Mono', size: 9 }
-              }
-            },
-            y: {
-              display: true,
-              grid: { color: colors.grid, drawBorder: false },
-              ticks: {
-                color: colors.text,
-                font: { family: 'JetBrains Mono', size: 9 },
-                callback: (v) => v.toFixed(0) + '%'
-              }
-            }
-          },
-          interaction: { intersect: false, mode: 'index' }
-        }
-      });
-    };
-
-    // Interval button click handlers
-    document.querySelectorAll('.interval-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        if (currentConditionId) {
-          loadPriceChart(currentConditionId, btn.dataset.interval);
-        }
-      });
-    });
 
     const loadHolders = async (conditionId) => {
       document.getElementById('selectedOutcomeHolders').style.display = 'block';
@@ -1467,84 +1480,7 @@
       } catch (e) { document.getElementById('yesHoldersList').innerHTML = `<p style="color:var(--text-muted);padding:16px">${e.message}</p>`; }
     };
 
-    // Comments functions
-    let commentsLoaded = false;
-    let commentsVisible = false;
-    let currentSlug = null;
-
-    const toggleComments = () => {
-      const list = document.getElementById('commentsList');
-      const toggle = document.getElementById('commentsToggle');
-      
-      commentsVisible = !commentsVisible;
-      
-      if (commentsVisible) {
-        list.style.display = 'block';
-        toggle.textContent = '▲ Hide';
-        
-        // Load comments if not loaded yet
-        if (!commentsLoaded && currentSlug) {
-          loadComments(currentSlug);
-        }
-      } else {
-        list.style.display = 'none';
-        toggle.textContent = '▼ Show';
-      }
-    };
-
-    const loadComments = async (slug) => {
-      const list = document.getElementById('commentsList');
-      list.innerHTML = '<div class="comments-loading"><div class="spinner"></div></div>';
-      
-      try {
-        const res = await fetch(`/api/comments?slug=${encodeURIComponent(slug)}&limit=50`);
-        const json = await res.json();
-        
-        if (json.success && json.data && json.data.length > 0) {
-          list.innerHTML = json.data.map(c => `
-            <div class="comment-item">
-              <div class="comment-header">
-                <div class="comment-user">
-                  <div class="comment-avatar">${(c.username || 'A').charAt(0).toUpperCase()}</div>
-                  <span class="comment-username">${c.username || 'Anonymous'}</span>
-                </div>
-                <span class="comment-time">${c.timeAgo || ''}</span>
-              </div>
-              <div class="comment-text">${escapeHtml(c.text || '')}</div>
-              ${c.likes || c.replies ? `
-                <div class="comment-stats">
-                  ${c.likes ? `<span>❤️ ${c.likes}</span>` : ''}
-                  ${c.replies ? `<span>💬 ${c.replies}</span>` : ''}
-                </div>
-              ` : ''}
-            </div>
-          `).join('');
-          commentsLoaded = true;
-        } else {
-          list.innerHTML = '<div class="comments-loading">No comments yet</div>';
-        }
-      } catch (e) {
-        list.innerHTML = '<div class="comments-loading">Failed to load comments</div>';
-        console.error('Comments error:', e);
-      }
-    };
-
-    const escapeHtml = (text) => {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    };
-
-    const closeEvent = () => { 
-      document.getElementById('eventModal').classList.remove('active'); 
-      currentEvent = null; 
-      if (priceChart) { priceChart.destroy(); priceChart = null; }
-      // Reset comments
-      commentsLoaded = false;
-      commentsVisible = false;
-      document.getElementById('commentsList').style.display = 'none';
-      document.getElementById('commentsToggle').textContent = '▼ Show';
-    };
+    const closeEvent = () => { document.getElementById('eventModal').classList.remove('active'); currentEvent = null; };
 
     const openProfile = async (wallet, name) => {
       document.getElementById('profileModal').classList.add('active');
@@ -1632,7 +1568,7 @@
 
     document.getElementById('eventModal').addEventListener('click', closeEvent);
     document.getElementById('profileModal').addEventListener('click', closeProfile);
-    document.querySelectorAll('.cat-btn').forEach(b => b.addEventListener('click', () => fetchMarkets(b.dataset.tag, 1)));
+    document.querySelectorAll('.cat-btn').forEach(b => b.addEventListener('click', () => { showingWatchlist = false; document.getElementById('watchlistTab').classList.remove('active'); fetchMarkets(b.dataset.tag, 1); }));
     document.getElementById('search').addEventListener('input', applyFilters);
     document.getElementById('sort').addEventListener('change', applyFilters);
     document.getElementById('refresh').addEventListener('click', () => fetchMarkets(currentTag, currentPage));
@@ -1640,6 +1576,9 @@
     document.getElementById('nextBtn').addEventListener('click', () => { if (currentPage < totalPages) fetchMarkets(currentTag, currentPage + 1); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeEvent(); closeProfile(); } });
 
+    // Initialize watchlist count
+    updateWatchlistCount();
+    
     fetchMarkets('all', 1);
   </script>
 </body>
